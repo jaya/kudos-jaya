@@ -1,4 +1,4 @@
-# Give Kudos
+# Kudos Jaya
 
 Share warm kudos and kind words with anyone in your workspace using functions
 and a workflow!
@@ -33,17 +33,6 @@ To use this sample, you need to install and configure the Slack CLI.
 Step-by-step instructions can be found in our
 [Quickstart Guide](https://api.slack.com/automation/quickstart).
 
-### Clone the Sample App
-
-Start by cloning this repository:
-
-```zsh
-# Clone this project onto your machine
-$ slack create give-kudos-app -t slack-samples/deno-give-kudos
-
-# Change into the project directory
-$ cd give-kudos-app
-```
 
 ## Running Your Project Locally
 
@@ -132,12 +121,6 @@ To manually create a trigger, use the following command:
 ```zsh
 $ slack trigger create --trigger-def triggers/give_kudos.ts
 ```
-
-## Datastores
-
-For storing data related to your app, datastores offer secure storage on Slack
-infrastructure. The use of a datastore requires the
-`datastore:write`/`datastore:read` scopes to be present in your manifest.
 
 ## Testing
 

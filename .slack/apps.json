@@ -1,9 +1,10 @@
 {
   "apps": {
-    "T033VJH10": {
-      "app_id": "A07GY6WQPLK",
-      "team_domain": "jaya-tech",
-      "team_id": "T033VJH10"
+    "jaya-tech": {
+      "name": "jaya-tech",
+      "app_id": "A07JR20MF7A",
+      "team_id": "T033VJH10",
+      "IsDev": false
     }
   },
   "default": "jaya-tech"
