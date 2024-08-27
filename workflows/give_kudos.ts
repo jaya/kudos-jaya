@@ -1,5 +1,6 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { FindGIFFunction } from "../functions/find_gif.ts";
+import { SaveRecognition } from "../functions/recognition/save.ts";
 
 /**
  * A workflow is a set of steps that are executed in order. Each step in a
@@ -38,7 +39,7 @@ const kudo = GiveKudosWorkflow.addStep(
     description: "Continue the positive energy through your written word",
     fields: {
       elements: [{
-        name: "doer_of_good_deeds",
+        name: "to_id",
         title: "Whose deeds are deemed worthy of a kudo?",
         description: "Recognizing such deeds is dazzlingly desirable of you!",
         type: Schema.slack.types.user_id,
@@ -66,9 +67,9 @@ const kudo = GiveKudosWorkflow.addStep(
         ],
       }],
       required: [
-        "doer_of_good_deeds", 
-        "kudo_channel", 
-        "kudo_message"
+        "to_id",
+        "kudo_channel",
+        "kudo_message",
       ],
     },
   },
@@ -84,6 +85,15 @@ const gif = GiveKudosWorkflow.addStep(FindGIFFunction, {
   vibe: kudo.outputs.fields.kudo_vibe,
 });
 
+GiveKudosWorkflow.addStep(SaveRecognition, {
+  from_id: kudo.outputs.submit_user,
+  to_id: kudo.outputs.fields.to_id,
+});
+// GiveKudosWorkflow.addStep(DepositFunction, {
+//   amount: 100,
+//   user_id: kudo.outputs.fields.to_id,
+// });
+
 /**
  * Messages can be sent into a channel with the built-in SendMessage function.
  * Learn more: https://api.slack.com/automation/functions#catalog
@@ -91,7 +101,7 @@ const gif = GiveKudosWorkflow.addStep(FindGIFFunction, {
 GiveKudosWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: kudo.outputs.fields.kudo_channel,
   message:
-    `*Hey <@${kudo.outputs.fields.doer_of_good_deeds}>!* Someone wanted to share some kind words with you :otter:\n` +
+    `*<@${kudo.outputs.submit_user}> is recognizing <@${kudo.outputs.fields.to_id}>!* :party-jaya:\n` +
     `> ${kudo.outputs.fields.kudo_message}\n` +
     `<${gif.outputs.URL}>`,
 });
