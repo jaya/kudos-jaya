@@ -1,18 +1,35 @@
 // @ts-ignore
-import { Manifest } from "deno-slack-sdk/mod.ts";
+import { DefineDatastore, Manifest, Schema } from "deno-slack-sdk/mod.ts";
 // @ts-ignore
 import { FindGIFFunction } from "./functions/find_gif.ts";
 // @ts-ignore
 import { GiveKudosWorkflow } from "./workflows/give_kudos.ts";
 // @ts-ignore
-import { SaveRecognition } from "./functions/recognition/save.ts";
+import { GiveKudosFunction } from "./functions/give_kudos.ts";
 import { RedeemWorkflow } from "./workflows/redeem.ts";
 
-/**
- * The app manifest contains the app's configuration. This file defines
- * attributes like app name, description, available workflows, and more.
- * Learn more: https://api.slack.com/automation/manifest
- */
+export const RecognitionDatastore = DefineDatastore({
+  name: "recognition",
+  primary_key: "id",
+  attributes: {
+    id: {
+      type: Schema.types.string,
+    },
+    from_id: {
+      type: Schema.types.string,
+    },
+    from_name: {
+      type: Schema.types.string,
+    },
+    to_id: {
+      type: Schema.types.string,
+    },
+    to_name: {
+      type: Schema.types.string,
+    },
+  },
+});
+
 export default Manifest({
   name: "Kudos Jaya",
   displayName: "Kudos Jaya",
@@ -23,8 +40,16 @@ export default Manifest({
     "Because every “thank you” counts. 🌟",
   icon: "assets/icon.png",
   backgroundColor: "#40e0d0",
-  functions: [FindGIFFunction, SaveRecognition],
+  functions: [FindGIFFunction, GiveKudosFunction],
   workflows: [GiveKudosWorkflow, RedeemWorkflow],
   outgoingDomains: [],
-  botScopes: ["commands", "chat:write", "chat:write.public", "users:read"],
+  datastores: [RecognitionDatastore],
+  botScopes: [
+    "commands",
+    "chat:write",
+    "chat:write.public",
+    "users:read",
+    "datastore:write",
+    "datastore:read",
+  ],
 });
