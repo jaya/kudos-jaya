@@ -2,6 +2,7 @@ import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import RecognitionDatastore, {
   Recognition,
 } from "../datastores/recognition.ts";
+import WalletDataStore, { Deposit } from "../datastores/wallet.ts";
 import { getSlackUsername } from "./get_user.ts";
 
 export const GiveKudosFunction = DefineFunction({
@@ -35,7 +36,13 @@ export default SlackFunction(GiveKudosFunction, async ({ inputs, client }) => {
     to_id: inputs.to_id,
     to_name,
   };
-  await RecognitionDatastore.save(client, recognition);
-
+  const ok = await RecognitionDatastore.save(client, recognition);
+  if (ok) {
+    const deposit: Deposit = {
+      owner_id: inputs.to_id,
+      amount: 100,
+    };
+    WalletDataStore.deposit(client, deposit);
+  }
   return { outputs: true };
 });

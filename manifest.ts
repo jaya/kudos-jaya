@@ -30,6 +30,22 @@ export const RecognitionDatastore = DefineDatastore({
   },
 });
 
+export const WalletDataStore = DefineDatastore({
+  name: "wallet",
+  primary_key: "id",
+  attributes: {
+    id: {
+      type: Schema.types.string,
+    },
+    owner_id: {
+      type: Schema.types.string,
+    },
+    balance: {
+      type: Schema.types.number,
+    },
+  },
+});
+
 export default Manifest({
   name: "Kudos Jaya",
   displayName: "Kudos Jaya",
@@ -43,7 +59,7 @@ export default Manifest({
   functions: [FindGIFFunction, GiveKudosFunction],
   workflows: [GiveKudosWorkflow, RedeemWorkflow],
   outgoingDomains: [],
-  datastores: [RecognitionDatastore],
+  datastores: [RecognitionDatastore, WalletDataStore],
   botScopes: [
     "commands",
     "chat:write",
