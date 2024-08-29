@@ -27,22 +27,27 @@ export const GiveKudosFunction = DefineFunction({
 });
 
 export default SlackFunction(GiveKudosFunction, async ({ inputs, client }) => {
-  const from_name = await getSlackUsername(client, inputs.from_id);
-  const to_name = await getSlackUsername(client, inputs.to_id);
-  const recognition: Recognition = {
-    id: crypto.randomUUID(),
-    from_id: inputs.from_id,
-    from_name,
-    to_id: inputs.to_id,
-    to_name,
-  };
-  const ok = await RecognitionDatastore.save(client, recognition);
-  if (ok) {
-    const deposit: Deposit = {
-      owner_id: inputs.to_id,
-      amount: 100,
+  try {
+    const from_name = await getSlackUsername(client, inputs.from_id);
+    const to_name = await getSlackUsername(client, inputs.to_id);
+    const recognition: Recognition = {
+      id: crypto.randomUUID(),
+      from_id: inputs.from_id,
+      from_name,
+      to_id: inputs.to_id,
+      to_name,
     };
-    WalletDataStore.deposit(client, deposit);
+    const ok = await RecognitionDatastore.save(client, recognition);
+    if (ok) {
+      const deposit: Deposit = {
+        owner_id: inputs.to_id,
+        amount: 100,
+      };
+      await WalletDataStore.deposit(client, deposit);
+    }
+    return { outputs: { success: true } };
+  } catch (error) {
+    console.error(error);
+    return { outputs: { success: false } };
   }
-  return { outputs: true };
 });

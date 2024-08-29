@@ -69,10 +69,6 @@ GiveKudosWorkflow.addStep(GiveKudosFunction, {
   from_id: kudo.outputs.submit_user,
   to_id: kudo.outputs.fields.to_id,
 });
-// GiveKudosWorkflow.addStep(DepositFunction, {
-//   amount: 100,
-//   user_id: kudo.outputs.fields.to_id,
-// });
 
 GiveKudosWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: kudo.outputs.fields.kudo_channel,
