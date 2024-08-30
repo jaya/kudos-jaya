@@ -1,4 +1,27 @@
 import { SlackAPIClient } from "deno-slack-api/types.ts";
+import { DefineDatastore, Schema } from "deno-slack-sdk/mod.ts";
+
+export const RecognitionDsDef = DefineDatastore({
+  name: "recognition",
+  primary_key: "id",
+  attributes: {
+    id: {
+      type: Schema.types.string,
+    },
+    from_id: {
+      type: Schema.types.string,
+    },
+    from_name: {
+      type: Schema.types.string,
+    },
+    to_id: {
+      type: Schema.types.string,
+    },
+    to_name: {
+      type: Schema.types.string,
+    },
+  },
+});
 
 export type Recognition = {
   id: string;

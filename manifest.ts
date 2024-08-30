@@ -1,50 +1,17 @@
 // @ts-ignore
-import { DefineDatastore, Manifest, Schema } from "deno-slack-sdk/mod.ts";
+import { Manifest } from "deno-slack-sdk/mod.ts";
 // @ts-ignore
 import { FindGIFFunction } from "./functions/find_gif.ts";
 // @ts-ignore
 import { GiveKudosWorkflow } from "./workflows/give_kudos.ts";
 // @ts-ignore
+import { RecognitionDsDef } from "./datastores/recognition.ts";
+import { WalletDsDef } from "./datastores/wallet.ts";
+import { WorkspaceDsDef } from "./datastores/workspace.ts";
 import { GiveKudosFunction } from "./functions/give_kudos.ts";
+import { SetupFunction } from "./functions/setup.ts";
 import { RedeemWorkflow } from "./workflows/redeem.ts";
-
-export const RecognitionDatastore = DefineDatastore({
-  name: "recognition",
-  primary_key: "id",
-  attributes: {
-    id: {
-      type: Schema.types.string,
-    },
-    from_id: {
-      type: Schema.types.string,
-    },
-    from_name: {
-      type: Schema.types.string,
-    },
-    to_id: {
-      type: Schema.types.string,
-    },
-    to_name: {
-      type: Schema.types.string,
-    },
-  },
-});
-
-export const WalletDataStore = DefineDatastore({
-  name: "wallet",
-  primary_key: "id",
-  attributes: {
-    id: {
-      type: Schema.types.string,
-    },
-    owner_id: {
-      type: Schema.types.string,
-    },
-    balance: {
-      type: Schema.types.number,
-    },
-  },
-});
+import { SetupWorkflow } from "./workflows/setup.ts";
 
 export default Manifest({
   name: "Kudos Jaya",
@@ -56,10 +23,14 @@ export default Manifest({
     "Because every “thank you” counts. 🌟",
   icon: "assets/icon.png",
   backgroundColor: "#40e0d0",
-  functions: [FindGIFFunction, GiveKudosFunction],
-  workflows: [GiveKudosWorkflow, RedeemWorkflow],
+  functions: [
+    FindGIFFunction,
+    GiveKudosFunction,
+    SetupFunction,
+  ],
+  workflows: [GiveKudosWorkflow, RedeemWorkflow, SetupWorkflow],
   outgoingDomains: [],
-  datastores: [RecognitionDatastore, WalletDataStore],
+  datastores: [RecognitionDsDef, WalletDsDef, WorkspaceDsDef],
   botScopes: [
     "commands",
     "chat:write",
@@ -67,5 +38,6 @@ export default Manifest({
     "users:read",
     "datastore:write",
     "datastore:read",
+    "team:read",
   ],
 });

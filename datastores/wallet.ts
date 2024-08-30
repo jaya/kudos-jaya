@@ -1,4 +1,21 @@
 import { SlackAPIClient } from "deno-slack-api/types.ts";
+import { DefineDatastore, Schema } from "deno-slack-sdk/mod.ts";
+
+export const WalletDsDef = DefineDatastore({
+  name: "wallet",
+  primary_key: "id",
+  attributes: {
+    id: {
+      type: Schema.types.string,
+    },
+    owner_id: {
+      type: Schema.types.string,
+    },
+    balance: {
+      type: Schema.types.number,
+    },
+  },
+});
 
 export type Wallet = {
   id: string;
