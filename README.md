@@ -21,3 +21,8 @@ and a workflow!
 #### Run Bolt Server
 
 `npm start`
+
+Configurar a URL da app aqui
+https://api.slack.com/apps/A07N6B9AUNT/interactive-messages
+
+Adicionar o BOT ao canal
