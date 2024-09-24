@@ -1,0 +1,55 @@
+{
+    "display_information": {
+        "name": "Kudos Jaya",
+        "description": "Brighten someone's day with a heartfelt thank you",
+        "background_color": "#000000",
+        "long_description": "Add a spark to your team’s day with KudosBot. Recognize and celebrate your colleagues’ efforts instantly with a simple command. \r\n\r\nBoost morale, foster a culture of appreciation, and make every accomplishment shine.\r\n\r\nBecause every “thank you” counts. 🌟"
+    },
+    "features": {
+        "app_home": {
+            "home_tab_enabled": true,
+            "messages_tab_enabled": true,
+            "messages_tab_read_only_enabled": true
+        },
+        "bot_user": {
+            "display_name": "Kudos Jaya",
+            "always_online": true
+        },
+        "slash_commands": [
+            {
+                "command": "/give-kudos",
+                "url": "https://dc33-2804-56c-c230-a800-819e-4e5b-a5d1-8674.ngrok-free.app/slack/events",
+                "description": "Acknowledge the impact someone had on you",
+                "should_escape": false
+            }
+        ]
+    },
+    "oauth_config": {
+        "scopes": {
+            "bot": [
+                "channels:history",
+                "chat:write",
+                "chat:write.public",
+                "users:read",
+                "team:read",
+                "commands"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "request_url": "https://dc33-2804-56c-c230-a800-819e-4e5b-a5d1-8674.ngrok-free.app/slack/events",
+            "bot_events": [
+                "app_home_opened",
+                "message.channels"
+            ]
+        },
+        "interactivity": {
+            "is_enabled": true,
+            "request_url": "https://dc33-2804-56c-c230-a800-819e-4e5b-a5d1-8674.ngrok-free.app/slack/events"
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": false,
+        "token_rotation_enabled": false
+    }
+}

@@ -1,8 +1,18 @@
 import { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
+import { RecognitionController } from '../../controllers/recognition';
+import { WalletController } from '../../controllers/wallet';
 
-const appHomeOpenedCallback = async ({ client, event }: AllMiddlewareArgs & SlackEventMiddlewareArgs<'app_home_opened'>) => {
+const appHomeOpenedCallback = async ({
+  client,
+  event,
+}: AllMiddlewareArgs & SlackEventMiddlewareArgs<'app_home_opened'>) => {
   // Ignore the `app_home_opened` event for anything but the Home tab
   if (event.tab !== 'home') return;
+  const recsController = new RecognitionController();
+
+  const recognitions = await recsController.getTotal(event.user);
+  const totalRecognitions = await recsController.getTotal();
+  const balance = await new WalletController().getBalance(event.user);
 
   try {
     await client.views.publish({
@@ -14,16 +24,37 @@ const appHomeOpenedCallback = async ({ client, event }: AllMiddlewareArgs & Slac
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: `*Welcome home, <@${event.user}> :house:*`,
+              text: `:trophy: <@${event.user}>, your prizes balance :trophy: 
+              *Recognitions*: ${recognitions}
+              *Balance*: R$ ${balance}`,
             },
+          },
+          {
+            type: 'actions',
+            elements: [
+              {
+                type: 'button',
+                text: {
+                  type: 'plain_text',
+                  text: 'Redeem',
+                  emoji: true,
+                },
+                value: 'redeem',
+              },
+            ],
+          },
+          {
+            type: 'divider',
           },
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: 'Learn how home tabs can be more useful and interactive <https://api.slack.com/surfaces/tabs/using|*in the documentation*>.',
+              //TODO: add via env o canal de reconhecimentos
+              text: `:sports_medal: <#wearejaya> ${totalRecognitions} recognitions :sports_medal:`,
             },
           },
+          //TODO: add lista de reconhecimentos
         ],
       },
     });

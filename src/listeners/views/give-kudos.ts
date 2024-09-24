@@ -18,7 +18,7 @@ const giveKudosViewCallback = async ({
   );
   const fromId = body.user.id;
 
-  const ok = await new RecognitionController(fromId, toId, client).save();
+  const ok = await new RecognitionController().save(fromId, toId, client);
   if (!ok) {
     await client.chat.postMessage({
       channel: fromId,

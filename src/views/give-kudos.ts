@@ -1,17 +1,10 @@
-import {
-  AllMiddlewareArgs,
-  Context,
-  SlackCommandMiddlewareArgs,
-} from '@slack/bolt';
-import { StringIndexed } from '@slack/bolt/dist/types/helpers';
+import { OpenViewParams } from './types';
 
-type Params = {
-  client: AllMiddlewareArgs['client'];
-  body: SlackCommandMiddlewareArgs['body'];
-  context: Context & StringIndexed;
-};
-
-export const openKudosView = async ({ client, body, context }: Params) => {
+export const openKudosView = async ({
+  client,
+  body,
+  context,
+}: OpenViewParams) => {
   await client.views.open({
     token: context.botToken,
     trigger_id: body.trigger_id,
