@@ -1,6 +1,8 @@
 import { App, LogLevel } from '@slack/bolt';
 import * as dotenv from 'dotenv';
+import 'reflect-metadata';
 import registerListeners from './listeners';
+import { AppDataSource } from './data-source';
 
 dotenv.config();
 
@@ -18,6 +20,7 @@ registerListeners(app);
 /** Start Bolt App */
 (async () => {
   try {
+    await AppDataSource.initialize();
     await app.start(process.env.PORT || 3000);
     console.log('⚡️ Bolt app is running! ⚡️');
   } catch (error) {

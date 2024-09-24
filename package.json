@@ -4,18 +4,23 @@
   "description": "Share warm kudos and kind words with anyone in your workspace using functions and a workflow!",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node ./dist/app.js",
+    "start": "ts-node src/app.ts",
     "watch": "tsc --watch & nodemon ./dist/app.js",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@slack/bolt": "^3.21.4",
     "config": "^3.3.12",
-    "dotenv": "~16.4.5"
+    "dotenv": "~16.4.5",
+    "pg": "^8.4.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "0.3.20"
   },
   "devDependencies": {
+    "@types/node": "^16.11.10",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "eslint": "~8.57.0",
@@ -23,6 +28,7 @@
     "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-plugin-import": "~2.29.1",
     "nodemon": "^3.1.7",
-    "typescript": "^5.5.4"
+    "typescript": "4.5.2",
+    "ts-node": "10.9.1"
   }
 }
