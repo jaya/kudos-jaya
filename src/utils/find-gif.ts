@@ -1,5 +1,7 @@
 import { gifs } from '../assets/gifs';
 
+//TODO: MOVER PARA CONTROLLER OU OUTRO LUGAR
+
 const getEnergy = (vibe: string): string => {
   if (vibe === 'Appreciation for someone 🫂') return 'appreciation';
   if (vibe === 'Celebrating a victory 🏆') return 'celebration';

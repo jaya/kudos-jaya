@@ -40,6 +40,7 @@ const appHomeOpenedCallback = async ({
                   emoji: true,
                 },
                 value: 'redeem',
+                action_id: 'redeem_button',
               },
             ],
           },
