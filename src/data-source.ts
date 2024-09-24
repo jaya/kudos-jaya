@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { User } from './entity/User';
+import { Recognition } from './entity/recognition';
+import { Wallet } from './entity/wallet';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -11,7 +12,7 @@ export const AppDataSource = new DataSource({
   database: 'kudos-jaya',
   synchronize: true,
   logging: false,
-  entities: [User],
+  entities: [Wallet, Recognition],
   migrations: [],
   subscribers: [],
 });

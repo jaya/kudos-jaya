@@ -1,4 +1,5 @@
 import { AllMiddlewareArgs, SlackViewMiddlewareArgs } from '@slack/bolt';
+import { RecognitionController } from '../../controllers/recognition';
 import { matchVibe } from '../../utils/find-gif';
 
 const giveKudosViewCallback = async ({
@@ -17,12 +18,25 @@ const giveKudosViewCallback = async ({
   );
   const fromId = body.user.id;
 
+  const ok = await new RecognitionController(fromId, toId, client).save();
+  if (!ok) {
+    await client.chat.postMessage({
+      channel: fromId,
+      text: `An error occurred while giving <@${toId}> a kudos :cry:`,
+    });
+  }
+
   await client.chat.postMessage({
     channel: channelId || '',
     text:
       `*<@${fromId}> is recognizing <@${toId}>!* :party-jaya:\n` +
       `> ${message}\n` +
       `<${gif.URL}>`,
+  });
+
+  await client.chat.postMessage({
+    channel: toId,
+    text: `Hey <@${toId}> Jaya is sending you a gift, check your balance! `,
   });
 };
 

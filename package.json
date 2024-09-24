@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/app.ts",
-    "watch": "tsc --watch & nodemon ./dist/app.js",
+    "watch": "nodemon --watch src --exec ts-node src/app.ts",
     "lint": "eslint . --ext .ts",
     "typeorm": "typeorm-ts-node-commonjs"
   },
