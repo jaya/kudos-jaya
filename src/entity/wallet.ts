@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { decimalTransformer } from '../utils/decimal-transformer';
 
 @Entity()
 export class Wallet {
@@ -8,7 +9,14 @@ export class Wallet {
   @Column()
   ownerId: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column({
+    name: 'balance',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0.0,
+    transformer: decimalTransformer,
+  })
   balance: number;
 
   deposit() {}
