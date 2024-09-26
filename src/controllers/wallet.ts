@@ -32,6 +32,6 @@ export class WalletController {
 
   public async getBalance(ownerId: string): Promise<number> {
     const wallet = await this.walletRepository.findOneBy({ ownerId });
-    return wallet.balance ?? 0;
+    return wallet?.balance ?? 0;
   }
 }
