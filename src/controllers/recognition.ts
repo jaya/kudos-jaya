@@ -7,7 +7,6 @@ import { WalletController } from './wallet';
 export class RecognitionController {
   private readonly recognitionRepository =
     AppDataSource.getRepository(Recognition);
-  constructor() {}
 
   public async save(
     fromId: string,

@@ -11,6 +11,7 @@ const redeemButtonCallback = async ({
   body,
 }: AllMiddlewareArgs & SlackActionMiddlewareArgs<BlockAction>) => {
   try {
+    //TODO: pagination max 25 https://api.slack.com/reference/block-kit/blocks#blocks
     await ack();
     const stores = await new TodoCartoes().fetchStores();
 
@@ -100,7 +101,12 @@ const redeemButtonCallback = async ({
               text: 'Choose',
               emoji: true,
             },
-            value: 'choose_card',
+            value:
+              product.products[0].card_identificator +
+              ',' +
+              product.products[0].min_value +
+              ',' +
+              product.products[0].max_value,
             action_id: 'choose_card',
           },
         ],

@@ -13,6 +13,14 @@ export class Request {
     return this.request.get<T, Response<T>>(url, config);
   }
 
+  public post<T>(
+    url: string,
+    config: RequestConfig = {},
+    data?: any
+  ): Promise<Response<T>> {
+    return this.request.post<T, Response<T>>(url, data, config);
+  }
+
   public static isRequestError(error: Error): boolean {
     return !!(
       (error as AxiosError).response && (error as AxiosError).response?.status

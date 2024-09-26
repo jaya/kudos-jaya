@@ -24,6 +24,8 @@ and a workflow!
 
 Configurar a URL da app aqui
 https://api.slack.com/apps/A07N6B9AUNT/interactive-messages
+https://api.slack.com/apps/A07N6B9AUNT/slash-commands?
+https://api.slack.com/apps/A07N6B9AUNT/event-subscriptions?
 
 Adicionar o BOT ao canal
 
@@ -31,3 +33,5 @@ docker run --name kudos-jaya \
  -e POSTGRES_PASSWORD=testpassword \
  -e POSTGRES_DB=kudos-jaya \
  -d -p 5432:5432 postgres
+
+Não esquecer de definir o token da TODO

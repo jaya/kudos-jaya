@@ -15,6 +15,8 @@ const appHomeOpenedCallback = async ({
   const balance = await new WalletController().getBalance(event.user);
 
   try {
+    //TODO: só mostrar o botão redeem se o cara tiver saldo > 0
+    //TODO: list of recognitions
     await client.views.publish({
       user_id: event.user,
       view: {
