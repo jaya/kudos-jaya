@@ -18,8 +18,9 @@ const giveKudosViewCallback = async ({
   );
   const fromId = body.user.id;
 
-  const ok = await new RecognitionController().save(fromId, toId, client);
-  if (!ok) {
+  const response = await new RecognitionController().save(fromId, toId, client);
+
+  if (!response.ok) {
     await client.chat.postMessage({
       channel: fromId,
       text: `An error occurred while giving <@${toId}> a kudos :cry:`,

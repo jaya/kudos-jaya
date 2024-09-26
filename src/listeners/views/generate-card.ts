@@ -15,6 +15,7 @@ const generateGiftCardCallback = async ({ ack, view, client, body }) => {
     });
 
     await client.chat.postMessage({
+      text: card.message,
       channel: userId,
       blocks: [
         {
@@ -24,19 +25,21 @@ const generateGiftCardCallback = async ({ ack, view, client, body }) => {
             text: card.message,
           },
         },
-        card.url ?? {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Gift Card',
-              },
-              url: card.url,
-            },
-          ],
-        },
+        card.url
+          ? {
+              type: 'actions',
+              elements: [
+                {
+                  type: 'button',
+                  text: {
+                    type: 'plain_text',
+                    text: 'Gift Card',
+                  },
+                  url: card.url,
+                },
+              ],
+            }
+          : undefined,
       ],
     });
   } catch (error) {
