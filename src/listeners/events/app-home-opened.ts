@@ -13,6 +13,7 @@ const appHomeOpenedCallback = async ({
   const recognitions = await recsController.getTotal(event.user);
   const totalRecognitions = await recsController.getTotal();
   const balance = await new WalletController().getBalance(event.user);
+  const recognitionSummary = await recsController.getUsersRecognitionSummary();
 
   const blocks = [];
 
@@ -55,14 +56,31 @@ const appHomeOpenedCallback = async ({
     },
   };
 
-  blocks.push(userBalance, divider, recognitionsListHeader);
+  const recognitionsList = [];
+  for (const recognition of recognitionSummary) {
+    const recognitionText = {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `<@${recognition.userId}>: ${recognition.recognitionCount} recognitions`,
+      },
+    };
+
+    recognitionsList.push(recognitionText);
+  }
+
+  blocks.push(
+    userBalance,
+    divider,
+    recognitionsListHeader,
+    ...recognitionsList
+  );
 
   if (balance > 0) {
     blocks.splice(1, 0, redeemButton);
   }
 
   try {
-    //TODO: list of recognitions
     await client.views.publish({
       user_id: event.user,
       view: {

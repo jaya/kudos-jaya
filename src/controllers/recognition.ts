@@ -4,6 +4,11 @@ import { Recognition } from '../entity/recognition';
 import { getSlackUserInfo } from '../utils/user-slack-info';
 import { WalletController } from './wallet';
 
+type RecognitionSummary = {
+  userId: string;
+  recognitionCount: number;
+}[];
+
 export class RecognitionController {
   private readonly recognitionRepository =
     AppDataSource.getRepository(Recognition);
@@ -38,5 +43,17 @@ export class RecognitionController {
       },
     });
     return total ?? 0;
+  }
+
+  public async getUsersRecognitionSummary(): Promise<RecognitionSummary> {
+    const summary = this.recognitionRepository
+      .createQueryBuilder('recognition')
+      .select('recognition.toId', 'userId')
+      .addSelect('COUNT(recognition.id)', 'recognitionCount')
+      .groupBy('recognition.toId')
+      .orderBy('COUNT(recognition.id)', 'DESC')
+      .limit(20)
+      .getRawMany();
+    return summary;
   }
 }
