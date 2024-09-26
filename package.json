@@ -7,7 +7,9 @@
     "start": "ts-node src/app.ts",
     "watch": "nodemon --watch src --exec ts-node src/app.ts",
     "lint": "eslint . --ext .ts",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:gen": "npm run typeorm -- migration:generate $npm_config_name -d src/data-source.ts --pretty",
+    "migration:up": "npm run typeorm -- migration:run -d src/data-source.ts"
   },
   "author": "",
   "license": "ISC",

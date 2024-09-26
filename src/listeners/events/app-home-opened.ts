@@ -14,51 +14,60 @@ const appHomeOpenedCallback = async ({
   const totalRecognitions = await recsController.getTotal();
   const balance = await new WalletController().getBalance(event.user);
 
+  const blocks = [];
+
+  const userBalance = {
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      text: `:trophy: <@${event.user}>, your prizes balance :trophy: 
+      *Recognitions*: ${recognitions}
+      *Balance*: R$ ${balance}`,
+    },
+  };
+
+  const redeemButton = {
+    type: 'actions',
+    elements: [
+      {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Redeem',
+          emoji: true,
+        },
+        value: 'redeem',
+        action_id: 'redeem_button',
+      },
+    ],
+  };
+
+  const divider = {
+    type: 'divider',
+  };
+
+  const recognitionsListHeader = {
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      //TODO: add via env o canal de reconhecimentos
+      text: `:sports_medal: <#wearejaya> ${totalRecognitions} recognitions :sports_medal:`,
+    },
+  };
+
+  blocks.push(userBalance, divider, recognitionsListHeader);
+
+  if (balance > 0) {
+    blocks.splice(1, 0, redeemButton);
+  }
+
   try {
-    //TODO: só mostrar o botão redeem se o cara tiver saldo > 0
     //TODO: list of recognitions
     await client.views.publish({
       user_id: event.user,
       view: {
         type: 'home',
-        blocks: [
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `:trophy: <@${event.user}>, your prizes balance :trophy: 
-              *Recognitions*: ${recognitions}
-              *Balance*: R$ ${balance}`,
-            },
-          },
-          {
-            type: 'actions',
-            elements: [
-              {
-                type: 'button',
-                text: {
-                  type: 'plain_text',
-                  text: 'Redeem',
-                  emoji: true,
-                },
-                value: 'redeem',
-                action_id: 'redeem_button',
-              },
-            ],
-          },
-          {
-            type: 'divider',
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              //TODO: add via env o canal de reconhecimentos
-              text: `:sports_medal: <#wearejaya> ${totalRecognitions} recognitions :sports_medal:`,
-            },
-          },
-          //TODO: add lista de reconhecimentos
-        ],
+        blocks,
       },
     });
   } catch (error) {
