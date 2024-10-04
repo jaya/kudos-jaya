@@ -21,7 +21,7 @@ type ProductLine = {
   brand_name: string;
   logo_url: string;
   product_line_description: string;
-  subscription: string;
+  subscription: boolean;
   updated_at: string;
   terms_and_conditions: string;
   steps_to_use: string;

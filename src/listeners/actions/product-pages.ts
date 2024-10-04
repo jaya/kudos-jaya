@@ -1,20 +1,17 @@
-import {
-  AllMiddlewareArgs,
-  BlockAction,
-  SlackActionMiddlewareArgs,
-} from '@slack/bolt';
 import { TodoCartoes } from '../../clients/todo-cartoes/todo-cartoes';
 
-const redeemButtonCallback = async ({
-  ack,
-  client,
-  body,
-}: AllMiddlewareArgs & SlackActionMiddlewareArgs<BlockAction>) => {
+const productPagesButtonCallback = async ({ ack, client, body }) => {
   try {
-    //TODO: ver se não tem como juntar esse com o product-pages
     await ack();
 
-    const products = await new TodoCartoes().fetchProducts(1);
+    const service = new TodoCartoes();
+    const lastPage = Math.ceil(service.getCatalogSize() / 15);
+
+    const page = Number(body.actions[0].value);
+    const previous = page - 1;
+    const next = page + 1;
+
+    const products = await service.fetchProducts(page);
 
     const blocks = [];
 
@@ -120,25 +117,48 @@ const redeemButtonCallback = async ({
       blocks.push(image, description, terms, values, button, divider);
     }
 
-    const buttonNextPage = {
-      type: 'actions',
-      elements: [
-        {
-          type: 'button',
-          text: {
-            type: 'plain_text',
-            text: 'Próxima Página',
-            emoji: true,
-          },
-          value: '2',
-          action_id: 'products_page_next',
-        },
-      ],
+    const previousButton = {
+      type: 'button',
+      text: {
+        type: 'plain_text',
+        text: 'Página Anterior',
+        emoji: true,
+      },
+      value: String(previous),
+      action_id: 'products_page_previous',
     };
-    blocks.push(buttonNextPage);
 
-    await client.views.open({
-      trigger_id: body.trigger_id,
+    const nextButton = {
+      type: 'button',
+      text: {
+        type: 'plain_text',
+        text: 'Próxima Página',
+        emoji: true,
+      },
+      value: String(next),
+      action_id: 'products_page_next',
+    };
+
+    const pageButtonsElements = [nextButton];
+
+    if (previous > 0) {
+      pageButtonsElements.unshift(previousButton);
+    }
+
+    if (next > lastPage) {
+      pageButtonsElements.pop();
+    }
+
+    const paginationButtons = {
+      type: 'actions',
+      elements: pageButtonsElements,
+    };
+
+    blocks.push(paginationButtons);
+
+    await client.views.update({
+      view_id: body.view!.id,
+      hash: body.view!.hash,
       view: {
         type: 'modal',
         callback_id: 'list_stores_view',
@@ -159,4 +179,4 @@ const redeemButtonCallback = async ({
   }
 };
 
-export default redeemButtonCallback;
+export default productPagesButtonCallback;
