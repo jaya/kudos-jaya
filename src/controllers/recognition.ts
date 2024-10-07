@@ -1,4 +1,5 @@
 import { AllMiddlewareArgs } from '@slack/bolt';
+import config from 'config';
 import { AppDataSource } from '../data-source';
 import { Recognition } from '../entity/recognition';
 import { getSlackUserInfo } from '../utils/user-slack-info';
@@ -26,8 +27,10 @@ export class RecognitionController {
     try {
       const response = await this.recognitionRepository.save(recognition);
       if (response.id) {
-        //TODO: definir env para o valor default
-        await new WalletController().deposit(toId, 100);
+        await new WalletController().deposit(
+          toId,
+          config.get<number>('app.deposit.defaultAmount')
+        );
       }
       return { ok: true };
     } catch (error) {

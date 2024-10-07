@@ -39,22 +39,27 @@ export class RedeemController {
       card_image_id: params.imageId,
     };
 
-    const response = await new TodoCartoes().emitGiftCard(payload);
+    try {
+      const response = await new TodoCartoes().emitGiftCard(payload);
+      if (response.status !== 201) {
+        return {
+          success: false,
+          message: 'We had a problem generating your card :cry:',
+        };
+      }
 
-    if (response.status !== 201) {
+      await this.walletController.withdraw(params.userId, params.amount);
+      return {
+        success: true,
+        url: response.data.magic_link,
+        message:
+          ':tada: *Your Gift Card has arrived* :tada: \nClick to access your gift card',
+      };
+    } catch (error) {
       return {
         success: false,
         message: 'We had a problem generating your card :cry:',
       };
     }
-
-    await this.walletController.withdraw(params.userId, params.amount);
-
-    return {
-      success: true,
-      url: response.data.magic_link,
-      message:
-        ':tada: *Your Gift Card has arrived* :tada: \nClick to access your gift card',
-    };
   }
 }

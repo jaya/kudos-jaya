@@ -1,6 +1,9 @@
 import { gifs } from '../assets/gifs';
-
-//TODO: MOVER PARA CONTROLLER OU OUTRO LUGAR
+interface GIF {
+  URL: string;
+  alt_text?: string;
+  tags: string[];
+}
 
 const getEnergy = (vibe: string): string => {
   if (vibe === 'Appreciation for someone 🫂') return 'appreciation';
@@ -11,12 +14,6 @@ const getEnergy = (vibe: string): string => {
   if (vibe === 'No vibes, just plants 🪴') return 'plants';
   return 'otter'; // 🦦
 };
-
-interface GIF {
-  URL: string;
-  alt_text?: string;
-  tags: string[];
-}
 
 export function matchVibe(vibe: string): GIF {
   const energy = getEnergy(vibe);

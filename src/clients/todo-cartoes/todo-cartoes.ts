@@ -22,7 +22,6 @@ export class TodoCartoes {
   public async fetchProducts(
     page: number
   ): Promise<TodoProductLineResponse['product_lines']> {
-    console.log('Requested page ' + page);
     const cachedProducts = this.getProductsFromCache(`products_page_${page}`);
 
     if (!cachedProducts) {
@@ -94,13 +93,13 @@ export class TodoCartoes {
   }
 
   public async emitGiftCard(payload: EmitGiftCardPayload) {
-    //TODO: definir timeout de acordo com a DOC
     const response = await this.request.post<TodoGiftCardResponse>(
       `${baseUrl}/orders`,
       {
         headers: {
           Authorization: `${token}`,
         },
+        timeout: 35000,
       },
       payload
     );

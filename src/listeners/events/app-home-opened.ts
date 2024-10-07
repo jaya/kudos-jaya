@@ -1,4 +1,5 @@
 import { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
+import config from 'config';
 import { RecognitionController } from '../../controllers/recognition';
 import { WalletController } from '../../controllers/wallet';
 
@@ -51,8 +52,9 @@ const appHomeOpenedCallback = async ({
     type: 'section',
     text: {
       type: 'mrkdwn',
-      //TODO: add via env o canal de reconhecimentos
-      text: `:sports_medal: <#wearejaya> ${totalRecognitions} recognitions :sports_medal:`,
+      text: `:sports_medal: <#${config.get<string>(
+        'app.recognition.defaultChannel'
+      )}> ${totalRecognitions} recognitions :sports_medal:`,
     },
   };
 

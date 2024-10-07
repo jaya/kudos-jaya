@@ -1,18 +1,16 @@
-import { App, LogLevel } from '@slack/bolt';
+import { App } from '@slack/bolt';
+import config from 'config';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { AppDataSource } from './data-source';
 import registerListeners from './listeners';
+import { SlackConfig } from './types';
 
 dotenv.config();
 
-const app = new App({
-  //TODO: pegar do configjs
-  token: process.env.SLACK_BOT_TOKEN,
-  appToken: process.env.SLACK_APP_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-  logLevel: LogLevel.DEBUG,
-});
+const slackConfig = config.get<SlackConfig>('app.slackConfig');
+
+const app = new App(slackConfig);
 
 registerListeners(app);
 
@@ -22,7 +20,7 @@ registerListeners(app);
     //TODO: add docker
     //TODO: add docker for db
     await AppDataSource.initialize();
-    await app.start(process.env.PORT || 3000);
+    await app.start(config.get<number>('app.port'));
     console.log('⚡️ Bolt app is running! ⚡️');
   } catch (error) {
     console.error('Unable to start App', error);
