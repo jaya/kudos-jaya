@@ -1,6 +1,6 @@
+import CacheUtil from '@/utils/cache';
+import * as HTTPUtil from '@/utils/request';
 import config from 'config';
-import CacheUtil from '../../utils/cache';
-import * as HTTPUtil from '../../utils/request';
 import { productsMock } from './mock';
 import {
   EmitGiftCardPayload,

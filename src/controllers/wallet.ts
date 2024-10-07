@@ -1,5 +1,5 @@
-import { AppDataSource } from '../data-source';
-import { Wallet } from '../entity/wallet';
+import { AppDataSource } from '@/data-source';
+import { Wallet } from '@/entity/wallet';
 
 export class WalletController {
   private readonly walletRepository = AppDataSource.getRepository(Wallet);

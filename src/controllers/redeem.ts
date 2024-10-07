@@ -1,5 +1,5 @@
-import { TodoCartoes } from '../clients/todo-cartoes/todo-cartoes';
-import { EmitGiftCardPayload } from '../clients/todo-cartoes/types';
+import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
+import { EmitGiftCardPayload } from '@/clients/todo-cartoes/types';
 import { WalletController } from './wallet';
 
 type GiftCard = {

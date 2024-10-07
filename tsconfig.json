@@ -9,6 +9,14 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/test/*": ["./test/*"]
+    },
+    "rootDirs": ["./src", "./test"]
+  },
+  "include": ["./src/**/*.ts", "./test/**/*.ts"],
+  "exclude": ["./node_modules/*", "build"]
 }

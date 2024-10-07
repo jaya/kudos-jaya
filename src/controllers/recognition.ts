@@ -1,8 +1,8 @@
+import { AppDataSource } from '@/data-source';
+import { Recognition } from '@/entity/recognition';
+import { getSlackUserInfo } from '@/utils/user-slack-info';
 import { AllMiddlewareArgs } from '@slack/bolt';
 import config from 'config';
-import { AppDataSource } from '../data-source';
-import { Recognition } from '../entity/recognition';
-import { getSlackUserInfo } from '../utils/user-slack-info';
 import { WalletController } from './wallet';
 
 type RecognitionSummary = {
