@@ -1,9 +1,9 @@
+import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import {
   AllMiddlewareArgs,
   BlockAction,
   SlackActionMiddlewareArgs,
 } from '@slack/bolt';
-import { TodoCartoes } from '../../clients/todo-cartoes/todo-cartoes';
 
 const redeemButtonCallback = async ({
   ack,
