@@ -12,8 +12,6 @@ module.exports = {
     '@test/(.*)': '<rootDir>/test/$1',
   },
   coverageReporters: ['clover', 'lcov', 'text-summary', 'text', 'cobertura'],
-  collectCoverageFrom: [
-    '<rootDir>/src/**/{!(index|Logger|container|server), *}.ts',
-  ],
+  collectCoverageFrom: ['<rootDir>/src/**/{!(index|app), *}.ts'],
   transformIgnorePatterns: ['node_modules/(?!axios)'],
 };

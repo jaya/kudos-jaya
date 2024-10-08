@@ -1,5 +1,5 @@
+import { openKudosView } from '@/views/give-kudos';
 import { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
-import { openKudosView } from '../../views/give-kudos';
 
 const giveKudosCommandCallback = async ({
   ack,

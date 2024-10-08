@@ -9,6 +9,7 @@
     "start:local": "dotenv -e .env -- ts-node-dev -r tsconfig-paths/register --transpile-only src/app.ts|pino-pretty -c",
     "start:watch": "dotenv -e .env -- nodemon --watch src --exec ts-node -r tsconfig-paths/register src/app.ts|pino-pretty -c",
     "test": "NODE_ENV=test dotenv -e .env -- jest",
+    "test:coverage": "npm run test -- --coverage",
     "lint": "eslint . --ext .ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:gen": "npm run typeorm -- migration:generate $npm_config_name -d src/data-source.ts --pretty",
