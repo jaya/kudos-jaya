@@ -12,7 +12,6 @@ const { token, baseUrl } = config.get<{ token: string; baseUrl: string }>(
   'externalClients.todoCartoes'
 );
 
-//TODO: add error validation
 export class TodoCartoes {
   constructor(
     protected request = new HTTPUtil.Request(),
@@ -88,7 +87,7 @@ export class TodoCartoes {
       return;
     }
 
-    console.info(`Using cache to return forecast points for key: ${key}`);
+    console.info(`Using cache to return products for key: ${key}`);
     return productsFromCache;
   }
 
