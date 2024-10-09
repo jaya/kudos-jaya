@@ -1,7 +1,6 @@
 import CacheUtil from '@/utils/cache';
 import * as HTTPUtil from '@/utils/request';
 import config from 'config';
-import { productsMock } from './mock';
 import {
   EmitGiftCardPayload,
   TodoGiftCardResponse,
@@ -33,19 +32,19 @@ export class TodoCartoes {
         }
       );
 
-      const productLines = [...response.data.product_lines, ...productsMock];
+      const { product_lines } = response.data;
 
-      this.setCatalogSize(productLines.length);
+      this.setCatalogSize(product_lines.length);
 
-      for (let i = 0; i < productLines.length; i += 15) {
-        const pageProducts = productLines.slice(i, i + 15);
+      for (let i = 0; i < product_lines.length; i += 15) {
+        const pageProducts = product_lines.slice(i, i + 15);
         const pageKey = Math.floor(i / 15) + 1;
         this.setProductsInCache(`products_page_${pageKey}`, pageProducts);
       }
 
       const start = (page - 1) * 15;
       const end = start + 15;
-      return productLines.slice(start, end);
+      return product_lines.slice(start, end);
     }
 
     return cachedProducts;
