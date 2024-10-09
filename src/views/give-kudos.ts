@@ -1,10 +1,4 @@
-import { OpenViewParams } from './types';
-
-export const openKudosView = async ({
-  client,
-  body,
-  context,
-}: OpenViewParams) => {
+export const openKudosView = async ({ client, body, context }) => {
   await client.views.open({
     token: context.botToken,
     trigger_id: body.trigger_id,
