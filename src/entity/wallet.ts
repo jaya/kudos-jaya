@@ -18,7 +18,4 @@ export class Wallet {
     transformer: decimalTransformer,
   })
   balance: number;
-
-  deposit() {}
-  withdraw() {}
 }
