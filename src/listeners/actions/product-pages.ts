@@ -1,11 +1,12 @@
-import { TodoCartoes } from '../../clients/todo-cartoes/todo-cartoes';
+import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 
 const productPagesButtonCallback = async ({ ack, client, body }) => {
   try {
     await ack();
 
     const service = new TodoCartoes();
-    const lastPage = Math.ceil(service.getCatalogSize() / 15);
+    const size = service.getCatalogSize();
+    const lastPage = Math.ceil(size / 15);
 
     const page = Number(body.actions[0].value);
     const previous = page - 1;
@@ -175,7 +176,6 @@ const productPagesButtonCallback = async ({ ack, client, body }) => {
     });
   } catch (error) {
     console.error(error);
-    console.error(JSON.stringify(error.data.response_metadata));
   }
 };
 
