@@ -1,13 +1,7 @@
-import { AllMiddlewareArgs, SlackViewMiddlewareArgs } from '@slack/bolt';
-import { RecognitionController } from '../../controllers/recognition';
-import { matchVibe } from '../../utils/find-gif';
+import { RecognitionController } from '@/controllers/recognition';
+import { matchVibe } from '@/utils/find-gif';
 
-const giveKudosViewCallback = async ({
-  ack,
-  view,
-  client,
-  body,
-}: AllMiddlewareArgs & SlackViewMiddlewareArgs) => {
+const giveKudosViewCallback = async ({ ack, view, client, body }) => {
   await ack();
   const toId = view.state.values['to_id_block']['to_id'].selected_user;
   const channelId =
@@ -28,7 +22,7 @@ const giveKudosViewCallback = async ({
   }
 
   await client.chat.postMessage({
-    channel: channelId || '',
+    channel: channelId,
     text:
       `*<@${fromId}> is recognizing <@${toId}>!* :party-jaya:\n` +
       `> ${message}\n` +
