@@ -1,4 +1,4 @@
-import { RedeemController } from '../../controllers/redeem';
+import { RedeemController } from '@/controllers/redeem';
 
 const generateGiftCardCallback = async ({ ack, view, client, body }) => {
   try {
