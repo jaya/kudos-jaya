@@ -6,3 +6,11 @@ export type SlackConfig = {
   signingSecret: string;
   logLevel: LogLevel;
 };
+
+export type DbConfig = {
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  name: string;
+};

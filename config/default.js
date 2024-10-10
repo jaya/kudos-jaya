@@ -14,13 +14,20 @@ const settings = {
     },
     port: process.env.PORT || 3000,
   },
+  database: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    name: process.env.DB_NAME,
+  },
   externalClients: {
     todoCartoes: {
       token: process.env.TODO_TOKEN || 'token',
       baseUrl:
         process.env.TODO_BASE_URL ||
         'https://corporate-api-gateway.todocartoes.com.br/staging/v2',
-      cacheTtl: 3600,
+      cacheTtl: process.env.TODO_CACHE_TTL || 3600,
     },
   },
 };

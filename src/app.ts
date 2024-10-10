@@ -18,7 +18,6 @@ registerListeners(app);
 (async () => {
   try {
     //TODO: add docker
-    //TODO: add docker for db
     await AppDataSource.initialize();
     await app.start(config.get<number>('app.port'));
     console.log('⚡️ Bolt app is running! ⚡️');
