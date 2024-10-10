@@ -15,6 +15,7 @@ export class Request {
 
   public post<T>(
     url: string,
+    /* istanbul ignore next */
     config: RequestConfig = {},
     data?: any
   ): Promise<Response<T>> {

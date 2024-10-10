@@ -1,13 +1,12 @@
 import { App } from '@slack/bolt';
 import chooseCardButtonCallback from './choose-card';
-import productPagesButtonCallback from './product-pages';
-import redeemButtonCallback from './redeem';
+import productPagesCallback from './product-pages';
 
 const register = (app: App) => {
-  app.action('redeem_button', redeemButtonCallback);
+  app.action('redeem_button', productPagesCallback);
   app.action('choose_card', chooseCardButtonCallback);
-  app.action('products_page_next', productPagesButtonCallback);
-  app.action('products_page_previous', productPagesButtonCallback);
+  app.action('products_page_next', productPagesCallback);
+  app.action('products_page_previous', productPagesCallback);
 };
 
 export default { register };
