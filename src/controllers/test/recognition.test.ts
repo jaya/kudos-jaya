@@ -3,7 +3,6 @@ import { WalletController } from '@/controllers/wallet';
 import { AppDataSource } from '@/data-source';
 import { getSlackUserInfo } from '@/utils/user-slack-info';
 import { WebClient } from '@slack/web-api';
-import config from 'config';
 
 jest.mock('@/utils/user-slack-info', () => ({
   getSlackUserInfo: jest.fn(),
@@ -15,7 +14,6 @@ jest.mock('@/controllers/wallet', () => ({
   })),
 }));
 
-jest.mock('config');
 jest.mock('@slack/web-api', () => ({
   ...jest.requireActual('@slack/web-api'),
   WebClient: jest.fn().mockImplementation(() => ({
@@ -52,7 +50,6 @@ describe('RecognitionController', () => {
     recognitionController = new RecognitionController();
     mockWalletController = new WalletController();
     mockSlackClient = new WebClient();
-    (config.get as jest.Mock).mockReturnValue(100);
   });
 
   afterEach(() => {

@@ -69,7 +69,7 @@ describe('giveKudosViewCallback', () => {
     });
 
     expect(mockPostMessage).toHaveBeenCalledWith({
-      channel: 'C12345',
+      channel: '#wearejaya',
       text: `*<@U12345> is recognizing <@U67890>!* :party-jaya:\n> Great job on the project!\n<https://mock-gif-url.com>`,
     });
 

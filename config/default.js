@@ -4,7 +4,7 @@ const settings = {
       defaultAmount: Number(process.env.DEPOSIT_DEFAULT_AMOUNT) || 100,
     },
     recognition: {
-      defaultChannel: process.env.DEFAULT_RECOGNITION_CHANNEL || 'wearejaya',
+      defaultChannel: process.env.DEFAULT_RECOGNITION_CHANNEL || '#wearejaya',
     },
     slackConfig: {
       token: process.env.SLACK_BOT_TOKEN,

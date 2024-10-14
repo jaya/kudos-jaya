@@ -20,18 +20,6 @@ exports[`openKudosView should call client.views.open with the correct payload 1`
       "type": "input",
     },
     {
-      "block_id": "kudo_channel_block",
-      "element": {
-        "action_id": "kudo_channel",
-        "type": "channels_select",
-      },
-      "label": {
-        "text": "Where should this message be shared?",
-        "type": "plain_text",
-      },
-      "type": "input",
-    },
-    {
       "block_id": "kudo_message_block",
       "element": {
         "action_id": "kudo_message",

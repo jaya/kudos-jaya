@@ -28,18 +28,6 @@ export const openKudosView = async ({ client, body, context }) => {
         },
         {
           type: 'input',
-          block_id: 'kudo_channel_block',
-          label: {
-            type: 'plain_text',
-            text: 'Where should this message be shared?',
-          },
-          element: {
-            type: 'channels_select',
-            action_id: 'kudo_channel',
-          },
-        },
-        {
-          type: 'input',
           block_id: 'kudo_message_block',
           label: {
             type: 'plain_text',
