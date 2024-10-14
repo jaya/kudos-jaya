@@ -17,6 +17,7 @@ describe('RedeemController', () => {
       new WalletController() as jest.Mocked<WalletController>;
     redeemController = new RedeemController();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (redeemController as any).walletController = mockWalletController;
   });
 

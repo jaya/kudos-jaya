@@ -12,6 +12,7 @@ describe('CacheUtil', () => {
     mockSet = jest.spyOn(cacheInstance, 'set').mockReturnValue(true);
     mockGet = jest.spyOn(cacheInstance, 'get').mockReturnValue(undefined);
     mockFlushAll = jest.spyOn(cacheInstance, 'flushAll').mockImplementation();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (CacheUtil as any).cacheService = cacheInstance;
   });
 

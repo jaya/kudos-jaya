@@ -1,5 +1,4 @@
 import { RecognitionController } from '@/controllers/recognition';
-import { WalletController } from '@/controllers/wallet';
 import { AppDataSource } from '@/data-source';
 import { getSlackUserInfo } from '@/utils/user-slack-info';
 import { WebClient } from '@slack/web-api';
@@ -28,8 +27,7 @@ jest.mock('@slack/web-api', () => ({
 
 describe('RecognitionController', () => {
   let recognitionController: RecognitionController;
-  let mockRepository: any;
-  let mockWalletController: any;
+  let mockRepository;
   let mockSlackClient: WebClient;
 
   beforeEach(() => {
@@ -48,7 +46,6 @@ describe('RecognitionController', () => {
     jest.spyOn(AppDataSource, 'getRepository').mockReturnValue(mockRepository);
 
     recognitionController = new RecognitionController();
-    mockWalletController = new WalletController();
     mockSlackClient = new WebClient();
   });
 

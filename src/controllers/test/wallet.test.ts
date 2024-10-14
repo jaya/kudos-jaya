@@ -5,7 +5,7 @@ jest.mock('@/data-source');
 
 describe('WalletController', () => {
   let walletController: WalletController;
-  let mockWalletRepository: any;
+  let mockWalletRepository;
 
   beforeEach(() => {
     jest.clearAllMocks();

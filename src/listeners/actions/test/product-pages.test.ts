@@ -6,7 +6,7 @@ jest.mock('@/clients/todo-cartoes/todo-cartoes');
 
 describe('productPagesCallback', () => {
   let ack: jest.Mock;
-  let client: any;
+  let client;
 
   beforeEach(() => {
     ack = jest.fn();
@@ -44,7 +44,7 @@ describe('productPagesCallback', () => {
       ack,
       client,
       body,
-    } as any);
+    });
 
     await productPagesCallback({ ack, client, body });
 
@@ -79,7 +79,7 @@ describe('productPagesCallback', () => {
       ack,
       client,
       body,
-    } as any);
+    });
 
     await productPagesCallback({ ack, client, body });
 
@@ -114,7 +114,7 @@ describe('productPagesCallback', () => {
       ack,
       client,
       body,
-    } as any);
+    });
 
     await productPagesCallback({ ack, client, body });
 
