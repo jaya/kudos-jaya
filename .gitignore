@@ -1,4 +1,9 @@
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
 dist
-package
-.DS_Store
-.slack/apps.dev.json
+.env
+coverage/

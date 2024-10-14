@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`openKudosView should call client.views.open with the correct payload 1`] = `
+{
+  "blocks": [
+    {
+      "block_id": "to_id_block",
+      "element": {
+        "action_id": "to_id",
+        "type": "users_select",
+      },
+      "hint": {
+        "text": "Recognizing such deeds is dazzlingly desirable of you!",
+        "type": "plain_text",
+      },
+      "label": {
+        "text": "Whose deeds are deemed worthy of a kudo?",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+    {
+      "block_id": "kudo_message_block",
+      "element": {
+        "action_id": "kudo_message",
+        "multiline": true,
+        "type": "plain_text_input",
+      },
+      "label": {
+        "text": "What would you like to say?",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+    {
+      "block_id": "kudo_vibe_block",
+      "element": {
+        "action_id": "kudo_vibe",
+        "options": [
+          {
+            "text": {
+              "text": "Appreciation for someone 🫂",
+              "type": "plain_text",
+            },
+            "value": "appreciation",
+          },
+          {
+            "text": {
+              "text": "Celebrating a victory 🏆",
+              "type": "plain_text",
+            },
+            "value": "victory",
+          },
+          {
+            "text": {
+              "text": "Thankful for great teamwork ⚽️",
+              "type": "plain_text",
+            },
+            "value": "teamwork",
+          },
+          {
+            "text": {
+              "text": "Amazed at awesome work ☄️",
+              "type": "plain_text",
+            },
+            "value": "awesome_work",
+          },
+          {
+            "text": {
+              "text": "Excited for the future 🎉",
+              "type": "plain_text",
+            },
+            "value": "future",
+          },
+          {
+            "text": {
+              "text": "No vibes, just plants 🪴",
+              "type": "plain_text",
+            },
+            "value": "plants",
+          },
+        ],
+        "type": "static_select",
+      },
+      "label": {
+        "text": "What is this kudo's "vibe"?",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+  ],
+  "callback_id": "give_kudos_view",
+  "submit": {
+    "text": "Share",
+    "type": "plain_text",
+  },
+  "title": {
+    "text": "Give someone kudos",
+    "type": "plain_text",
+  },
+  "type": "modal",
+}
+`;

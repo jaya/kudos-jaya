@@ -3,207 +3,35 @@
 Share warm kudos and kind words with anyone in your workspace using functions
 and a workflow!
 
-**Guide Outline**:
+1 - Cria a app em https://api.slack.com/apps "From an app manifest" e cola o manifest que está aqui no projeto
+2 - Seta as envs
+<br> 2. Open your apps configuration page from [this list](https://api.slack.com/apps), click _OAuth & Permissions_ in the left hand menu, then copy the _Bot User OAuth Token_ into your `.env` file under `SLACK_BOT_TOKEN` 3. Click _Basic Information_ from the left hand menu and follow the steps in the _App-Level Tokens_ section to create an app-level token with the `connections:write` scope. Copy that token into your `.env` as `SLACK_APP_TOKEN`.
 
-- [Setup](#setup)
-  - [Install the Slack CLI](#install-the-slack-cli)
-  - [Clone the Sample App](#clone-the-sample-app)
-- [Running Your Project Locally](#running-your-project-locally)
-  - [Updating the GIF Catalog](#updating-the-gif-catalog)
-- [Creating Triggers](#creating-triggers)
-- [Datastores](#datastores)
-- [Testing](#testing)
-- [Deploying Your App](#deploying-your-app)
-- [Viewing Activity Logs](#viewing-activity-logs)
-- [Project Structure](#project-structure)
-- [Resources](#resources)
+3 - SLACK_SIGNING_SECRET não pode faltar essa
+4 - Não pode ter o socketMode: true na instância da app
+5 - Definir a signingSecret: process.env.SLACK_SIGNING_SECRET na instância da app
+6 - Em https://api.slack.com/apps/A07N6B9AUNT/event-subscriptions? -> Ativar
+7 - Será necessário colocar a URL do ambiente de prod ou desenvolvimento. Se ainda estiver em dev coloca pra rodar com ngrok. A URL que vai ser setada aqui tem que terminar com /slack/events
+8 - Vai em https://api.slack.com/apps/A07N6B9AUNT/slash-commands? Edit -> Request URL coloca a URL do ambiente de prod ou local gerada pelo ngrok + /slack/events Vai ficar tipo: https://c160-2804-56c-c230-a800-76d7-258e-c01d-305.ngrok-free.app/slack/events
 
----
+#### Install Dependencies
 
-## Setup
+`npm install`
 
-Before getting started, first make sure you have a development workspace where
-you have permission to install apps. **Please note that the features in this
-project require that the workspace be part of
-[a Slack paid plan](https://slack.com/pricing).**
+#### Run Bolt Server
 
-### Install the Slack CLI
+`npm start`
 
-To use this sample, you need to install and configure the Slack CLI.
-Step-by-step instructions can be found in our
-[Quickstart Guide](https://api.slack.com/automation/quickstart).
+Configurar a URL da app aqui
+https://api.slack.com/apps/A07N6B9AUNT/interactive-messages
+https://api.slack.com/apps/A07N6B9AUNT/slash-commands?
+https://api.slack.com/apps/A07N6B9AUNT/event-subscriptions?
 
+Adicionar o BOT ao canal
 
-## Running Your Project Locally
+docker run --name kudos-jaya \
+ -e POSTGRES_PASSWORD=testpassword \
+ -e POSTGRES_DB=kudos-jaya \
+ -d -p 5432:5432 postgres
 
-While building your app, you can see your changes appear in your workspace in
-real-time with `slack run`. You'll know an app is the development version if the
-name has the string `(local)` appended.
-
-```zsh
-# Run app locally
-$ slack run
-
-Connected, awaiting events
-```
-
-To stop running locally, press `<CTRL> + C` to end the process.
-
-### Updating the GIF Catalog
-
-The GIFs that accompony a kudo are selected randomly after filtering against
-user input. The GIF catalog can be found in the `./assets/gifs.json` file and
-fixed to your fancies!
-
-```javascript
-// ./assets/gifs.json
-
-[{
-  "URL": "https://media1.giphy.com/media/ZfK4cXKJTTay1Ava29/giphy.gif",
-  "alt_text": "A person wearing a banana hat says thanks a bunch",
-  "tags": ["thankful"]
-}, {
-  "URL": "https://media2.giphy.com/media/ZfK4cXKJTTay1Ava29/giphy.gif",
-  "alt_text": "Dwight from The Office says thank you",
-  "tags": ["thankful", "appreciation"]
-}, {
-  ...
-}]
-```
-
-Each GIF is represented by an object with a `URL` of the GIF, `alt_text` that
-describes the GIF, and a `tags` array.
-
-Strings in the `tags` array are checked against the `kudo_vibe`, and GIFs that
-pass the vibe check are added to the pool of possibily chosen animations.
-
-## Creating Triggers
-
-[Triggers](https://api.slack.com/automation/triggers) are what cause workflows
-to run. These triggers can be invoked by a user, or automatically as a response
-to an event within Slack.
-
-When you `run` or `deploy` your project for the first time, the CLI will prompt
-you to create a trigger if one is found in the `triggers/` directory. For any
-subsequent triggers added to the application, each must be
-[manually added using the `trigger create` command](#manual-trigger-creation).
-
-When creating triggers, you must select the workspace and environment that you'd
-like to create the trigger in. Each workspace can have a local development
-version (denoted by `(local)`), as well as a deployed version. _Triggers created
-in a local environment will only be available to use when running the
-application locally._
-
-### Link Triggers
-
-A [link trigger](https://api.slack.com/automation/triggers/link) is a type of
-trigger that generates a **Shortcut URL** which, when posted in a channel or
-added as a bookmark, becomes a link. When clicked, the link trigger will run the
-associated workflow.
-
-Link triggers are _unique to each installed version of your app_. This means
-that Shortcut URLs will be different across each workspace, as well as between
-[locally run](#running-your-project-locally) and
-[deployed apps](#deploying-your-app).
-
-With link triggers, after selecting a workspace and environment, the output
-provided will include a Shortcut URL. Copy and paste this URL into a channel as
-a message, or add it as a bookmark in a channel of the workspace you selected.
-Interacting with this link will run the associated workflow.
-
-**Note: triggers won't run the workflow unless the app is either running locally
-or deployed!**
-
-### Manual Trigger Creation
-
-To manually create a trigger, use the following command:
-
-```zsh
-$ slack trigger create --trigger-def triggers/give_kudos.ts
-```
-
-## Testing
-
-For an example of how to test a function, see `functions/find_gif_test.ts`. Test
-filenames should be suffixed with `_test`.
-
-Run all tests with `deno test`:
-
-```zsh
-$ deno test
-```
-
-## Deploying Your App
-
-Once development is complete, deploy the app to Slack infrastructure using
-`slack deploy`:
-
-```zsh
-$ slack deploy
-```
-
-When deploying for the first time, you'll be prompted to
-[create a new link trigger](#creating-triggers) for the deployed version of your
-app. When that trigger is invoked, the workflow should run just as it did when
-developing locally (but without requiring your server to be running).
-
-## Viewing Activity Logs
-
-Activity logs of your application can be viewed live and as they occur with the
-following command:
-
-```zsh
-$ slack activity --tail
-```
-
-## Project Structure
-
-### `.slack/`
-
-Contains `apps.dev.json` and `apps.json`, which include installation details for
-development and deployed apps.
-
-### `datastores/`
-
-[Datastores](https://api.slack.com/automation/datastores) securely store data
-for your application on Slack infrastructure. Required scopes to use datastores
-include `datastore:write` and `datastore:read`.
-
-### `functions/`
-
-[Functions](https://api.slack.com/automation/functions) are reusable building
-blocks of automation that accept inputs, perform calculations, and provide
-outputs. Functions can be used independently or as steps in workflows.
-
-### `triggers/`
-
-[Triggers](https://api.slack.com/automation/triggers) determine when workflows
-are run. A trigger file describes the scenario in which a workflow should be
-run, such as a user pressing a button or when a specific event occurs.
-
-### `workflows/`
-
-A [workflow](https://api.slack.com/automation/workflows) is a set of steps
-(functions) that are executed in order.
-
-Workflows can be configured to run without user input or they can collect input
-by beginning with a [form](https://api.slack.com/automation/forms) before
-continuing to the next step.
-
-### `manifest.ts`
-
-The [app manifest](https://api.slack.com/automation/manifest) contains the app's
-configuration. This file defines attributes like app name and description.
-
-### `slack.json`
-
-Used by the CLI to interact with the project's SDK dependencies. It contains
-script hooks that are executed by the CLI and implemented by the SDK.
-
-## Resources
-
-To learn more about developing automations on Slack, visit the following:
-
-- [Automation Overview](https://api.slack.com/automation)
-- [CLI Quick Reference](https://api.slack.com/automation/cli/quick-reference)
-- [Samples and Templates](https://api.slack.com/automation/samples)
+Não esquecer de definir o token da TODO
