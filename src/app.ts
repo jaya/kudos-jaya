@@ -1,3 +1,4 @@
+import './utils/module-alias';
 import { App } from '@slack/bolt';
 import config from 'config';
 import * as dotenv from 'dotenv';
@@ -5,6 +6,7 @@ import 'reflect-metadata';
 import { AppDataSource } from './data-source';
 import registerListeners from './listeners';
 import { SlackConfig } from './types';
+
 
 dotenv.config();
 
@@ -17,7 +19,6 @@ registerListeners(app);
 /** Start Bolt App */
 (async () => {
   try {
-    //TODO: add docker
     await AppDataSource.initialize();
     await app.start(config.get<number>('app.port'));
     console.log('⚡️ Bolt app is running! ⚡️');
