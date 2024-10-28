@@ -1,4 +1,5 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
+import { ProductLine } from '@/clients/todo-cartoes/types';
 
 const productPagesCallback = async ({ ack, client, body }) => {
   try {
@@ -58,6 +59,14 @@ async function mountBlocks(page: number) {
   const blocks = [];
 
   for (const product of products) {
+    if (!validateProduct(product)) continue;
+    const min_value = product?.products[0]?.min_value
+      ? product?.products[0]?.min_value
+      : '0';
+    const max_value = product?.products[0]?.max_value
+      ? product?.products[0]?.max_value
+      : '';
+
     const image = {
       type: 'image',
       title: {
@@ -78,7 +87,7 @@ async function mountBlocks(page: number) {
             {
               type: 'text',
               text:
-                product.product_line_description.length > 0
+                product?.product_line_description?.length > 0
                   ? product.product_line_description
                   : product.brand_name,
             },
@@ -96,7 +105,7 @@ async function mountBlocks(page: number) {
             {
               type: 'text',
               text:
-                product.terms_and_conditions.length > 0
+                product?.terms_and_conditions?.length > 0
                   ? product.terms_and_conditions
                   : '   ',
             },
@@ -120,11 +129,11 @@ async function mountBlocks(page: number) {
             },
             {
               type: 'text',
-              text: 'Min: R$' + product.products[0].min_value,
+              text: 'Min: R$' + min_value,
             },
             {
               type: 'text',
-              text: '     |     Max: R$' + product.products[0].max_value,
+              text: '     |     Max: R$' + max_value,
             },
           ],
         },
@@ -142,11 +151,11 @@ async function mountBlocks(page: number) {
             emoji: true,
           },
           value:
-            product.products[0].card_identificator +
+            product?.products[0]?.card_identificator +
             ',' +
-            product.products[0].min_value +
+            min_value +
             ',' +
-            product.products[0].max_value,
+            max_value,
           action_id: 'choose_card',
         },
       ],
@@ -203,6 +212,14 @@ async function mountBlocks(page: number) {
   blocks.push(paginationButtons);
 
   return blocks;
+}
+
+function validateProduct(productLine: ProductLine): boolean {
+  if (!productLine.brand_name || !productLine.logo_url) return false;
+
+  if (!productLine.products[0].card_identificator) return false;
+
+  return true;
 }
 
 export default productPagesCallback;
