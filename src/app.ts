@@ -24,7 +24,7 @@ registerListeners(app);
     await app.start(config.get<number>('app.port'));
     console.log('⚡️ Bolt app is running! ⚡️');
     const res = await axios.get('https://curlmyip.org');
-    console.log('The app public IP is: ' + res);
+    console.log('The app public IP is: ' + res.data);
   } catch (error) {
     console.error('Unable to start App', error);
   }
