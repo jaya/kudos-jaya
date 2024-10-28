@@ -12,7 +12,7 @@ type Product = {
   subscription_period: string | null;
 };
 
-type ProductLine = {
+export type ProductLine = {
   identificator: string;
   online_redemption: boolean;
   store_redemption: boolean;
