@@ -1,3 +1,4 @@
+import './utils/module-alias';
 import { App } from '@slack/bolt';
 import axios from 'axios';
 import config from 'config';
@@ -6,7 +7,7 @@ import 'reflect-metadata';
 import { AppDataSource } from './data-source';
 import registerListeners from './listeners';
 import { SlackConfig } from './types';
-import './utils/module-alias';
+
 
 dotenv.config();
 
