@@ -1,6 +1,11 @@
+import { IGiftCard, IGiftCardPayload } from '@/models/IGiftCard';
+import { BaseProduct } from '@/models/IProduct';
+import { TodoProduct } from '@/models/TodoProduct';
 import CacheUtil from '@/utils/cache';
+import logger from '@/utils/logger';
 import * as HTTPUtil from '@/utils/request';
 import config from 'config';
+import { IGiftCardDataSource } from '../IGiftCardDataSource';
 import {
   EmitGiftCardPayload,
   TodoGiftCardResponse,
@@ -10,16 +15,15 @@ import {
 const { token, baseUrl } = config.get<{ token: string; baseUrl: string }>(
   'externalClients.todoCartoes'
 );
+const productsPageSize = config.get<number>('app.productsPageSize');
 
-export class TodoCartoes {
+export class TodoCartoes implements IGiftCardDataSource {
   constructor(
     protected request = new HTTPUtil.Request(),
     protected cacheUtil = CacheUtil
   ) {}
 
-  public async fetchProducts(
-    page: number
-  ): Promise<TodoProductLineResponse['product_lines']> {
+  public async fetchProducts(page: number = 1): Promise<BaseProduct[]> {
     const cachedProducts = this.getProductsFromCache(`products_page_${page}`);
 
     if (!cachedProducts) {
@@ -32,19 +36,19 @@ export class TodoCartoes {
         }
       );
 
-      const { product_lines } = response.data;
+      const { products } = new TodoProduct(response.data);
 
-      this.setCatalogSize(product_lines.length);
+      this.setCatalogSize(products.length);
 
-      for (let i = 0; i < product_lines.length; i += 15) {
-        const pageProducts = product_lines.slice(i, i + 15);
-        const pageKey = Math.floor(i / 15) + 1;
+      for (let i = 0; i < products.length; i += productsPageSize) {
+        const pageProducts = products.slice(i, i + productsPageSize);
+        const pageKey = Math.floor(i / productsPageSize) + 1;
         this.setProductsInCache(`products_page_${pageKey}`, pageProducts);
       }
 
-      const start = (page - 1) * 15;
-      const end = start + 15;
-      return product_lines.slice(start, end);
+      const start = (page - 1) * productsPageSize;
+      const end = start + productsPageSize;
+      return products.slice(start, end);
     }
 
     return cachedProducts;
@@ -64,11 +68,8 @@ export class TodoCartoes {
     );
   }
 
-  private setProductsInCache(
-    key: string,
-    products: TodoProductLineResponse['product_lines']
-  ): boolean {
-    console.info(`Updating cache to return products for key: ${key}`);
+  private setProductsInCache(key: string, products: BaseProduct[]): boolean {
+    logger.info(`Updating cache to return products for key: ${key}`);
     return this.cacheUtil.set(
       key,
       products,
@@ -76,31 +77,45 @@ export class TodoCartoes {
     );
   }
 
-  protected getProductsFromCache(
-    key: string
-  ): TodoProductLineResponse['product_lines'] | undefined {
-    const productsFromCache =
-      this.cacheUtil.get<TodoProductLineResponse['product_lines']>(key);
+  protected getProductsFromCache(key: string): BaseProduct[] | undefined {
+    const productsFromCache = this.cacheUtil.get<BaseProduct[]>(key);
 
     if (!productsFromCache) {
       return;
     }
 
-    console.info(`Using cache to return products for key: ${key}`);
+    logger.info(`Using cache to return products for key: ${key}`);
     return productsFromCache;
   }
 
-  public async emitGiftCard(payload: EmitGiftCardPayload) {
-    const response = await this.request.post<TodoGiftCardResponse>(
-      `${baseUrl}/orders`,
-      {
-        headers: {
-          Authorization: `${token}`,
+  public async emitGiftCard(payload: IGiftCardPayload): Promise<IGiftCard> {
+    const todoPayload: EmitGiftCardPayload = {
+      card_identificator: payload.cardId,
+      external_partner_load_id: payload.transactionId,
+      total: payload.amount,
+    };
+    try {
+      const response = await this.request.post<TodoGiftCardResponse>(
+        `${baseUrl}/orders`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          timeout: 35000,
         },
-        timeout: 35000,
-      },
-      payload
-    );
-    return response;
+        todoPayload
+      );
+      return { url: response.data.magic_link };
+    } catch (e) {
+      logger.error(
+        'TodoCartoes.emitGiftCard() - Error while trying to generate gift card',
+        {
+          message: e?.message,
+          code: e?.code,
+          status: e?.response?.status,
+          data: e?.response?.data,
+        }
+      );
+    }
   }
 }

@@ -1,5 +1,7 @@
 import CacheUtil from '@/utils/cache';
+import logger from '@/utils/logger';
 import * as HTTPUtil from '@/utils/request';
+import { AxiosError } from 'axios';
 import { TodoCartoes } from '../todo-cartoes';
 import {
   fetchProductsResponse,
@@ -22,7 +24,7 @@ describe('TodoCartoes client', () => {
 
       MockedCacheUtil.get.mockReturnValue(undefined);
       const todoCartoes = new TodoCartoes(mockedRequest, MockedCacheUtil);
-      const response = await todoCartoes.fetchProducts(1);
+      const response = await todoCartoes.fetchProducts();
       expect(response).toEqual(fetchProductsResponse);
     });
 
@@ -70,11 +72,28 @@ describe('TodoCartoes client', () => {
 
       const todoCartoes = new TodoCartoes(mockedRequest);
       const response = await todoCartoes.emitGiftCard({
-        card_identificator: '0000014281781487',
-        external_partner_load_id: 'jayatech203232',
-        total: 200,
+        cardId: '0000014281781487',
+        transactionId: 'jayatech203232',
+        amount: 200,
       });
-      expect(response).toEqual({ data: giftCardResponse });
+      expect(response).toEqual({ url: giftCardResponse.magic_link });
+    });
+
+    it('Should log the error when there is a trouble to emit the gift card', async () => {
+      mockedRequest.post.mockRejectedValueOnce(new AxiosError());
+      logger.error = jest.fn();
+
+      const todoCartoes = new TodoCartoes(mockedRequest);
+      const response = await todoCartoes.emitGiftCard({
+        cardId: '0000014281781487',
+        transactionId: 'jayatech11',
+        amount: 5,
+      });
+      expect(response).toEqual(undefined);
+      expect(logger.error).toHaveBeenCalledWith(
+        'TodoCartoes.emitGiftCard() - Error while trying to generate gift card',
+        {}
+      );
     });
   });
 });

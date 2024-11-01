@@ -1,3 +1,4 @@
+import logger from '@/utils/logger';
 import chooseCardButtonCallback from '../choose-card';
 
 describe('chooseCardButtonCallback', () => {
@@ -42,15 +43,14 @@ describe('chooseCardButtonCallback', () => {
     );
   });
   it('should handle errors and log them', async () => {
-    console.error = jest.fn();
+    logger.error = jest.fn();
     await chooseCardButtonCallback({
       ack,
       client,
       body: {},
     });
-    expect(console.error).toHaveBeenCalledWith(expect.any(TypeError));
-    expect((console.error as jest.Mock).mock.calls[0][0].message).toBe(
-      "Cannot read properties of undefined (reading '0')"
-    );
+    expect(logger.error).toHaveBeenCalledWith('chooseCardButtonCallback()', {
+      error: expect.any(TypeError),
+    });
   });
 });

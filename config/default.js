@@ -13,6 +13,7 @@ const settings = {
       logLevel: process.env.SLACK_LOGLEVEL || 'debug',
     },
     port: process.env.PORT || 3000,
+    productsPageSize: process.env.PRODUCTS_PAGE_SIZE || 5,
   },
   database: {
     host: process.env.DB_HOST,

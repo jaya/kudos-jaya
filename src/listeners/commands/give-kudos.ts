@@ -1,3 +1,4 @@
+import logger from '@/utils/logger';
 import { openKudosView } from '@/views/give-kudos';
 import { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 
@@ -11,7 +12,7 @@ const giveKudosCommandCallback = async ({
     await ack();
     await openKudosView({ client, body, context });
   } catch (error) {
-    console.error(error);
+    logger.error('giveKudosCommandCallback()', error);
   }
 };
 

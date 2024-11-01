@@ -1,4 +1,5 @@
 import { RedeemController } from '@/controllers/redeem';
+import logger from '@/utils/logger';
 import generateGiftCardCallback from '../generate-card';
 
 jest.mock('@/controllers/redeem');
@@ -63,7 +64,7 @@ describe('generateGiftCardCallback', () => {
 
   it('should send the message with the text and button link to gift card', async () => {
     const mockEmitGiftCard = jest.fn().mockResolvedValue({
-      message: 'Gift card generated successfully',
+      message: 'Click the button below to access your gift card',
       url: 'https://giftcard.url',
     });
 
@@ -79,14 +80,14 @@ describe('generateGiftCardCallback', () => {
     });
 
     expect(mockPostMessage).toHaveBeenCalledWith({
-      text: 'Gift card generated successfully',
+      text: 'Click the button below to access your gift card',
       channel: 'U12345',
       blocks: [
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: 'Gift card generated successfully',
+            text: 'Click the button below to access your gift card',
           },
         },
         {
@@ -140,7 +141,7 @@ describe('generateGiftCardCallback', () => {
   });
 
   it('should log errors if any exception is thrown', async () => {
-    const mockConsoleError = jest.spyOn(console, 'error').mockImplementation();
+    const mockConsoleError = jest.spyOn(logger, 'error').mockImplementation();
     const mockEmitGiftCard = jest
       .fn()
       .mockRejectedValue(new Error('Gift card error'));
@@ -155,7 +156,10 @@ describe('generateGiftCardCallback', () => {
       client: mockClient,
       body,
     });
-
-    expect(mockConsoleError).toHaveBeenCalledWith(new Error('Gift card error'));
+    const error = new Error('Gift card error');
+    expect(mockConsoleError).toHaveBeenCalledWith(
+      'generateGiftCardCallback()',
+      { error }
+    );
   });
 });
