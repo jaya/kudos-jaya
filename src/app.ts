@@ -24,6 +24,7 @@ registerListeners(app);
     await AppDataSource.initialize();
     await app.start(config.get<number>('app.port'));
     logger.info('⚡️ Bolt app is running! ⚡️');
+
     const res = await axios.get('https://curlmyip.org');
     logger.info('The app public IP is: ' + res.data);
     await new TodoCartoes().fetchProducts();

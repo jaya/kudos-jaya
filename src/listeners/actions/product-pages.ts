@@ -1,8 +1,8 @@
-import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
+import { ProductController } from '@/controllers/product';
 import logger from '@/utils/logger';
 import config from 'config';
 
-const productsPageCallback = async ({ ack, client, body }) => {
+const productPagesCallback = async ({ ack, client, body }) => {
   try {
     await ack();
 
@@ -53,10 +53,15 @@ const productsPageCallback = async ({ ack, client, body }) => {
 };
 
 async function mountBlocks(page: number) {
-  const service = new TodoCartoes();
-  const size = service.getCatalogSize();
-  const products = await service.fetchProducts(page);
+  const productController = new ProductController();
+  const size = await productController.getCatalogSize();
   const productsPageSize = config.get<number>('app.productsPageSize');
+
+  const products = await productController.get(
+    (page - 1) * productsPageSize,
+    productsPageSize
+  );
+
   const lastPage = Math.ceil(size / productsPageSize);
 
   const blocks = [];
@@ -194,4 +199,4 @@ async function mountBlocks(page: number) {
   return blocks;
 }
 
-export default productsPageCallback;
+export default productPagesCallback;

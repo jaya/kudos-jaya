@@ -1,7 +1,8 @@
-import CacheUtil from '@/utils/cache';
+import { ProductController } from '@/controllers/product';
+import { IGiftCardPayload } from '@/models/IGiftCard';
 import logger from '@/utils/logger';
 import * as HTTPUtil from '@/utils/request';
-import { AxiosError } from 'axios';
+import config from 'config';
 import { TodoCartoes } from '../todo-cartoes';
 import {
   fetchProductsResponse,
@@ -9,90 +10,119 @@ import {
   todoProductsResponse,
 } from './samples';
 
+jest.mock('@/controllers/product');
+jest.mock('@/utils/logger');
 jest.mock('@/utils/request');
-jest.mock('@/utils/cache');
 
-describe('TodoCartoes client', () => {
-  const MockedCacheUtil = CacheUtil as jest.Mocked<typeof CacheUtil>;
-  const mockedRequest = new HTTPUtil.Request() as jest.Mocked<HTTPUtil.Request>;
+const { token, baseUrl } = config.get<{ token: string; baseUrl: string }>(
+  'externalClients.todoCartoes'
+);
 
-  describe('fetchProducts()', () => {
-    it('Should return product list from todo service', async () => {
-      mockedRequest.get.mockResolvedValue({
+describe('TodoCartoes', () => {
+  let todoCartoes: TodoCartoes;
+  let requestMock: jest.Mocked<HTTPUtil.Request>;
+
+  beforeEach(() => {
+    requestMock = new HTTPUtil.Request() as jest.Mocked<HTTPUtil.Request>;
+    todoCartoes = new TodoCartoes(requestMock);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('fetchProducts', () => {
+    it('should fetch and save the products if catalog is out of date', async () => {
+      const productControllerMock =
+        ProductController.prototype as jest.Mocked<ProductController>;
+      productControllerMock.isCatalogUpdated.mockResolvedValue(false);
+
+      requestMock.get.mockResolvedValue({
         data: todoProductsResponse,
       } as HTTPUtil.Response);
 
-      MockedCacheUtil.get.mockReturnValue(undefined);
-      const todoCartoes = new TodoCartoes(mockedRequest, MockedCacheUtil);
-      const response = await todoCartoes.fetchProducts();
-      expect(response).toEqual(fetchProductsResponse);
+      await todoCartoes.fetchProducts();
+
+      expect(productControllerMock.isCatalogUpdated).toHaveBeenCalled();
+      expect(requestMock.get).toHaveBeenCalledWith(`${baseUrl}/product_lines`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      expect(productControllerMock.save).toHaveBeenCalledWith(
+        expect.arrayContaining(fetchProductsResponse)
+      );
     });
 
-    it('Should return product list from cache', async () => {
-      mockedRequest.get.mockResolvedValue({
-        data: null,
-      } as HTTPUtil.Response);
+    it('should not fetch products if catalog is up to date', async () => {
+      const productControllerMock =
+        ProductController.prototype as jest.Mocked<ProductController>;
+      productControllerMock.isCatalogUpdated.mockResolvedValue(true);
 
-      MockedCacheUtil.get.mockReturnValue(fetchProductsResponse);
-      const todoCartoes = new TodoCartoes(mockedRequest, MockedCacheUtil);
-      const response = await todoCartoes.fetchProducts(1);
-      expect(response).toEqual(fetchProductsResponse);
-    });
-  });
+      await todoCartoes.fetchProducts();
 
-  describe('getCatalogSize()', () => {
-    it('Should return the length of the products catalog greater than 0', async () => {
-      mockedRequest.get.mockResolvedValue({
-        data: null,
-      } as HTTPUtil.Response);
-
-      MockedCacheUtil.get.mockReturnValue(5);
-      const todoCartoes = new TodoCartoes(mockedRequest, MockedCacheUtil);
-      const response = await todoCartoes.getCatalogSize();
-      expect(response).toEqual(5);
-    });
-
-    it('Should return 0 when there is no products in cache', async () => {
-      mockedRequest.get.mockResolvedValue({
-        data: null,
-      } as HTTPUtil.Response);
-
-      MockedCacheUtil.get.mockReturnValue(undefined);
-      const todoCartoes = new TodoCartoes();
-      const response = await todoCartoes.getCatalogSize();
-      expect(response).toEqual(0);
+      expect(productControllerMock.isCatalogUpdated).toHaveBeenCalled();
+      expect(requestMock.get).not.toHaveBeenCalled();
+      expect(productControllerMock.save).not.toHaveBeenCalled();
     });
   });
 
-  describe('emitGiftCard()', () => {
-    it('Should return the gift card from todo', async () => {
-      mockedRequest.post.mockResolvedValue({
+  describe('emitGiftCard', () => {
+    it('should emit a gift card from todo', async () => {
+      const payload: IGiftCardPayload = {
+        cardId: '12345',
+        transactionId: 'jayatech123',
+        amount: 5000,
+      };
+
+      requestMock.post.mockResolvedValue({
         data: giftCardResponse,
       } as HTTPUtil.Response);
 
-      const todoCartoes = new TodoCartoes(mockedRequest);
-      const response = await todoCartoes.emitGiftCard({
-        cardId: '0000014281781487',
-        transactionId: 'jayatech203232',
-        amount: 200,
+      const result = await todoCartoes.emitGiftCard(payload);
+
+      expect(requestMock.post).toHaveBeenCalledWith(
+        `${baseUrl}/orders`,
+        {
+          headers: {
+            Authorization: token,
+          },
+          timeout: 35000,
+        },
+        {
+          card_identificator: '12345',
+          external_partner_load_id: 'jayatech123',
+          total: 5000,
+        }
+      );
+      expect(result).toEqual({
+        url: 'https://giftcard-hmg.todo.gift/_-Po7zh7pUB5kGXf9AgowAijgq-HIrIGdjYX',
       });
-      expect(response).toEqual({ url: giftCardResponse.magic_link });
     });
+    it('should log the error when there is a failure trying to emit the gift card', async () => {
+      const payload: IGiftCardPayload = {
+        cardId: '12345',
+        transactionId: 'trans-123',
+        amount: 5000,
+      };
 
-    it('Should log the error when there is a trouble to emit the gift card', async () => {
-      mockedRequest.post.mockRejectedValueOnce(new AxiosError());
-      logger.error = jest.fn();
+      const error = new Error('Request failed');
+      error.message = 'Request failed';
 
-      const todoCartoes = new TodoCartoes(mockedRequest);
-      const response = await todoCartoes.emitGiftCard({
-        cardId: '0000014281781487',
-        transactionId: 'jayatech11',
-        amount: 5,
-      });
-      expect(response).toEqual(undefined);
+      jest.spyOn(HTTPUtil.Request.prototype, 'post').mockRejectedValue(error);
+
+      const todoInstance = new TodoCartoes();
+
+      await todoInstance.emitGiftCard(payload);
+
       expect(logger.error).toHaveBeenCalledWith(
         'TodoCartoes.emitGiftCard() - Error while trying to generate gift card',
-        {}
+        {
+          message: 'Request failed',
+          code: undefined,
+          status: undefined,
+          data: undefined,
+        }
       );
     });
   });

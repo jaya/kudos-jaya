@@ -1,8 +1,6 @@
 import { IGiftCard, IGiftCardPayload } from '@/models/IGiftCard';
-import { BaseProduct } from '@/models/IProduct';
 
 export interface IGiftCardDataSource {
-  fetchProducts(page: number): Promise<BaseProduct[]>;
+  fetchProducts(page: number): Promise<void>;
   emitGiftCard(payload: IGiftCardPayload): Promise<IGiftCard>;
-  getCatalogSize(): number;
 }

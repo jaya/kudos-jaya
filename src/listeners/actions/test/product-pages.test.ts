@@ -1,9 +1,7 @@
-import { fetchProductsResponse } from '@/clients/todo-cartoes/test/samples';
-import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
-import logger from '@/utils/logger';
+import { ProductController } from '@/controllers/product';
+import { fetchProductsResponse } from '../../../clients/todo-cartoes/test/samples';
+import logger from '../../../utils/logger';
 import productPagesCallback from '../product-pages';
-
-jest.mock('@/clients/todo-cartoes/todo-cartoes');
 
 describe('productPagesCallback', () => {
   let ack: jest.Mock;
@@ -17,14 +15,6 @@ describe('productPagesCallback', () => {
         update: jest.fn(),
       },
     };
-    (TodoCartoes as jest.Mock).mockImplementation(() => ({
-      fetchProducts: jest
-        .fn()
-        .mockResolvedValue(
-          fetchProductsResponse.flatMap((item) => Array(10).fill(item))
-        ),
-      getCatalogSize: jest.fn().mockReturnValue(50),
-    }));
   });
 
   afterEach(() => {
@@ -32,6 +22,13 @@ describe('productPagesCallback', () => {
   });
 
   it('should fetch products from the first page', async () => {
+    const getCatalogSizeSpy = jest
+      .spyOn(ProductController.prototype, 'getCatalogSize')
+      .mockResolvedValue(60);
+    const getProductsSpy = jest
+      .spyOn(ProductController.prototype, 'get')
+      .mockResolvedValue(fetchProductsResponse.slice(0, 5));
+
     const body = {
       trigger_id: 'mockTriggerId',
       actions: [{ value: 'open,1' }],
@@ -47,9 +44,8 @@ describe('productPagesCallback', () => {
       body,
     });
 
-    await productPagesCallback({ ack, client, body });
-
-    expect(TodoCartoes).toHaveBeenCalled();
+    expect(getCatalogSizeSpy).toHaveBeenCalled();
+    expect(getProductsSpy).toHaveBeenCalled();
     expect(client.views.open).toHaveBeenCalledWith(
       expect.objectContaining({
         view: expect.objectContaining({
@@ -67,6 +63,13 @@ describe('productPagesCallback', () => {
   });
 
   it('should fetch products from the second page', async () => {
+    const getCatalogSizeSpy = jest
+      .spyOn(ProductController.prototype, 'getCatalogSize')
+      .mockResolvedValue(10);
+    const getProductsSpy = jest
+      .spyOn(ProductController.prototype, 'get')
+      .mockResolvedValue(fetchProductsResponse);
+
     const body = {
       actions: [{ selected_option: { value: 'update,2' } }],
       view: {
@@ -83,7 +86,8 @@ describe('productPagesCallback', () => {
 
     await productPagesCallback({ ack, client, body });
 
-    expect(TodoCartoes).toHaveBeenCalled();
+    expect(getCatalogSizeSpy).toHaveBeenCalled();
+    expect(getProductsSpy).toHaveBeenCalled();
     expect(client.views.update).toHaveBeenCalledWith(
       expect.objectContaining({
         view: expect.objectContaining({
@@ -94,6 +98,8 @@ describe('productPagesCallback', () => {
             expect.objectContaining({ type: 'rich_text' }),
             expect.objectContaining({ type: 'actions' }),
             expect.objectContaining({ type: 'divider' }),
+            expect.objectContaining({ type: 'actions' }),
+            expect.objectContaining({ type: 'section' }),
           ]),
         }),
       })
@@ -110,10 +116,8 @@ describe('productPagesCallback', () => {
       },
     };
     const error = new Error('Test Error');
-    (TodoCartoes as jest.Mock).mockImplementation(() => ({
-      fetchProducts: jest.fn().mockRejectedValue(error),
-      getCatalogSize: jest.fn().mockReturnValue(30),
-    }));
+
+    jest.spyOn(ProductController.prototype, 'get').mockRejectedValue(error);
 
     logger.error = jest.fn();
 
