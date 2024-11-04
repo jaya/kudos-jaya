@@ -1,5 +1,5 @@
-import { fetchProductsResponse } from '../../clients/todo-cartoes/test/samples';
-import { AppDataSource } from '../../data-source';
+import { fetchProductsResponse } from '@/clients/todo-cartoes/test/samples';
+import { AppDataSource } from '@/data-source';
 import { ProductController } from '../product';
 
 describe('ProductController', () => {
