@@ -1,3 +1,5 @@
+import logger from '@/utils/logger';
+
 const chooseCardButtonCallback = async ({ ack, client, body }) => {
   try {
     await ack();
@@ -42,7 +44,7 @@ const chooseCardButtonCallback = async ({ ack, client, body }) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    logger.error('chooseCardButtonCallback()', { error });
   }
 };
 

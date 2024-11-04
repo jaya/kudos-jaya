@@ -1,7 +1,8 @@
+import { RecognitionController } from '@/controllers/recognition';
+import { WalletController } from '@/controllers/wallet';
+import logger from '@/utils/logger';
 import { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 import config from 'config';
-import { RecognitionController } from '../../controllers/recognition';
-import { WalletController } from '../../controllers/wallet';
 
 const appHomeOpenedCallback = async ({
   client,
@@ -91,7 +92,7 @@ const appHomeOpenedCallback = async ({
       },
     });
   } catch (error) {
-    console.error(error);
+    logger.error('appHomeOpenedCallback()', { error });
   }
 };
 

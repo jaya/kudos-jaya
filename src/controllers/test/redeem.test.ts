@@ -1,8 +1,6 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
-import { EmitGiftCardPayload } from '@/clients/todo-cartoes/types';
 import { RedeemController } from '@/controllers/redeem';
 import { WalletController } from '@/controllers/wallet';
-import * as HTTPUtil from '@/utils/request';
 
 jest.mock('@/controllers/wallet');
 
@@ -47,11 +45,8 @@ describe('RedeemController', () => {
       mockWalletController.getBalance.mockResolvedValueOnce(200);
 
       const mockEmitGiftCardResponse = {
-        status: 201,
-        data: {
-          magic_link: 'http://giftcard.url',
-        },
-      } as HTTPUtil.Response;
+        url: 'http://giftcard.url',
+      };
 
       const mockEmitGiftCard = jest
         .spyOn(TodoCartoes.prototype, 'emitGiftCard')
@@ -67,11 +62,10 @@ describe('RedeemController', () => {
       });
 
       expect(mockEmitGiftCard).toHaveBeenCalledWith({
-        card_identificator: 'card123',
-        external_partner_load_id: expect.stringContaining('jayatech'),
-        total: 100,
-        card_image_id: 'img123',
-      } as EmitGiftCardPayload);
+        cardId: 'card123',
+        transactionId: expect.stringContaining('jayatech'),
+        amount: 100,
+      });
 
       expect(mockWalletController.withdraw).toHaveBeenCalledWith('user1', 100);
     });
@@ -79,9 +73,7 @@ describe('RedeemController', () => {
     it('should handle TodoCartoes API errors gracefully', async () => {
       mockWalletController.getBalance.mockResolvedValueOnce(200);
 
-      const mockEmitGiftCardResponse = {
-        status: 500,
-      } as HTTPUtil.Response;
+      const mockEmitGiftCardResponse = { url: undefined };
 
       jest
         .spyOn(TodoCartoes.prototype, 'emitGiftCard')

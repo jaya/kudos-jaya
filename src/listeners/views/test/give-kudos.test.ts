@@ -1,5 +1,6 @@
 import { RecognitionController } from '@/controllers/recognition';
 import { matchVibe } from '@/utils/find-gif';
+import logger from '@/utils/logger';
 import giveKudosViewCallback from '../give-kudos';
 
 jest.mock('@/controllers/recognition');
@@ -98,6 +99,26 @@ describe('giveKudosViewCallback', () => {
     expect(mockPostMessage).toHaveBeenCalledWith({
       channel: 'U12345',
       text: 'An error occurred while giving <@U67890> a kudos :cry:',
+    });
+  });
+
+  it('should log a non mapped error', async () => {
+    const mockSave = jest.fn().mockRejectedValue(new Error());
+
+    (RecognitionController as jest.Mock).mockImplementation(() => ({
+      save: mockSave,
+    }));
+    logger.error = jest.fn();
+
+    await giveKudosViewCallback({
+      ack: mockAck,
+      view,
+      client: mockClient,
+      body,
+    });
+
+    expect(logger.error).toHaveBeenCalledWith('giveKudosViewCallback()', {
+      error: new Error(),
     });
   });
 

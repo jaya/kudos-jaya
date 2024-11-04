@@ -1,5 +1,6 @@
 import { AppDataSource } from '@/data-source';
 import { Recognition } from '@/entity/recognition';
+import logger from '@/utils/logger';
 import { getSlackUserInfo } from '@/utils/user-slack-info';
 import { AllMiddlewareArgs } from '@slack/bolt';
 import config from 'config';
@@ -34,7 +35,7 @@ export class RecognitionController {
       }
       return { ok: true };
     } catch (error) {
-      console.error(error);
+      logger.error('RecognitionController.save()', { error });
       return { ok: false };
     }
   }

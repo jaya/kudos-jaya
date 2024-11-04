@@ -1,3 +1,4 @@
+import logger from '@/utils/logger';
 import { openKudosView } from '@/views/give-kudos';
 import { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import giveKudosCommandCallback from '../give-kudos';
@@ -40,14 +41,17 @@ describe('giveKudosCommandCallback', () => {
   });
 
   it('should handle errors by logging them', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleSpy = jest.spyOn(logger, 'error').mockImplementation();
     const errorMessage = 'Test error';
 
     (openKudosView as jest.Mock).mockRejectedValueOnce(new Error(errorMessage));
 
     await giveKudosCommandCallback(commandArgs);
 
-    expect(consoleSpy).toHaveBeenCalledWith(new Error(errorMessage));
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'giveKudosCommandCallback()',
+      new Error(errorMessage)
+    );
 
     consoleSpy.mockRestore();
   });

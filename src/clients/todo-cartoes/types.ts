@@ -13,19 +13,19 @@ type Product = {
 };
 
 export type ProductLine = {
-  identificator: string;
-  online_redemption: boolean;
-  store_redemption: boolean;
-  categories: string[];
+  identificator: string | null;
+  online_redemption: boolean | null;
+  store_redemption: boolean | null;
+  categories: string[] | null;
   product_line_name: string;
-  brand_name: string;
-  logo_url: string;
-  product_line_description: string;
+  brand_name: string | null;
+  logo_url: string | null;
+  product_line_description: string | null;
   subscription: boolean;
-  updated_at: string;
-  terms_and_conditions: string;
-  steps_to_use: string;
-  additional_data: string;
+  updated_at: string | null;
+  terms_and_conditions: string | null;
+  steps_to_use: string | null;
+  additional_data?: object | string;
   card_images: CardImage[];
   products: Product[];
 };

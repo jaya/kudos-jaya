@@ -1,5 +1,5 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
-import { EmitGiftCardPayload } from '@/clients/todo-cartoes/types';
+import { IGiftCardPayload } from '@/models/IGiftCard';
 import { WalletController } from './wallet';
 
 type GiftCard = {
@@ -32,16 +32,15 @@ export class RedeemController {
     const date = new Date();
     const id = date.valueOf();
 
-    const payload: EmitGiftCardPayload = {
-      card_identificator: params.cardId,
-      external_partner_load_id: `jayatech${id}`,
-      total: params.amount,
-      card_image_id: params.imageId,
+    const payload: IGiftCardPayload = {
+      cardId: params.cardId,
+      transactionId: `jayatech${id}`,
+      amount: params.amount,
     };
 
     try {
       const response = await new TodoCartoes().emitGiftCard(payload);
-      if (response.status !== 201) {
+      if (!response.url) {
         return {
           success: false,
           message: 'We had a problem generating your card :cry:',
@@ -51,7 +50,7 @@ export class RedeemController {
       await this.walletController.withdraw(params.userId, params.amount);
       return {
         success: true,
-        url: response.data.magic_link,
+        url: response.url,
         message:
           ':tada: *Your Gift Card has arrived* :tada: \nClick to access your gift card',
       };

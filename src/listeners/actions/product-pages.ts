@@ -1,10 +1,13 @@
-import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
-import { ProductLine } from '@/clients/todo-cartoes/types';
+import { ProductController } from '@/controllers/product';
+import logger from '@/utils/logger';
+import config from 'config';
 
 const productPagesCallback = async ({ ack, client, body }) => {
   try {
     await ack();
-    const params = body.actions[0].value;
+
+    const params =
+      body.actions[0]?.value || body?.actions[0]?.selected_option?.value;
     const action = params.split(',')[0];
     const page = params.split(',')[1];
 
@@ -43,38 +46,35 @@ const productPagesCallback = async ({ ack, client, body }) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    logger.error('productPagesCallback() - Error trying to build structure', {
+      error,
+    });
   }
 };
 
 async function mountBlocks(page: number) {
-  const service = new TodoCartoes();
-  const size = service.getCatalogSize();
-  const products = await service.fetchProducts(page);
+  const productController = new ProductController();
+  const size = await productController.getCatalogSize();
+  const productsPageSize = config.get<number>('app.productsPageSize');
 
-  const lastPage = Math.ceil(size / 15);
-  const previous = page - 1;
-  const next = page + 1;
+  const products = await productController.get(
+    (page - 1) * productsPageSize,
+    productsPageSize
+  );
+
+  const lastPage = Math.ceil(size / productsPageSize);
 
   const blocks = [];
 
   for (const product of products) {
-    if (!validateProduct(product)) continue;
-    const min_value = product?.products[0]?.min_value
-      ? product?.products[0]?.min_value
-      : '0';
-    const max_value = product?.products[0]?.max_value
-      ? product?.products[0]?.max_value
-      : '';
-
     const image = {
       type: 'image',
       title: {
         type: 'plain_text',
-        text: product.brand_name,
+        text: product.name,
         emoji: true,
       },
-      image_url: product.logo_url,
+      image_url: product.logo,
       alt_text: 'Store Card Image',
     };
 
@@ -86,10 +86,7 @@ async function mountBlocks(page: number) {
           elements: [
             {
               type: 'text',
-              text:
-                product?.product_line_description?.length > 0
-                  ? product.product_line_description
-                  : product.brand_name,
+              text: product.description,
             },
           ],
         },
@@ -104,10 +101,7 @@ async function mountBlocks(page: number) {
           elements: [
             {
               type: 'text',
-              text:
-                product?.terms_and_conditions?.length > 0
-                  ? product.terms_and_conditions
-                  : '   ',
+              text: product.terms,
             },
           ],
         },
@@ -129,11 +123,11 @@ async function mountBlocks(page: number) {
             },
             {
               type: 'text',
-              text: 'Min: R$' + min_value,
+              text: 'Min: R$' + product.minValue,
             },
             {
               type: 'text',
-              text: '     |     Max: R$' + max_value,
+              text: '     |     Max: R$' + product.maxValue,
             },
           ],
         },
@@ -150,12 +144,7 @@ async function mountBlocks(page: number) {
             text: 'Choose',
             emoji: true,
           },
-          value:
-            product?.products[0]?.card_identificator +
-            ',' +
-            min_value +
-            ',' +
-            max_value,
+          value: product.id + ',' + product.minValue + ',' + product.maxValue,
           action_id: 'choose_card',
         },
       ],
@@ -168,58 +157,46 @@ async function mountBlocks(page: number) {
     blocks.push(image, description, terms, values, button, divider);
   }
 
-  const previousButton = {
-    type: 'button',
-    text: {
-      type: 'plain_text',
-      text: 'Página Anterior',
-      emoji: true,
-    },
-    value: 'update,' + String(previous),
-    action_id: 'products_page_previous',
-  };
-
-  const nextButton = {
-    type: 'button',
-    text: {
-      type: 'plain_text',
-      text: 'Próxima Página',
-      emoji: true,
-    },
-    value: 'update,' + String(next),
-    action_id: 'products_page_next',
-  };
-
-  const pageButtonsElements = [];
-
-  if (page === 1) {
-    pageButtonsElements.push(nextButton);
+  const paginationOptions = [];
+  for (let i = 1; i <= lastPage; i++) {
+    const option = {
+      text: {
+        type: 'plain_text',
+        text: 'Page ' + String(i),
+        emoji: true,
+      },
+      value: 'update,' + String(i),
+    };
+    paginationOptions.push(option);
   }
 
-  if (page > 1 && page < lastPage) {
-    pageButtonsElements.push(previousButton, nextButton);
-  }
-
-  if (page === lastPage) {
-    pageButtonsElements.push(previousButton);
-  }
-
-  const paginationButtons = {
+  const pagination = {
     type: 'actions',
-    elements: pageButtonsElements,
+    elements: [
+      {
+        type: 'static_select',
+        placeholder: {
+          type: 'plain_text',
+          text: 'Go to page',
+          emoji: true,
+        },
+        options: paginationOptions,
+        action_id: 'products_page',
+      },
+    ],
   };
 
-  blocks.push(paginationButtons);
+  const paginationText = {
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      text: 'You are on page ' + String(page),
+    },
+  };
+
+  blocks.push(paginationText, pagination);
 
   return blocks;
-}
-
-function validateProduct(productLine: ProductLine): boolean {
-  if (!productLine.brand_name || !productLine.logo_url) return false;
-
-  if (!productLine.products[0].card_identificator) return false;
-
-  return true;
 }
 
 export default productPagesCallback;
