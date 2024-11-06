@@ -2,7 +2,6 @@ import { AppDataSource } from '@/data-source';
 import { Recognition } from '@/entity/recognition';
 import logger from '@/utils/logger';
 import { getSlackUserInfo } from '@/utils/user-slack-info';
-import { AllMiddlewareArgs } from '@slack/bolt';
 import config from 'config';
 import { WalletController } from './wallet';
 
@@ -15,16 +14,13 @@ export class RecognitionController {
   private readonly recognitionRepository =
     AppDataSource.getRepository(Recognition);
 
-  public async save(
-    fromId: string,
-    toId: string,
-    client: AllMiddlewareArgs['client']
-  ) {
+  public async save(fromId: string, toId: string, message: string) {
     const recognition = new Recognition();
     recognition.fromId = fromId;
-    recognition.fromName = await getSlackUserInfo(client, fromId);
-    recognition.toName = await getSlackUserInfo(client, toId);
+    recognition.fromName = await getSlackUserInfo(fromId);
+    recognition.toName = await getSlackUserInfo(toId);
     recognition.toId = toId;
+    recognition.description = message;
     try {
       const response = await this.recognitionRepository.save(recognition);
       if (response.id) {

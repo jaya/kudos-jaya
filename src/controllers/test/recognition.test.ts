@@ -1,7 +1,6 @@
 import { RecognitionController } from '@/controllers/recognition';
 import { AppDataSource } from '@/data-source';
 import { getSlackUserInfo } from '@/utils/user-slack-info';
-import { WebClient } from '@slack/web-api';
 
 jest.mock('@/utils/user-slack-info', () => ({
   getSlackUserInfo: jest.fn(),
@@ -28,7 +27,6 @@ jest.mock('@slack/web-api', () => ({
 describe('RecognitionController', () => {
   let recognitionController: RecognitionController;
   let mockRepository;
-  let mockSlackClient: WebClient;
 
   beforeEach(() => {
     mockRepository = {
@@ -46,7 +44,6 @@ describe('RecognitionController', () => {
     jest.spyOn(AppDataSource, 'getRepository').mockReturnValue(mockRepository);
 
     recognitionController = new RecognitionController();
-    mockSlackClient = new WebClient();
   });
 
   afterEach(() => {
@@ -57,6 +54,7 @@ describe('RecognitionController', () => {
     it('should save recognition and make a deposit', async () => {
       const fromId = 'user1';
       const toId = 'user2';
+      const message = 'message test';
 
       (getSlackUserInfo as jest.Mock)
         .mockResolvedValueOnce('User One')
@@ -64,20 +62,17 @@ describe('RecognitionController', () => {
 
       mockRepository.save.mockResolvedValueOnce({ id: 1 });
 
-      const result = await recognitionController.save(
-        fromId,
-        toId,
-        mockSlackClient
-      );
+      const result = await recognitionController.save(fromId, toId, message);
 
-      expect(getSlackUserInfo).toHaveBeenCalledWith(mockSlackClient, fromId);
-      expect(getSlackUserInfo).toHaveBeenCalledWith(mockSlackClient, toId);
+      expect(getSlackUserInfo).toHaveBeenCalledWith(fromId);
+      expect(getSlackUserInfo).toHaveBeenCalledWith(toId);
       expect(mockRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           fromId: 'user1',
           fromName: 'User One',
           toId: 'user2',
           toName: 'User Two',
+          description: 'message test',
         })
       );
       expect(result).toEqual({ ok: true });
@@ -86,6 +81,7 @@ describe('RecognitionController', () => {
     it('should return an error if recognition save fails', async () => {
       const fromId = 'user1';
       const toId = 'user2';
+      const message = 'message test';
 
       (getSlackUserInfo as jest.Mock)
         .mockResolvedValueOnce('User One')
@@ -93,11 +89,7 @@ describe('RecognitionController', () => {
 
       mockRepository.save.mockRejectedValueOnce(new Error('Save failed'));
 
-      const result = await recognitionController.save(
-        fromId,
-        toId,
-        mockSlackClient
-      );
+      const result = await recognitionController.save(fromId, toId, message);
 
       expect(result).toEqual({ ok: false });
     });

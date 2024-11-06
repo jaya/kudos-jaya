@@ -1,59 +1,47 @@
+import { WebClient } from '@slack/web-api';
 import { getSlackUserInfo } from '../user-slack-info';
 
-describe('getSlackUserInfo', () => {
-  const mockClient = {
+jest.mock('@slack/web-api', () => {
+  const mSlack = {
     users: {
       info: jest.fn(),
     },
   };
+  return { WebClient: jest.fn(() => mSlack) };
+});
 
-  const userId = 'U12345';
+describe('getSlackUserInfo', () => {
+  const userId = 'U123456';
+  const mockRealName = 'John Doe';
 
-  beforeEach(() => {
-    jest.clearAllMocks();
+  let slack: WebClient;
+
+  beforeAll(() => {
+    slack = new WebClient();
   });
 
-  it('should return the real name of the Slack user when the response is successful', async () => {
-    const mockResponse = {
+  it('returns real name on successful response', async () => {
+    (slack.users.info as jest.Mock).mockResolvedValue({
       ok: true,
       user: {
         profile: {
-          real_name: 'John Doe',
+          real_name: mockRealName,
         },
       },
-    };
+    });
 
-    mockClient.users.info.mockResolvedValue(mockResponse);
+    const realName = await getSlackUserInfo(userId);
 
-    const result = await getSlackUserInfo(mockClient, userId);
-
-    expect(mockClient.users.info).toHaveBeenCalledWith({ user: userId });
-    expect(result).toBe('John Doe');
+    expect(realName).toBe(mockRealName);
+    expect(slack.users.info).toHaveBeenCalledWith({ user: userId });
   });
 
-  it('should throw an error if the Slack API response is not ok', async () => {
-    const mockErrorResponse = {
-      ok: false,
-      error: 'user_not_found',
-    };
-
-    mockClient.users.info.mockResolvedValue(mockErrorResponse);
-
-    await expect(getSlackUserInfo(mockClient, userId)).rejects.toThrow(
-      'user_not_found'
+  it('handles errors when Slack API fails', async () => {
+    (slack.users.info as jest.Mock).mockRejectedValue(
+      new Error('user_not_found')
     );
 
-    expect(mockClient.users.info).toHaveBeenCalledWith({ user: userId });
-  });
-
-  it('should throw an error if the Slack API throws an exception', async () => {
-    const mockError = new Error('API failure');
-    mockClient.users.info.mockRejectedValue(mockError);
-
-    await expect(getSlackUserInfo(mockClient, userId)).rejects.toThrow(
-      'API failure'
-    );
-
-    expect(mockClient.users.info).toHaveBeenCalledWith({ user: userId });
+    await expect(getSlackUserInfo(userId)).rejects.toThrow('user_not_found');
+    expect(slack.users.info).toHaveBeenCalledWith({ user: userId });
   });
 });

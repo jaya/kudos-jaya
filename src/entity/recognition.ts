@@ -16,4 +16,10 @@ export class Recognition {
 
   @Column()
   toName: string;
+
+  @Column({ nullable: true })
+  description: string | null;
+
+  @Column({ default: () => 'NOW()' })
+  createdAt: Date;
 }

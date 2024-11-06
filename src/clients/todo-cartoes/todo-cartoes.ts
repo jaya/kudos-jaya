@@ -58,7 +58,6 @@ export class TodoCartoes implements IGiftCardDataSource {
       );
       return { url: response?.data?.magic_link };
     } catch (e) {
-      console.log(e);
       logger.error(
         'TodoCartoes.emitGiftCard() - Error while trying to generate gift card',
         {
