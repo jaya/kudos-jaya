@@ -11,19 +11,22 @@ export const openKudosView = async ({ client, body, context }) => {
       },
       blocks: [
         {
-          type: 'input',
           block_id: 'to_id_block',
-          label: {
-            type: 'plain_text',
-            text: 'Whose deeds are deemed worthy of a kudo?',
-          },
+          type: 'input',
           element: {
-            type: 'users_select',
+            focus_on_load: true,
+            type: 'multi_users_select',
+            placeholder: {
+              type: 'plain_text',
+              text: 'Select users',
+              emoji: false,
+            },
             action_id: 'to_id',
           },
-          hint: {
+          label: {
             type: 'plain_text',
-            text: 'Recognizing such deeds is dazzlingly desirable of you!',
+            text: 'Select the colleagues who deserved a kudos',
+            emoji: true,
           },
         },
         {

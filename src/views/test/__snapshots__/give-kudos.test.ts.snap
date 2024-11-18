@@ -7,14 +7,17 @@ exports[`openKudosView should call client.views.open with the correct payload 1`
       "block_id": "to_id_block",
       "element": {
         "action_id": "to_id",
-        "type": "users_select",
-      },
-      "hint": {
-        "text": "Recognizing such deeds is dazzlingly desirable of you!",
-        "type": "plain_text",
+        "focus_on_load": true,
+        "placeholder": {
+          "emoji": false,
+          "text": "Select users",
+          "type": "plain_text",
+        },
+        "type": "multi_users_select",
       },
       "label": {
-        "text": "Whose deeds are deemed worthy of a kudo?",
+        "emoji": true,
+        "text": "Select the colleagues who deserved a kudos",
         "type": "plain_text",
       },
       "type": "input",
