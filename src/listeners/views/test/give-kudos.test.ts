@@ -27,7 +27,7 @@ describe('giveKudosViewCallback', () => {
       values: {
         to_id_block: {
           to_id: {
-            selected_user: 'U67890',
+            selected_users: ['U67890', 'U1234'],
           },
         },
         kudo_channel_block: {
@@ -53,7 +53,7 @@ describe('giveKudosViewCallback', () => {
     jest.clearAllMocks();
   });
 
-  it('should send kudos to the correct channel and user', async () => {
+  it('should send kudos to the correct channel and users', async () => {
     const mockGif = { URL: 'https://mock-gif-url.com' };
     (matchVibe as jest.Mock).mockReturnValue(mockGif);
     const mockSave = jest.fn().mockResolvedValue({ ok: true });
@@ -70,13 +70,18 @@ describe('giveKudosViewCallback', () => {
     });
 
     expect(mockPostMessage).toHaveBeenCalledWith({
-      channel: '#wearejaya',
-      text: `*<@U12345> is recognizing <@U67890>!* :party-jaya:\n> Great job on the project!\n<https://mock-gif-url.com>`,
+      channel: 'U67890',
+      text: 'Hey <@U67890> Jaya is sending you a gift, check your balance! ',
     });
 
     expect(mockPostMessage).toHaveBeenCalledWith({
-      channel: 'U67890',
-      text: 'Hey <@U67890> Jaya is sending you a gift, check your balance! ',
+      channel: 'U1234',
+      text: 'Hey <@U1234> Jaya is sending you a gift, check your balance! ',
+    });
+
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      channel: '#wearejaya',
+      text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* :party-jaya:\n> Great job on the project!\n<https://mock-gif-url.com>`,
     });
   });
 
