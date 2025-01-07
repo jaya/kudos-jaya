@@ -1,5 +1,6 @@
 import { decimalTransformer } from '@/utils/decimal-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Workspace } from '@/entity/workspace';
 
 @Entity()
 export class Wallet {
@@ -8,6 +9,9 @@ export class Wallet {
 
   @Column()
   ownerId: string;
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.wallets, { onDelete: "CASCADE" })
+  workspace: Workspace;
 
   @Column({
     name: 'balance',
