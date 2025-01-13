@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
+//TODO: mudar de user para installation e salvar apenas o necessário
 @Entity()
 export class User {
   @PrimaryColumn()

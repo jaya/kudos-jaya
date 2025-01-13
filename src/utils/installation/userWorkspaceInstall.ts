@@ -4,12 +4,12 @@ import { AppDataSource } from '../../data-source';
 export async function saveUserWorkspaceInstall(installation) {
   const repository = AppDataSource.getRepository(User);
   const existUser = await repository.findOneBy({
-    id: installation.enterprise.id,
+    id: installation.team.id,
   });
 
   if (!existUser) {
     await repository.save({
-      id: installation.enterprise.id,
+      id: installation.team.id,
       team: { id: installation.team.id, name: installation.team.name },
       // enterprise id is null on workspace install
       enterprise: { id: 'null', name: 'null' },

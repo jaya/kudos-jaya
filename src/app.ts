@@ -1,6 +1,8 @@
 import './utils/module-alias';
 //module alias must be on top
+import { sendFinishInstallMessage } from '@/utils/installation/installationWizard';
 import { saveUserOrgInstall } from '@/utils/installation/userOrgInstall';
+import { saveUserWorkspaceInstall } from '@/utils/installation/userWorkspaceInstall';
 import { App, Installation } from '@slack/bolt';
 import axios from 'axios';
 import config from 'config';
@@ -12,7 +14,6 @@ import { UserController } from './controllers/user';
 import { AppDataSource } from './data-source';
 import registerListeners from './listeners';
 import { SlackConfig } from './types';
-import { saveUserWorkspaceInstall } from './utils/installation/userWorkspaceInstall';
 import logger from './utils/logger';
 dotenv.config();
 
@@ -57,24 +58,24 @@ const app = new App({
   },
   installationStore: {
     storeInstallation: async (installation) => {
-      console.log('installation: ');
-      console.log(installation);
-      if (
-        installation.isEnterpriseInstall &&
-        installation.enterprise !== undefined
-      ) {
-        console.log(installation);
+      if (installation.isEnterpriseInstall && installation.enterprise) {
+        //TODO: Mudar de user para installation
+        await saveUserOrgInstall(installation);
+      } else if (installation.team) {
+        await saveUserWorkspaceInstall(installation);
+      }
 
-        return await saveUserOrgInstall(installation);
+      if (installation.bot?.token && installation.team?.id) {
+        const client = app.client;
+        await sendFinishInstallMessage(
+          client,
+          installation.bot.token,
+          installation.user.id
+        );
       }
-      if (installation.team !== undefined) {
-        console.log(installation);
-        return await saveUserWorkspaceInstall(installation);
-      }
-      throw new Error('Failed saving installation data to installationStore');
     },
     fetchInstallation: async (installQuery) => {
-      console.log('installQuery');
+      console.log('fetchInstallation');
       console.log(installQuery);
       if (
         installQuery.isEnterpriseInstall &&
@@ -85,8 +86,12 @@ const app = new App({
         )) as Installation<'v1' | 'v2', boolean>;
       }
       if (installQuery.teamId !== undefined) {
-        const teste = await userController.findUser(installQuery.teamId);
-        return teste as Installation<'v1' | 'v2', boolean>;
+        const storedInstallation = await userController.findUser(
+          installQuery.teamId
+        );
+        if (!storedInstallation) {
+          throw new Error('Failed fetching installation');
+        } else return storedInstallation as Installation<'v1' | 'v2', boolean>;
       }
       throw new Error('Failed fetching installation');
     },
