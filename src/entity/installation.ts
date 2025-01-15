@@ -1,10 +1,12 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-//TODO: mudar de user para installation e salvar apenas o necessário
 @Entity()
-export class User {
+export class Installation {
   @PrimaryColumn()
-  id: string;
+  teamId: string;
+
+  @Column()
+  teamName: string;
 
   @Column()
   tokenType: string;
@@ -18,23 +20,10 @@ export class User {
   @Column()
   authVersion: string;
 
-  @Column({ type: 'jsonb' })
-  team: {
-    id: string;
-    name: string;
-  };
-
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
   enterprise: {
-    id: string;
-    name: string;
-  };
-
-  @Column({ type: 'jsonb' })
-  user: {
-    token: string;
-    scopes: string[];
-    id: string;
+    id: string | null;
+    name: string | null;
   };
 
   @Column({ type: 'jsonb' })
@@ -44,4 +33,13 @@ export class User {
     userId: string;
     id: string;
   };
+
+  @Column({ nullable: true })
+  giftCardApiToken: string;
+
+  @Column({ nullable: true })
+  defaultRecognitionChannel: string;
+
+  @Column({ default: () => 'NOW()' })
+  createdAt: Date;
 }

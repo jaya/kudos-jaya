@@ -3,7 +3,6 @@ import logger from '@/utils/logger';
 const finishInstallButtonCallback = async ({ ack, client, body }) => {
   try {
     await ack();
-    console.log('Chegou aquio');
     await client.views.open({
       trigger_id: body.trigger_id,
       view: {
@@ -23,8 +22,7 @@ const finishInstallButtonCallback = async ({ ack, client, body }) => {
             },
             element: {
               type: 'plain_text_input',
-              action_id: 'store_todo_token',
-
+              action_id: 'finish_install',
               multiline: true,
             },
           },

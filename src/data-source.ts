@@ -1,9 +1,9 @@
 import config from 'config';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import { Installation } from './entity/installation';
 import { Product } from './entity/product';
 import { Recognition } from './entity/recognition';
-import { User } from './entity/user';
 import { Wallet } from './entity/wallet';
 import { DbConfig } from './types';
 
@@ -18,7 +18,7 @@ export const AppDataSource = new DataSource({
   database: name,
   synchronize: true,
   logging: false,
-  entities: [Wallet, Recognition, Product, User],
+  entities: [Wallet, Recognition, Product, Installation],
   migrations: [],
   subscribers: [],
 });

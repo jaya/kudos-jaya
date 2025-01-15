@@ -2,6 +2,7 @@ import logger from '../logger';
 
 export async function sendFinishInstallMessage(client, token, user) {
   try {
+    //TODO: checar se o usuário é um admin, se sim enviar a mensagem, senao, avisa-lo
     await client.chat.postMessage({
       token,
       channel: user,

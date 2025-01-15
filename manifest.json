@@ -1,6 +1,6 @@
 {
   "display_information": {
-    "name": "Kudos Jaya",
+    "name": "Kudos Jaya (Dev)",
     "description": "Brighten someone's day with a heartfelt thank you",
     "background_color": "#000000",
     "long_description": "Add a spark to your team’s day with KudosBot. Recognize and celebrate your colleagues’ efforts instantly with a simple command. \r\n\r\nBoost morale, foster a culture of appreciation, and make every accomplishment shine.\r\n\r\nBecause every “thank you” counts. 🌟"
@@ -12,13 +12,13 @@
       "messages_tab_read_only_enabled": true
     },
     "bot_user": {
-      "display_name": "Kudos Jaya",
+      "display_name": "Kudos Jaya (Dev)",
       "always_online": true
     },
     "slash_commands": [
       {
         "command": "/give-kudos",
-        "url": "https://efcb-2804-56c-d760-1900-5a47-734b-7185-e166.ngrok-free.app/slack/events",
+        "url": "https://f683-2804-56c-d760-1900-bc22-46ea-bb0-3d59.ngrok-free.app/slack/events",
         "description": "Acknowledge the impact someone had on you",
         "should_escape": false
       }
@@ -26,7 +26,7 @@
   },
   "oauth_config": {
     "redirect_urls": [
-      "https://efcb-2804-56c-d760-1900-5a47-734b-7185-e166.ngrok-free.app/slack/oauth_redirect"
+      "https://f683-2804-56c-d760-1900-bc22-46ea-bb0-3d59.ngrok-free.app/slack/oauth_redirect"
     ],
     "scopes": {
       "bot": [
@@ -41,12 +41,12 @@
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://efcb-2804-56c-d760-1900-5a47-734b-7185-e166.ngrok-free.app/slack/events",
+      "request_url": "https://f683-2804-56c-d760-1900-bc22-46ea-bb0-3d59.ngrok-free.app/slack/events",
       "bot_events": ["app_home_opened", "message.channels"]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://efcb-2804-56c-d760-1900-5a47-734b-7185-e166.ngrok-free.app/slack/events"
+      "request_url": "https://f683-2804-56c-d760-1900-bc22-46ea-bb0-3d59.ngrok-free.app/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,
