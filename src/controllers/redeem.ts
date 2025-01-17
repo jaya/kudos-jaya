@@ -13,15 +13,20 @@ type EmitGiftCardParams = {
   cardId: string;
   amount: number;
   imageId?: string;
+  teamId: string;
 };
 
 export class RedeemController {
   private readonly walletController = new WalletController();
 
   public async emitGiftCard(params: EmitGiftCardParams): Promise<GiftCard> {
-    const balance = await this.walletController.getBalance(params.userId);
+    const { userId, teamId, amount, cardId } = params;
+    const balance = await this.walletController.getBalance({
+      ownerId: userId,
+      teamId,
+    });
 
-    if (params.amount > balance) {
+    if (amount > balance) {
       return {
         success: false,
         message:
@@ -33,9 +38,9 @@ export class RedeemController {
     const id = date.valueOf();
 
     const payload: IGiftCardPayload = {
-      cardId: params.cardId,
+      cardId: cardId,
       transactionId: `jayatech${id}`,
-      amount: params.amount,
+      amount,
     };
 
     try {
@@ -47,7 +52,7 @@ export class RedeemController {
         };
       }
 
-      await this.walletController.withdraw(params.userId, params.amount);
+      await this.walletController.withdraw({ ownerId: userId, teamId, amount });
       return {
         success: true,
         url: response.url,

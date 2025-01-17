@@ -1,37 +1,54 @@
 import { AppDataSource } from '@/data-source';
 import { Wallet } from '@/entity/wallet';
 
+type BaseParams = {
+  ownerId: string;
+  teamId: string;
+  amount?: number;
+};
 export class WalletController {
   private readonly walletRepository = AppDataSource.getRepository(Wallet);
 
-  public async deposit(ownerId: string, amount: number): Promise<void> {
+  public async deposit(params: BaseParams): Promise<void> {
+    const { ownerId, amount, teamId } = params;
     const existWallet = await this.walletRepository.findOneBy({
       ownerId,
+      teamId,
     });
     if (!existWallet) {
       await this.walletRepository.save({
         ownerId,
         balance: amount,
+        teamId,
       });
       return;
     }
     existWallet.balance = existWallet.balance + amount;
-    await this.walletRepository.save(existWallet);
+    await this.walletRepository.update(
+      { ownerId, teamId },
+      { balance: existWallet.balance }
+    );
   }
 
-  public async withdraw(ownerId: string, amount: number): Promise<void> {
+  public async withdraw(params: BaseParams): Promise<void> {
+    const { teamId, ownerId, amount } = params;
     const existWallet = await this.walletRepository.findOneBy({
       ownerId,
+      teamId,
     });
     if (!existWallet) {
       return;
     }
     existWallet.balance = existWallet.balance - amount;
-    await this.walletRepository.save(existWallet);
+    await this.walletRepository.update(
+      { ownerId, teamId },
+      { balance: existWallet.balance }
+    );
   }
 
-  public async getBalance(ownerId: string): Promise<number> {
-    const wallet = await this.walletRepository.findOneBy({ ownerId });
+  public async getBalance(params: BaseParams): Promise<number> {
+    const { ownerId, teamId } = params;
+    const wallet = await this.walletRepository.findOneBy({ ownerId, teamId });
     return wallet?.balance ?? 0;
   }
 }

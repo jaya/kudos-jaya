@@ -23,15 +23,15 @@ export class RecognitionController {
     AppDataSource.getRepository(Recognition);
 
   public async save(params: SaveRecognitionParams) {
-    const { toId } = params;
+    const { toId, teamId } = params;
     try {
       const response = await this.recognitionRepository.save(params);
       if (response.id) {
-        await new WalletController().deposit(
-          toId,
-          config.get<number>('app.deposit.defaultAmount')
-          //TODO: add teamId
-        );
+        await new WalletController().deposit({
+          ownerId: toId,
+          amount: config.get<number>('app.deposit.defaultAmount'),
+          teamId,
+        });
       }
       return { ok: true };
     } catch (error) {

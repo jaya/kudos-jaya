@@ -16,7 +16,10 @@ const appHomeOpenedCallback = async ({ client, event }) => {
     teamId,
   });
   const totalRecognitions = await recsController.getTotal({ teamId });
-  const balance = await new WalletController().getBalance(event.user);
+  const balance = await new WalletController().getBalance({
+    ownerId: event.user,
+    teamId,
+  });
   const recognitionSummary = await recsController.getUsersRecognitionSummary(
     teamId
   );
