@@ -1,7 +1,7 @@
 import { RecognitionController } from '@/controllers/recognition';
 import { matchVibe } from '@/utils/find-gif';
 import logger from '@/utils/logger';
-import config from 'config';
+import { InstallationController } from '../../controllers/installation';
 import { getSlackUserInfo } from '../../utils/user-slack-info';
 
 const giveKudosViewCallback = async ({ ack, view, client, body }) => {
@@ -10,9 +10,6 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
     const botToken = client.token;
     const users = view.state.values['to_id_block']['to_id'].selected_users;
 
-    //TODO: obter do banco
-    const channelId = config.get<string>('app.recognition.defaultChannel');
-
     const message =
       view.state.values['kudo_message_block']['kudo_message'].value;
     const gif = matchVibe(
@@ -20,6 +17,9 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
     );
     const fromId = body.user.id;
     const teamId = body.user.team_id;
+
+    const { defaultRecognitionChannel } =
+      await new InstallationController().find(teamId);
 
     const usersText = [];
 
@@ -53,7 +53,7 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
     }
 
     await client.chat.postMessage({
-      channel: channelId,
+      channel: defaultRecognitionChannel,
       text:
         `*<@${fromId}> is recognizing${usersText}!* :party-jaya:\n` +
         `> ${message}\n` +

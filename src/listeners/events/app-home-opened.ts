@@ -1,3 +1,4 @@
+import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
 import { WalletController } from '@/controllers/wallet';
@@ -29,9 +30,14 @@ type ButtonSection = {
 const appHomeOpenedCallback = async ({ client, event }) => {
   // Ignore the `app_home_opened` event for anything but the Home tab
   if (event.tab !== 'home') return;
+  const teamId = event?.view?.app_installed_team_id;
+
+  const { giftCardApiToken } = await new InstallationController().find(teamId);
+
+  await new TodoCartoes(undefined, giftCardApiToken).fetchProducts();
+
   const recsController = new RecognitionController();
 
-  const teamId = event?.view?.app_installed_team_id;
   const recognitions = await recsController.getTotal({
     userId: event.user,
     teamId,

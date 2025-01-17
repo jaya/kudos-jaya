@@ -29,6 +29,7 @@ export class RecognitionController {
       if (response.id) {
         await new WalletController().deposit({
           ownerId: toId,
+          //TODO: obter das configurações do app
           amount: config.get<number>('app.deposit.defaultAmount'),
           teamId,
         });

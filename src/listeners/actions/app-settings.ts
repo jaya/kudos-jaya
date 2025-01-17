@@ -3,6 +3,9 @@ import logger from '@/utils/logger';
 const appSettingsButtonCallback = async ({ ack, client, body }) => {
   try {
     await ack();
+    //TODO: ver se tem como mostrar os valores atuais
+    //TODO: não deixar os dois campos como obrigatórios
+    //TODO: não enviar sempre a mesma mensagem de sucesso
     await client.views.open({
       trigger_id: body.trigger_id,
       view: {

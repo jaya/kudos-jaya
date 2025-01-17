@@ -11,7 +11,6 @@ import config from 'config';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import manifest from '../manifest.json';
-import { TodoCartoes } from './clients/todo-cartoes/todo-cartoes';
 import { AppDataSource } from './data-source';
 import registerListeners from './listeners';
 import { SlackConfig } from './types';
@@ -47,7 +46,6 @@ registerListeners(app);
 
     const res = await axios.get('https://curlmyip.org');
     logger.info('The app public IP is: ' + res.data);
-    await new TodoCartoes().fetchProducts();
   } catch (error) {
     logger.error('Unable to start App', error);
   }

@@ -1,5 +1,6 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import { IGiftCardPayload } from '@/models/IGiftCard';
+import { InstallationController } from './installation';
 import { WalletController } from './wallet';
 
 type GiftCard = {
@@ -42,9 +43,15 @@ export class RedeemController {
       transactionId: `jayatech${id}`,
       amount,
     };
+    const { giftCardApiToken } = await new InstallationController().find(
+      teamId
+    );
 
     try {
-      const response = await new TodoCartoes().emitGiftCard(payload);
+      const response = await new TodoCartoes(
+        undefined,
+        giftCardApiToken
+      ).emitGiftCard(payload);
       if (!response.url) {
         return {
           success: false,
@@ -53,6 +60,7 @@ export class RedeemController {
       }
 
       await this.walletController.withdraw({ ownerId: userId, teamId, amount });
+      //TODO: salvar em tabela de transações
       return {
         success: true,
         url: response.url,

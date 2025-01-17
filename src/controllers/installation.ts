@@ -22,6 +22,7 @@ export class InstallationController {
     const { teamId, giftCardApiToken, defaultRecognitionChannel } =
       installation;
 
+    //TODO: salvar hash do token ao inves do token
     await this.repository.update(
       { teamId },
       { giftCardApiToken, defaultRecognitionChannel }
