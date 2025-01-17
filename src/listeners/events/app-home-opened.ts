@@ -1,21 +1,22 @@
 import { RecognitionController } from '@/controllers/recognition';
 import { WalletController } from '@/controllers/wallet';
 import logger from '@/utils/logger';
-import { AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
+import { isUserAdmin } from '@/utils/user-slack-info';
 import config from 'config';
 
-const appHomeOpenedCallback = async ({
-  client,
-  event,
-}: AllMiddlewareArgs & SlackEventMiddlewareArgs<'app_home_opened'>) => {
+const appHomeOpenedCallback = async ({ client, event }) => {
   // Ignore the `app_home_opened` event for anything but the Home tab
   if (event.tab !== 'home') return;
   const recsController = new RecognitionController();
 
+  //TODO: passar o teamId em todas as consultas
+  const teamId = event?.view?.app_installed_team_id;
+  console.log(teamId);
   const recognitions = await recsController.getTotal(event.user);
   const totalRecognitions = await recsController.getTotal();
   const balance = await new WalletController().getBalance(event.user);
   const recognitionSummary = await recsController.getUsersRecognitionSummary();
+  const isAdmin = await isUserAdmin(client.token, event.user);
 
   const blocks = [];
 
@@ -45,6 +46,22 @@ const appHomeOpenedCallback = async ({
     ],
   };
 
+  const settingsButton = {
+    type: 'actions',
+    elements: [
+      {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Settings',
+          emoji: true,
+        },
+        value: 'origin=home',
+        action_id: 'app_settings',
+      },
+    ],
+  };
+
   const divider = {
     type: 'divider',
   };
@@ -53,9 +70,10 @@ const appHomeOpenedCallback = async ({
     type: 'section',
     text: {
       type: 'mrkdwn',
-      text: `:sports_medal: <#${config.get<string>(
+      //TODO: buscar do banco o canal padrao
+      text: `:sports_medal: ${config.get<string>(
         'app.recognition.defaultChannel'
-      )}> ${totalRecognitions} recognitions :sports_medal:`,
+      )} ${totalRecognitions} recognitions :sports_medal:`,
     },
   };
 
@@ -78,6 +96,10 @@ const appHomeOpenedCallback = async ({
     recognitionsListHeader,
     ...recognitionsList
   );
+
+  if (isAdmin) {
+    blocks.splice(0, 0, settingsButton, divider);
+  }
 
   if (balance > 0) {
     blocks.splice(1, 0, redeemButton);
