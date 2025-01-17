@@ -1,15 +1,36 @@
+import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
 import { WalletController } from '@/controllers/wallet';
 import logger from '@/utils/logger';
 import { isUserAdmin } from '@/utils/user-slack-info';
-import config from 'config';
+
+type TextSection = {
+  type: string;
+  text: {
+    type: string;
+    text: string;
+  };
+};
+
+type ButtonSection = {
+  type: string;
+  elements: {
+    type: string;
+    text: {
+      type: string;
+      text: string;
+      emoji: boolean;
+    };
+    value: string;
+    action_id: string;
+  }[];
+};
 
 const appHomeOpenedCallback = async ({ client, event }) => {
   // Ignore the `app_home_opened` event for anything but the Home tab
   if (event.tab !== 'home') return;
   const recsController = new RecognitionController();
 
-  //TODO: passar o teamId em todas as consultas
   const teamId = event?.view?.app_installed_team_id;
   const recognitions = await recsController.getTotal({
     userId: event.user,
@@ -23,19 +44,25 @@ const appHomeOpenedCallback = async ({ client, event }) => {
   const recognitionSummary = await recsController.getUsersRecognitionSummary(
     teamId
   );
+  const { defaultRecognitionChannel } = await new InstallationController().find(
+    teamId
+  );
+
   const isAdmin = await isUserAdmin(client.token, event.user);
 
   const blocks = [];
 
-  const userBalance = {
-    type: 'section',
-    text: {
-      type: 'mrkdwn',
-      text: `:trophy: <@${event.user}>, your prizes balance :trophy: 
+  const userBalance: (TextSection | ButtonSection)[] = [
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `:trophy: <@${event.user}>, your prizes balance :trophy: 
       *Recognitions*: ${recognitions}
       *Balance*: R$ ${balance}`,
+      },
     },
-  };
+  ];
 
   const redeemButton = {
     type: 'actions',
@@ -52,6 +79,10 @@ const appHomeOpenedCallback = async ({ client, event }) => {
       },
     ],
   };
+
+  if (balance > 0) {
+    userBalance.push(redeemButton);
+  }
 
   const settingsButton = {
     type: 'actions',
@@ -77,10 +108,7 @@ const appHomeOpenedCallback = async ({ client, event }) => {
     type: 'section',
     text: {
       type: 'mrkdwn',
-      //TODO: buscar do banco o canal padrao
-      text: `:sports_medal: ${config.get<string>(
-        'app.recognition.defaultChannel'
-      )} ${totalRecognitions} recognitions :sports_medal:`,
+      text: `:sports_medal: <#${defaultRecognitionChannel}> ${totalRecognitions} recognitions :sports_medal:`,
     },
   };
 
@@ -98,19 +126,14 @@ const appHomeOpenedCallback = async ({ client, event }) => {
   }
 
   blocks.push(
-    userBalance,
+    ...userBalance,
     divider,
     recognitionsListHeader,
     ...recognitionsList
   );
 
-  //TODO: ajustar layout quando tem o botao redeem tambem
   if (isAdmin) {
     blocks.splice(0, 0, settingsButton, divider);
-  }
-
-  if (balance > 0) {
-    blocks.splice(1, 0, redeemButton);
   }
 
   try {

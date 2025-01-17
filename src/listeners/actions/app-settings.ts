@@ -10,7 +10,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
         callback_id: 'settings_view',
         title: {
           type: 'plain_text',
-          text: 'Finish install',
+          text: 'App Settings',
         },
         blocks: [
           {
