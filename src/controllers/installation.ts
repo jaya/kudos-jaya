@@ -2,22 +2,31 @@ import { AppDataSource } from '@/data-source';
 import { Installation } from '@/entity/installation';
 
 export class InstallationController {
-  private readonly installationRepository =
-    AppDataSource.getRepository(Installation);
+  private readonly repository = AppDataSource.getRepository(Installation);
 
   public async find(teamId: string): Promise<Installation> {
-    return await this.installationRepository.findOneBy({ teamId });
+    return await this.repository.findOneBy({ teamId });
   }
 
   public async create(installation): Promise<Installation> {
-    return await this.installationRepository.save({
+    return await this.repository.save({
       teamId: installation.team.id,
       teamName: installation.team.name,
       ...installation,
     });
   }
 
-  // public async update(installation): Promise<Installation> {
+  public async update(
+    installation: Partial<Installation>
+  ): Promise<Installation> {
+    const { teamId, giftCardApiToken, defaultRecognitionChannel } =
+      installation;
 
-  // }
+    await this.repository.update(
+      { teamId },
+      { giftCardApiToken, defaultRecognitionChannel }
+    );
+
+    return await this.find(teamId);
+  }
 }

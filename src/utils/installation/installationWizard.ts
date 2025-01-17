@@ -77,8 +77,7 @@ export async function sendFinishInstallMessage(
                 text: 'Finish Install',
                 emoji: true,
               },
-              //TODO: salvar na tabela de installation o token
-              action_id: 'finish_install',
+              action_id: 'app_settings',
             },
           ],
         },
