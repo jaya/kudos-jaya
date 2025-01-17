@@ -15,3 +15,22 @@ export async function getSlackUserInfo(userId: string) {
     throw e;
   }
 }
+
+export async function isUserAdmin(
+  botToken: string,
+  userId: string
+): Promise<boolean> {
+  try {
+    const client = new WebClient(botToken);
+
+    const response = await client.users.info({ user: userId });
+
+    if (response?.user && response.user.is_admin) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    logger.error('isAdmin()', { error: e });
+    throw e;
+  }
+}
