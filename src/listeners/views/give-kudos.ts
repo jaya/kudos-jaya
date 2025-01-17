@@ -2,12 +2,15 @@ import { RecognitionController } from '@/controllers/recognition';
 import { matchVibe } from '@/utils/find-gif';
 import logger from '@/utils/logger';
 import config from 'config';
+import { getSlackUserInfo } from '../../utils/user-slack-info';
 
 const giveKudosViewCallback = async ({ ack, view, client, body }) => {
   await ack();
   try {
+    const botToken = client.token;
     const users = view.state.values['to_id_block']['to_id'].selected_users;
 
+    //TODO: obter do banco
     const channelId = config.get<string>('app.recognition.defaultChannel');
 
     const message =
@@ -16,15 +19,22 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
       view.state.values['kudo_vibe_block']['kudo_vibe'].value ?? 'plants'
     );
     const fromId = body.user.id;
+    const teamId = body.user.team_id;
 
     const usersText = [];
 
     for (const toId of users) {
-      const response = await new RecognitionController().save(
+      const fromName = await getSlackUserInfo(botToken, fromId);
+      const toName = await getSlackUserInfo(botToken, toId);
+
+      const response = await new RecognitionController().save({
         fromId,
+        fromName,
         toId,
-        message
-      );
+        toName,
+        message,
+        teamId,
+      });
 
       if (!response.ok) {
         await client.chat.postMessage({

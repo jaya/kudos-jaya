@@ -1,7 +1,6 @@
 import { AppDataSource } from '@/data-source';
 import { Recognition } from '@/entity/recognition';
 import logger from '@/utils/logger';
-import { getSlackUserInfo } from '@/utils/user-slack-info';
 import config from 'config';
 import { WalletController } from './wallet';
 
@@ -10,23 +9,28 @@ type RecognitionSummary = {
   recognitionCount: number;
 }[];
 
+type SaveRecognitionParams = {
+  fromId: string;
+  fromName: string;
+  toId: string;
+  toName: string;
+  message: string;
+  teamId: string;
+};
+
 export class RecognitionController {
   private readonly recognitionRepository =
     AppDataSource.getRepository(Recognition);
 
-  public async save(fromId: string, toId: string, message: string) {
-    const recognition = new Recognition();
-    recognition.fromId = fromId;
-    recognition.fromName = await getSlackUserInfo(fromId);
-    recognition.toName = await getSlackUserInfo(toId);
-    recognition.toId = toId;
-    recognition.description = message;
+  public async save(params: SaveRecognitionParams) {
+    const { toId } = params;
     try {
-      const response = await this.recognitionRepository.save(recognition);
+      const response = await this.recognitionRepository.save(params);
       if (response.id) {
         await new WalletController().deposit(
           toId,
           config.get<number>('app.deposit.defaultAmount')
+          //TODO: add teamId
         );
       }
       return { ok: true };
@@ -36,19 +40,26 @@ export class RecognitionController {
     }
   }
 
-  public async getTotal(userId?: string): Promise<number> {
+  public async getTotal(params: {
+    teamId: string;
+    userId?: string;
+  }): Promise<number> {
     const total = await this.recognitionRepository.count({
       where: {
-        toId: userId,
+        toId: params.userId,
+        teamId: params.teamId,
       },
     });
     return total ?? 0;
   }
 
-  public async getUsersRecognitionSummary(): Promise<RecognitionSummary> {
+  public async getUsersRecognitionSummary(
+    teamId: string
+  ): Promise<RecognitionSummary> {
     const summary = this.recognitionRepository
       .createQueryBuilder('recognition')
       .select('recognition.toId', 'userId')
+      .where('recognition.teamId = :teamId', { teamId })
       .addSelect('COUNT(recognition.id)', 'recognitionCount')
       .groupBy('recognition.toId')
       .orderBy('COUNT(recognition.id)', 'DESC')

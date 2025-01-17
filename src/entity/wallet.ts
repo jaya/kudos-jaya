@@ -1,5 +1,12 @@
 import { decimalTransformer } from '@/utils/decimal-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Installation } from './installation';
 
 @Entity()
 export class Wallet {
@@ -18,4 +25,11 @@ export class Wallet {
     transformer: decimalTransformer,
   })
   balance: number;
+
+  @ManyToOne(() => Installation, { nullable: true })
+  @JoinColumn({ name: 'teamId' })
+  installation: Installation;
+
+  @Column({ nullable: true })
+  teamId: string | null;
 }

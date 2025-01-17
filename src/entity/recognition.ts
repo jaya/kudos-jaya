@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Installation } from './installation';
 
 @Entity()
 export class Recognition {
@@ -22,4 +29,11 @@ export class Recognition {
 
   @Column({ default: () => 'NOW()' })
   createdAt: Date;
+
+  @ManyToOne(() => Installation, { nullable: true })
+  @JoinColumn({ name: 'teamId' })
+  installation: Installation;
+
+  @Column({ nullable: true })
+  teamId: string | null;
 }

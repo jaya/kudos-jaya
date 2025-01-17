@@ -1,12 +1,10 @@
 import { WebClient } from '@slack/web-api';
-import config from 'config';
+
 import logger from './logger';
 
-const slackConfig = config.get<string>('app.slackConfig.token');
-
-export async function getSlackUserInfo(userId: string) {
+export async function getSlackUserInfo(botToken: string, userId: string) {
   try {
-    const client = new WebClient(slackConfig);
+    const client = new WebClient(botToken);
     const response = await client.users.info({ user: userId });
 
     return response?.user?.profile?.real_name;

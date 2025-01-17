@@ -11,11 +11,15 @@ const appHomeOpenedCallback = async ({ client, event }) => {
 
   //TODO: passar o teamId em todas as consultas
   const teamId = event?.view?.app_installed_team_id;
-  console.log(teamId);
-  const recognitions = await recsController.getTotal(event.user);
-  const totalRecognitions = await recsController.getTotal();
+  const recognitions = await recsController.getTotal({
+    userId: event.user,
+    teamId,
+  });
+  const totalRecognitions = await recsController.getTotal({ teamId });
   const balance = await new WalletController().getBalance(event.user);
-  const recognitionSummary = await recsController.getUsersRecognitionSummary();
+  const recognitionSummary = await recsController.getUsersRecognitionSummary(
+    teamId
+  );
   const isAdmin = await isUserAdmin(client.token, event.user);
 
   const blocks = [];
@@ -97,6 +101,7 @@ const appHomeOpenedCallback = async ({ client, event }) => {
     ...recognitionsList
   );
 
+  //TODO: ajustar layout quando tem o botao redeem tambem
   if (isAdmin) {
     blocks.splice(0, 0, settingsButton, divider);
   }
