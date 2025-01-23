@@ -2,6 +2,7 @@ import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
 import { WalletController } from '@/controllers/wallet';
+import { decrypt } from '@/utils/encrypt';
 import logger from '@/utils/logger';
 import { isUserAdmin } from '@/utils/user-slack-info';
 
@@ -34,7 +35,7 @@ const appHomeOpenedCallback = async ({ client, event }) => {
 
   const { giftCardApiToken } = await new InstallationController().find(teamId);
 
-  await new TodoCartoes(undefined, giftCardApiToken).fetchProducts();
+  await new TodoCartoes(undefined, decrypt(giftCardApiToken)).fetchProducts();
 
   const recsController = new RecognitionController();
 

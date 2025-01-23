@@ -1,5 +1,6 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import { IGiftCardPayload } from '@/models/IGiftCard';
+import { decrypt } from '@/utils/encrypt';
 import { InstallationController } from './installation';
 import { WalletController } from './wallet';
 
@@ -50,7 +51,7 @@ export class RedeemController {
     try {
       const response = await new TodoCartoes(
         undefined,
-        giftCardApiToken
+        decrypt(giftCardApiToken)
       ).emitGiftCard(payload);
       if (!response.url) {
         return {

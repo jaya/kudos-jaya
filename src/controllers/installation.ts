@@ -1,5 +1,6 @@
 import { AppDataSource } from '@/data-source';
 import { Installation } from '@/entity/installation';
+import { encrypt } from '@/utils/encrypt';
 
 export class InstallationController {
   private readonly repository = AppDataSource.getRepository(Installation);
@@ -22,10 +23,9 @@ export class InstallationController {
     const { teamId, giftCardApiToken, defaultRecognitionChannel } =
       installation;
 
-    //TODO: salvar hash do token ao inves do token
     await this.repository.update(
       { teamId },
-      { giftCardApiToken, defaultRecognitionChannel }
+      { giftCardApiToken: encrypt(giftCardApiToken), defaultRecognitionChannel }
     );
 
     return await this.find(teamId);
