@@ -12,6 +12,7 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
 
     const message =
       view.state.values['kudo_message_block']['kudo_message'].value;
+    //TODO: obter gifs da internet
     const gif = matchVibe(
       view.state.values['kudo_vibe_block']['kudo_vibe'].value ?? 'plants'
     );

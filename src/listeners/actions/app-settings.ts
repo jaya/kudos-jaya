@@ -1,10 +1,19 @@
+import { InstallationController } from '@/controllers/installation';
 import logger from '@/utils/logger';
 
 const appSettingsButtonCallback = async ({ ack, client, body }) => {
   try {
     await ack();
-    //TODO: ver se tem como mostrar os valores atuais
-    //TODO: não enviar sempre a mesma mensagem de sucesso
+
+    const teamId = body.user.team_id;
+
+    const {
+      giftCardApiTokenHint,
+      defaultChannelHint,
+      defaultAmountHint,
+      alreadyInstalled,
+    } = await getCurrentSettings(teamId);
+
     await client.views.open({
       trigger_id: body.trigger_id,
       view: {
@@ -18,7 +27,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
           {
             type: 'input',
             block_id: 'setup_todo_token',
-            optional: true,
+            optional: alreadyInstalled,
             label: {
               type: 'plain_text',
               text: 'Fill in the field below with the token provided by Todo Cartões',
@@ -30,14 +39,14 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
             },
             hint: {
               type: 'plain_text',
-              text: 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+              text: giftCardApiTokenHint,
               emoji: true,
             },
           },
           {
             type: 'input',
             block_id: 'setup_default_channel_id',
-            optional: true,
+            optional: alreadyInstalled,
             element: {
               type: 'plain_text_input',
               action_id: 'default_channel_id',
@@ -49,14 +58,14 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
             },
             hint: {
               type: 'plain_text',
-              text: 'Enter the default Slack channel id (ex: C93LZNJ64, #bots).',
+              text: defaultAmountHint,
               emoji: true,
             },
           },
           {
             type: 'input',
             block_id: 'setup_default_amount',
-            optional: true,
+            optional: alreadyInstalled,
             element: {
               type: 'number_input',
               is_decimal_allowed: true,
@@ -65,13 +74,13 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
             },
             label: {
               type: 'plain_text',
-              text: 'Default amount to add to the wallet when someone receives a kudo',
+              text: 'Default amount to add to the wallet when someone receives a kudo.',
               emoji: true,
             },
             hint: {
               type: 'plain_text',
-              text: 'Ex: 100',
-              emoji: false,
+              text: defaultChannelHint,
+              emoji: true,
             },
           },
         ],
@@ -85,5 +94,32 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
     logger.error('finishInstallButtonCallback()', { error });
   }
 };
+
+async function getCurrentSettings(teamId: string) {
+  const installation = await new InstallationController().find(teamId);
+  const baseApiTokenText = 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+  const baseAmountText = 'Ex: 100.';
+  const baseDefaultChannelText =
+    'Enter the default Slack channel id (ex: C93LZNJ64, #bots).';
+
+  if (
+    !installation?.giftCardApiToken ||
+    !installation?.defaultRecognitionChannel
+  ) {
+    return {
+      giftCardApiTokenHint: baseApiTokenText,
+      defaultAmountHint: baseAmountText,
+      defaultChannelHint: baseDefaultChannelText,
+      alreadyInstalled: false,
+    };
+  }
+
+  return {
+    giftCardApiTokenHint: `${baseApiTokenText}\nThe token has already been configured`,
+    defaultAmountHint: `${baseAmountText}\nCurrent: ${installation.defaultAmount}`,
+    defaultChannelHint: `${baseDefaultChannelText}\nCurrent: ${installation.defaultRecognitionChannel}`,
+    alreadyInstalled: true,
+  };
+}
 
 export default appSettingsButtonCallback;
