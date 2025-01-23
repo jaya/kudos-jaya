@@ -115,8 +115,9 @@ const appHomeOpenedCallback = async ({ client, event }) => {
     type: 'section',
     text: {
       type: 'mrkdwn',
-      //TODO: corrigir se o primeiro caracter for #
-      text: `:sports_medal: <#${defaultRecognitionChannel}> ${totalRecognitions} recognitions :sports_medal:`,
+      text: defaultRecognitionChannel.startsWith('#')
+        ? `:sports_medal: ${defaultRecognitionChannel} ${totalRecognitions} recognitions :sports_medal:`
+        : `:sports_medal: <#${defaultRecognitionChannel}> ${totalRecognitions} recognitions :sports_medal:`,
     },
   };
 

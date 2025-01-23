@@ -58,7 +58,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
             },
             hint: {
               type: 'plain_text',
-              text: defaultAmountHint,
+              text: defaultChannelHint,
               emoji: true,
             },
           },
@@ -79,7 +79,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
             },
             hint: {
               type: 'plain_text',
-              text: defaultChannelHint,
+              text: defaultAmountHint,
               emoji: true,
             },
           },
