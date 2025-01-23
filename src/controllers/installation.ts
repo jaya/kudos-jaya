@@ -1,6 +1,7 @@
 import { AppDataSource } from '@/data-source';
 import { Installation } from '@/entity/installation';
 import { encrypt } from '@/utils/encrypt';
+import logger from '../utils/logger';
 
 export class InstallationController {
   private readonly repository = AppDataSource.getRepository(Installation);
@@ -21,14 +22,23 @@ export class InstallationController {
   public async update(
     installation: Partial<Installation>
   ): Promise<Installation> {
-    const { teamId, giftCardApiToken, defaultRecognitionChannel } =
-      installation;
+    try {
+      const { teamId, giftCardApiToken } = installation;
 
-    await this.repository.update(
-      { teamId },
-      { giftCardApiToken: encrypt(giftCardApiToken), defaultRecognitionChannel }
-    );
+      if (giftCardApiToken) {
+        installation['giftCardApiToken'] = encrypt(giftCardApiToken);
+      }
 
-    return await this.find(teamId);
+      await this.repository.update(
+        { teamId },
+        {
+          ...installation,
+        }
+      );
+
+      return await this.find(teamId);
+    } catch (error) {
+      logger.error('InstallationController.update()', error);
+    }
   }
 }

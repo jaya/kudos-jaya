@@ -4,7 +4,6 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
   try {
     await ack();
     //TODO: ver se tem como mostrar os valores atuais
-    //TODO: não deixar os dois campos como obrigatórios
     //TODO: não enviar sempre a mesma mensagem de sucesso
     await client.views.open({
       trigger_id: body.trigger_id,
@@ -19,6 +18,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
           {
             type: 'input',
             block_id: 'setup_todo_token',
+            optional: true,
             label: {
               type: 'plain_text',
               text: 'Fill in the field below with the token provided by Todo Cartões',
@@ -37,6 +37,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
           {
             type: 'input',
             block_id: 'setup_default_channel_id',
+            optional: true,
             element: {
               type: 'plain_text_input',
               action_id: 'default_channel_id',
@@ -48,8 +49,29 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
             },
             hint: {
               type: 'plain_text',
-              text: 'Enter the default Slack channel id (ex: C93LZNJ64).',
+              text: 'Enter the default Slack channel id (ex: C93LZNJ64, #bots).',
               emoji: true,
+            },
+          },
+          {
+            type: 'input',
+            block_id: 'setup_default_amount',
+            optional: true,
+            element: {
+              type: 'number_input',
+              is_decimal_allowed: true,
+              action_id: 'default_amount',
+              min_value: '100',
+            },
+            label: {
+              type: 'plain_text',
+              text: 'Default amount to add to the wallet when someone receives a kudo',
+              emoji: true,
+            },
+            hint: {
+              type: 'plain_text',
+              text: 'Ex: 100',
+              emoji: false,
             },
           },
         ],
