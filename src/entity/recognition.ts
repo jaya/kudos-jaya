@@ -30,7 +30,7 @@ export class Recognition {
   @Column({ default: () => 'NOW()' })
   createdAt: Date;
 
-  @ManyToOne(() => Installation, { nullable: true })
+  @ManyToOne(() => Installation, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'teamId' })
   installation: Installation;
 

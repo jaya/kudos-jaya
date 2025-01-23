@@ -13,6 +13,7 @@ export class InstallationController {
     return await this.repository.save({
       teamId: installation.team.id,
       teamName: installation.team.name,
+      defaultAmount: 100,
       ...installation,
     });
   }

@@ -1,7 +1,7 @@
 import { AppDataSource } from '@/data-source';
 import { Recognition } from '@/entity/recognition';
 import logger from '@/utils/logger';
-import config from 'config';
+import { InstallationController } from './installation';
 import { WalletController } from './wallet';
 
 type RecognitionSummary = {
@@ -26,11 +26,11 @@ export class RecognitionController {
     const { toId, teamId } = params;
     try {
       const response = await this.recognitionRepository.save(params);
+      const { defaultAmount } = await new InstallationController().find(teamId);
       if (response.id) {
         await new WalletController().deposit({
           ownerId: toId,
-          //TODO: obter das configurações do app
-          amount: config.get<number>('app.deposit.defaultAmount'),
+          amount: defaultAmount,
           teamId,
         });
       }

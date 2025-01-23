@@ -1,3 +1,4 @@
+import { decimalTransformer } from '@/utils/decimal-transformer';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
@@ -39,6 +40,16 @@ export class Installation {
 
   @Column({ nullable: true })
   defaultRecognitionChannel: string;
+
+  @Column({
+    name: 'defaultAmount',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 100.0,
+    transformer: decimalTransformer,
+  })
+  defaultAmount: number;
 
   @Column({ default: () => 'NOW()' })
   createdAt: Date;

@@ -26,7 +26,7 @@ export class Wallet {
   })
   balance: number;
 
-  @ManyToOne(() => Installation, { nullable: true })
+  @ManyToOne(() => Installation, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'teamId' })
   installation: Installation;
 
