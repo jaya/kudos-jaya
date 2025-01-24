@@ -2,6 +2,7 @@ import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import { IGiftCardPayload } from '@/models/IGiftCard';
 import { decrypt } from '@/utils/encrypt';
 import { InstallationController } from './installation';
+import { TransactionController } from './transaction';
 import { WalletController } from './wallet';
 
 type GiftCard = {
@@ -20,10 +21,11 @@ type EmitGiftCardParams = {
 
 export class RedeemController {
   private readonly walletController = new WalletController();
+  private readonly transactionController = new TransactionController();
 
   public async emitGiftCard(params: EmitGiftCardParams): Promise<GiftCard> {
     const { userId, teamId, amount, cardId } = params;
-    const balance = await this.walletController.getBalance({
+    const { balance, id: walletId } = await this.walletController.find({
       ownerId: userId,
       teamId,
     });
@@ -61,7 +63,13 @@ export class RedeemController {
       }
 
       await this.walletController.withdraw({ ownerId: userId, teamId, amount });
-      //TODO: salvar em tabela de transações
+      await this.transactionController.register({
+        teamId,
+        walletId,
+        amount,
+        productId: cardId,
+      });
+
       return {
         success: true,
         url: response.url,
