@@ -36,6 +36,10 @@ const settings = {
         'https://corporate-api-gateway.todocartoes.com.br/staging/v2',
       cacheTtl: process.env.TODO_CACHE_TTL || 604800,
     },
+    giphy: {
+      apiKey: process.env.GIPHY_API_KEY,
+      baseUrl: process.env.GIPHY_BASE_URL || 'https://api.giphy.com',
+    },
   },
 };
 module.exports = settings;

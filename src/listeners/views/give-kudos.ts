@@ -1,8 +1,8 @@
+import { Giphy } from '@/clients/giphy/giphy';
+import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
-import { matchVibe } from '@/utils/find-gif';
 import logger from '@/utils/logger';
-import { InstallationController } from '../../controllers/installation';
-import { getSlackUserInfo } from '../../utils/user-slack-info';
+import { getSlackUserInfo } from '@/utils/user-slack-info';
 
 const giveKudosViewCallback = async ({ ack, view, client, body }) => {
   await ack();
@@ -12,10 +12,7 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
 
     const message =
       view.state.values['kudo_message_block']['kudo_message'].value;
-    //TODO: obter gifs da internet
-    const gif = matchVibe(
-      view.state.values['kudo_vibe_block']['kudo_vibe'].value ?? 'plants'
-    );
+    const gif = await new Giphy().fetchGif();
     const fromId = body.user.id;
     const teamId = body.user.team_id;
 
@@ -55,10 +52,21 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
 
     await client.chat.postMessage({
       channel: defaultRecognitionChannel,
-      text:
-        `*<@${fromId}> is recognizing${usersText}!* :party-jaya:\n` +
-        `> ${message}\n` +
-        `<${gif.URL}>`,
+      text: `*<@${fromId}> is recognizing${usersText}!* :party-jaya:\n> ${message}`,
+      blocks: [
+        {
+          type: 'image',
+          image_url: gif,
+          alt_text: 'GIF',
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*<@${fromId}> is recognizing${usersText}!* :party-jaya: \n${message}`,
+          },
+        },
+      ],
     });
   } catch (e) {
     logger.error('giveKudosViewCallback()', { error: e });
