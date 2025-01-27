@@ -1,8 +1,13 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
+import { InstallationController } from '@/controllers/installation';
 import { RedeemController } from '@/controllers/redeem';
 import { WalletController } from '@/controllers/wallet';
 
 jest.mock('@/controllers/wallet');
+jest.mock('@/controllers/installation');
+jest.mock('@/utils/encrypt', () => ({
+  decrypt: jest.fn(),
+}));
 
 describe('RedeemController', () => {
   let redeemController: RedeemController;
@@ -25,10 +30,14 @@ describe('RedeemController', () => {
       cardId: 'card123',
       amount: 100,
       imageId: 'img123',
+      teamId: 'team1324',
     };
 
     it('should return an error if the user has insufficient balance', async () => {
-      mockWalletController.getBalance.mockResolvedValueOnce(50);
+      mockWalletController.find.mockResolvedValueOnce({
+        id: 1,
+        balance: 50,
+      });
 
       const result = await redeemController.emitGiftCard(params);
 
@@ -38,19 +47,27 @@ describe('RedeemController', () => {
           'You cannot request a gift card with a value greater than your current balance.',
       });
 
-      expect(mockWalletController.getBalance).toHaveBeenCalledWith('user1');
+      expect(mockWalletController.find).toHaveBeenCalledWith({
+        ownerId: params.userId,
+        teamId: params.teamId,
+      });
     });
 
     it('should call TodoCartoes.emitGiftCard and return success if all goes well', async () => {
-      mockWalletController.getBalance.mockResolvedValueOnce(200);
+      mockWalletController.find.mockResolvedValueOnce({
+        balance: 200,
+        id: 1,
+      });
 
-      const mockEmitGiftCardResponse = {
-        url: 'http://giftcard.url',
-      };
+      const mockInstallController = jest
+        .spyOn(InstallationController.prototype, 'find')
+        .mockResolvedValueOnce({ giftCardApiToken: 'mocked-decrypted-token' });
 
       const mockEmitGiftCard = jest
         .spyOn(TodoCartoes.prototype, 'emitGiftCard')
-        .mockResolvedValueOnce(mockEmitGiftCardResponse);
+        .mockResolvedValueOnce({
+          url: 'http://giftcard.url',
+        });
 
       const result = await redeemController.emitGiftCard(params);
 
@@ -66,12 +83,19 @@ describe('RedeemController', () => {
         transactionId: expect.stringContaining('jayatech'),
         amount: 100,
       });
-
-      expect(mockWalletController.withdraw).toHaveBeenCalledWith('user1', 100);
+      expect(mockInstallController).toHaveBeenCalledWith(params.teamId);
+      expect(mockWalletController.withdraw).toHaveBeenCalledWith({
+        amount: params.amount,
+        ownerId: params.userId,
+        teamId: params.teamId,
+      });
     });
 
     it('should handle TodoCartoes API errors gracefully', async () => {
-      mockWalletController.getBalance.mockResolvedValueOnce(200);
+      mockWalletController.find.mockResolvedValueOnce({ balance: 200 });
+      const mockInstallController = jest
+        .spyOn(InstallationController.prototype, 'find')
+        .mockResolvedValueOnce({ giftCardApiToken: 'mocked-decrypted-token' });
 
       const mockEmitGiftCardResponse = { url: undefined };
 
@@ -87,10 +111,14 @@ describe('RedeemController', () => {
       });
 
       expect(mockWalletController.withdraw).not.toHaveBeenCalled();
+      expect(mockInstallController).toHaveBeenCalledWith(params.teamId);
     });
 
     it('should handle exceptions during API calls', async () => {
-      mockWalletController.getBalance.mockResolvedValueOnce(200);
+      mockWalletController.find.mockResolvedValueOnce({ balance: 200 });
+      const mockInstallController = jest
+        .spyOn(InstallationController.prototype, 'find')
+        .mockResolvedValueOnce({ giftCardApiToken: 'mocked-decrypted-token' });
 
       jest
         .spyOn(TodoCartoes.prototype, 'emitGiftCard')
@@ -102,7 +130,7 @@ describe('RedeemController', () => {
         success: false,
         message: 'We had a problem generating your card :cry:',
       });
-
+      expect(mockInstallController).toHaveBeenCalledWith(params.teamId);
       expect(mockWalletController.withdraw).not.toHaveBeenCalled();
     });
   });

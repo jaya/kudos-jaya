@@ -6,7 +6,7 @@ import logger from '../utils/logger';
 export class InstallationController {
   private readonly repository = AppDataSource.getRepository(Installation);
 
-  public async find(teamId: string): Promise<Installation> {
+  public async find(teamId: string): Promise<Partial<Installation>> {
     return await this.repository.findOneBy({ teamId });
   }
 
@@ -21,7 +21,7 @@ export class InstallationController {
 
   public async update(
     installation: Partial<Installation>
-  ): Promise<Installation> {
+  ): Promise<Partial<Installation>> {
     try {
       const { teamId, giftCardApiToken } = installation;
 

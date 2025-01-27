@@ -52,7 +52,7 @@ export class WalletController {
     return wallet?.balance ?? 0;
   }
 
-  public async find(params: BaseParams): Promise<Wallet> {
+  public async find(params: BaseParams): Promise<Partial<Wallet>> {
     const { ownerId, teamId } = params;
     return await this.walletRepository.findOneBy({ ownerId, teamId });
   }
