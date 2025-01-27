@@ -1,24 +1,29 @@
+import { Giphy } from '@/clients/giphy/giphy';
+import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
-import { matchVibe } from '@/utils/find-gif';
 import logger from '@/utils/logger';
 import giveKudosViewCallback from '../give-kudos';
 
 jest.mock('@/controllers/recognition');
-jest.mock('@/utils/find-gif');
+jest.mock('@/controllers/installation');
+jest.mock('@/utils/user-slack-info', () => ({
+  getSlackUserInfo: jest.fn(),
+}));
 
 const mockAck = jest.fn();
-const mockPostMessage = jest.fn();
 
 const mockClient = {
   chat: {
-    postMessage: mockPostMessage,
+    postMessage: jest.fn(),
   },
+  token: 'bot-token-test-mock',
 };
 
 describe('giveKudosViewCallback', () => {
   const body = {
     user: {
       id: 'U12345',
+      team_id: 'TEAM1234',
     },
   };
 
@@ -30,37 +35,33 @@ describe('giveKudosViewCallback', () => {
             selected_users: ['U67890', 'U1234'],
           },
         },
-        kudo_channel_block: {
-          kudo_channel: {
-            selected_channel: 'C12345',
-          },
-        },
         kudo_message_block: {
           kudo_message: {
             value: 'Great job on the project!',
-          },
-        },
-        kudo_vibe_block: {
-          kudo_vibe: {
-            value: 'celebration',
           },
         },
       },
     },
   };
 
+  const mockedGifUrl = 'https://test-url.gif.com';
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should send kudos to the correct channel and users', async () => {
-    const mockGif = { URL: 'https://mock-gif-url.com' };
-    (matchVibe as jest.Mock).mockReturnValue(mockGif);
-    const mockSave = jest.fn().mockResolvedValue({ ok: true });
+    const giphyMocked = jest
+      .spyOn(Giphy.prototype, 'fetchGif')
+      .mockResolvedValueOnce(mockedGifUrl);
 
-    (RecognitionController as jest.Mock).mockImplementation(() => ({
-      save: mockSave,
-    }));
+    const installControllerMocked = jest
+      .spyOn(InstallationController.prototype, 'find')
+      .mockResolvedValueOnce({ defaultRecognitionChannel: 'CHANNEL123' });
+
+    jest
+      .spyOn(RecognitionController.prototype, 'save')
+      .mockResolvedValue({ ok: true });
 
     await giveKudosViewCallback({
       ack: mockAck,
@@ -69,30 +70,47 @@ describe('giveKudosViewCallback', () => {
       body,
     });
 
-    expect(mockPostMessage).toHaveBeenCalledWith({
+    expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
       channel: 'U67890',
       text: 'Hey <@U67890> Jaya is sending you a gift, check your balance! ',
     });
 
-    expect(mockPostMessage).toHaveBeenCalledWith({
+    expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
       channel: 'U1234',
       text: 'Hey <@U1234> Jaya is sending you a gift, check your balance! ',
     });
 
-    expect(mockPostMessage).toHaveBeenCalledWith({
-      channel: '#wearejaya',
-      text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* :party-jaya:\n> Great job on the project!\n<https://mock-gif-url.com>`,
+    expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
+      channel: 'CHANNEL123',
+      text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* :party-jaya:\n> Great job on the project!`,
+      blocks: [
+        {
+          type: 'image',
+          image_url: mockedGifUrl,
+          alt_text: 'GIF',
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* :party-jaya: \nGreat job on the project!`,
+          },
+        },
+      ],
     });
+    expect(mockClient.chat.postMessage).toHaveBeenCalledTimes(3);
+    expect(giphyMocked).toHaveBeenCalled();
+    expect(installControllerMocked).toHaveBeenCalledWith(body.user.team_id);
   });
 
   it('should handle errors from RecognitionController and notify the user', async () => {
-    const mockGif = { URL: 'https://mock-gif-url.com' };
-    (matchVibe as jest.Mock).mockReturnValue(mockGif);
-    const mockSave = jest.fn().mockResolvedValue({ ok: false });
-
-    (RecognitionController as jest.Mock).mockImplementation(() => ({
-      save: mockSave,
-    }));
+    jest.spyOn(Giphy.prototype, 'fetchGif').mockResolvedValueOnce(mockedGifUrl);
+    jest
+      .spyOn(InstallationController.prototype, 'find')
+      .mockResolvedValueOnce({ defaultRecognitionChannel: 'CHANNEL123' });
+    jest
+      .spyOn(RecognitionController.prototype, 'save')
+      .mockResolvedValue({ ok: false });
 
     await giveKudosViewCallback({
       ack: mockAck,
@@ -101,18 +119,22 @@ describe('giveKudosViewCallback', () => {
       body,
     });
 
-    expect(mockPostMessage).toHaveBeenCalledWith({
+    expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
       channel: 'U12345',
       text: 'An error occurred while giving <@U67890> a kudos :cry:',
     });
   });
 
   it('should log a non mapped error', async () => {
-    const mockSave = jest.fn().mockRejectedValue(new Error());
+    jest.spyOn(Giphy.prototype, 'fetchGif').mockResolvedValueOnce(mockedGifUrl);
+    jest
+      .spyOn(InstallationController.prototype, 'find')
+      .mockResolvedValueOnce({ defaultRecognitionChannel: 'CHANNEL123' });
 
-    (RecognitionController as jest.Mock).mockImplementation(() => ({
-      save: mockSave,
-    }));
+    jest
+      .spyOn(RecognitionController.prototype, 'save')
+      .mockRejectedValue(new Error());
+
     logger.error = jest.fn();
 
     await giveKudosViewCallback({
@@ -125,33 +147,5 @@ describe('giveKudosViewCallback', () => {
     expect(logger.error).toHaveBeenCalledWith('giveKudosViewCallback()', {
       error: new Error(),
     });
-  });
-
-  it('should handle a missing kudo vibe by defaulting to "plants"', async () => {
-    const modifiedView = {
-      ...view,
-      state: {
-        values: {
-          ...view.state.values,
-          kudo_vibe_block: {
-            kudo_vibe: {
-              value: undefined,
-            },
-          },
-        },
-      },
-    };
-
-    const mockGif = { URL: 'https://mock-gif-url.com' };
-    (matchVibe as jest.Mock).mockReturnValue(mockGif);
-
-    await giveKudosViewCallback({
-      ack: mockAck,
-      view: modifiedView,
-      client: mockClient,
-      body,
-    });
-
-    expect(matchVibe).toHaveBeenCalledWith('plants');
   });
 });
