@@ -51,6 +51,6 @@ export class Installation {
   })
   defaultAmount: number;
 
-  @Column({ default: () => 'NOW()' })
+  @Column({ default: /* istanbul ignore next */ () => 'NOW()' })
   createdAt: Date;
 }

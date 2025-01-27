@@ -38,7 +38,6 @@ export class Product {
   })
   maxValue: number;
 
-  /* istanbul ignore next */
-  @UpdateDateColumn({ default: () => 'NOW()' })
+  @UpdateDateColumn({ default: /* istanbul ignore next */ () => 'NOW()' })
   updatedAt: Date;
 }

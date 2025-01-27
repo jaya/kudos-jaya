@@ -27,10 +27,13 @@ export class Recognition {
   @Column({ nullable: true })
   description: string | null;
 
-  @Column({ default: () => 'NOW()' })
+  @Column({ default: /* istanbul ignore next */ () => 'NOW()' })
   createdAt: Date;
 
-  @ManyToOne(() => Installation, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(/* istanbul ignore next */ () => Installation, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'teamId' })
   installation: Installation;
 

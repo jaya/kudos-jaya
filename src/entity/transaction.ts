@@ -34,18 +34,27 @@ export class Transaction {
   @Column()
   productId: string;
 
-  @Column({ default: () => 'NOW()' })
+  @Column({ default: /* istanbul ignore next */ () => 'NOW()' })
   createdAt: Date;
 
-  @ManyToOne(() => Installation, { nullable: false, onDelete: 'NO ACTION' })
+  @ManyToOne(/* istanbul ignore next */ () => Installation, {
+    nullable: false,
+    onDelete: 'NO ACTION',
+  })
   @JoinColumn({ name: 'teamId' })
   installation: Installation;
 
-  @ManyToOne(() => Wallet, { nullable: false, onDelete: 'NO ACTION' })
+  @ManyToOne(/* istanbul ignore next */ () => Wallet, {
+    nullable: false,
+    onDelete: 'NO ACTION',
+  })
   @JoinColumn({ name: 'walletId' })
   wallet: Wallet;
 
-  @ManyToOne(() => Product, { nullable: false, onDelete: 'NO ACTION' })
+  @ManyToOne(/* istanbul ignore next */ () => Product, {
+    nullable: false,
+    onDelete: 'NO ACTION',
+  })
   @JoinColumn({ name: 'productId', referencedColumnName: 'id' })
   product: Product;
 }
