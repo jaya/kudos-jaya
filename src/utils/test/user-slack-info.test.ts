@@ -11,6 +11,7 @@ jest.mock('@slack/web-api', () => {
 });
 
 describe('getSlackUserInfo', () => {
+  const botToken = 'bot-token-mocked';
   const userId = 'U123456';
   const mockRealName = 'John Doe';
 
@@ -30,7 +31,7 @@ describe('getSlackUserInfo', () => {
       },
     });
 
-    const realName = await getSlackUserInfo(userId);
+    const realName = await getSlackUserInfo(botToken, userId);
 
     expect(realName).toBe(mockRealName);
     expect(slack.users.info).toHaveBeenCalledWith({ user: userId });
@@ -41,7 +42,9 @@ describe('getSlackUserInfo', () => {
       new Error('user_not_found')
     );
 
-    await expect(getSlackUserInfo(userId)).rejects.toThrow('user_not_found');
+    await expect(getSlackUserInfo(botToken, userId)).rejects.toThrow(
+      'user_not_found'
+    );
     expect(slack.users.info).toHaveBeenCalledWith({ user: userId });
   });
 });
