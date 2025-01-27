@@ -35,62 +35,6 @@ exports[`openKudosView should call client.views.open with the correct payload 1`
       },
       "type": "input",
     },
-    {
-      "block_id": "kudo_vibe_block",
-      "element": {
-        "action_id": "kudo_vibe",
-        "options": [
-          {
-            "text": {
-              "text": "Appreciation for someone 🫂",
-              "type": "plain_text",
-            },
-            "value": "appreciation",
-          },
-          {
-            "text": {
-              "text": "Celebrating a victory 🏆",
-              "type": "plain_text",
-            },
-            "value": "victory",
-          },
-          {
-            "text": {
-              "text": "Thankful for great teamwork ⚽️",
-              "type": "plain_text",
-            },
-            "value": "teamwork",
-          },
-          {
-            "text": {
-              "text": "Amazed at awesome work ☄️",
-              "type": "plain_text",
-            },
-            "value": "awesome_work",
-          },
-          {
-            "text": {
-              "text": "Excited for the future 🎉",
-              "type": "plain_text",
-            },
-            "value": "future",
-          },
-          {
-            "text": {
-              "text": "No vibes, just plants 🪴",
-              "type": "plain_text",
-            },
-            "value": "plants",
-          },
-        ],
-        "type": "static_select",
-      },
-      "label": {
-        "text": "What is this kudo's "vibe"?",
-        "type": "plain_text",
-      },
-      "type": "input",
-    },
   ],
   "callback_id": "give_kudos_view",
   "submit": {
