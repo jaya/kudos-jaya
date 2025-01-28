@@ -1,9 +1,6 @@
 import './utils/module-alias';
 //module alias must be on top
-import {
-  fetchInstallation,
-  storeInstallation,
-} from '@/utils/installation/installationWizard';
+import { fetchInstallation, storeInstallation } from '@/utils/installation';
 import logger from '@/utils/logger';
 import { App } from '@slack/bolt';
 import axios from 'axios';
