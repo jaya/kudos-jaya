@@ -1,7 +1,7 @@
 import { AppDataSource } from '@/data-source';
 import { Installation } from '@/entity/installation';
 import { encrypt } from '@/utils/encrypt';
-import logger from '../utils/logger';
+import logger from '@/utils/logger';
 
 export class InstallationController {
   private readonly repository = AppDataSource.getRepository(Installation);
