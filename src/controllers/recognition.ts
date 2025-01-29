@@ -4,7 +4,7 @@ import logger from '@/utils/logger';
 import { InstallationController } from './installation';
 import { WalletController } from './wallet';
 
-type RecognitionSummary = {
+export type RecognitionSummary = {
   userId: string;
   recognitionCount: number;
 }[];
