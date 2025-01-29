@@ -1,5 +1,5 @@
 import { AppDataSource } from '@/data-source';
-import { Transaction } from '@/entity/transaction';
+import { Transaction } from '@/entities/';
 import logger from '@/utils/logger';
 
 export class TransactionController {

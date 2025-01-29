@@ -1,5 +1,5 @@
 import { AppDataSource } from '@/data-source';
-import { Product } from '@/entity/product';
+import { Product } from '@/entities/';
 import { BaseProduct } from '@/models/IProduct';
 import logger from '@/utils/logger';
 

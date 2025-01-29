@@ -1,7 +1,8 @@
 import { AppDataSource } from '@/data-source';
-import { Recognition } from '@/entity/recognition';
+import { Recognition } from '@/entities/';
 import logger from '@/utils/logger';
 import { InstallationController } from './installation';
+import UserController from './user';
 import { WalletController } from './wallet';
 
 export type RecognitionSummary = {
@@ -11,21 +12,46 @@ export type RecognitionSummary = {
 
 type SaveRecognitionParams = {
   fromId: string;
-  fromName: string;
   toId: string;
-  toName: string;
   message: string;
   teamId: string;
+  botToken: string;
 };
 
 export class RecognitionController {
   private readonly recognitionRepository =
     AppDataSource.getRepository(Recognition);
+  private readonly userController = new UserController();
 
   public async save(params: SaveRecognitionParams) {
-    const { toId, teamId } = params;
+    const { toId, teamId, fromId, botToken } = params;
     try {
-      const response = await this.recognitionRepository.save(params);
+      let fromUser = await this.userController.find(fromId);
+      let toUser = await this.userController.find(toId);
+      if (!fromUser) {
+        fromUser = await this.userController.create({
+          teamId,
+          botToken,
+          userId: fromId,
+        });
+      }
+      if (!toUser) {
+        toUser = await this.userController.create({
+          teamId,
+          botToken,
+          userId: toId,
+        });
+      }
+
+      const response = await this.recognitionRepository.save({
+        fromId,
+        fromName: fromUser.name,
+        toId,
+        toName: toUser.name,
+        description: params.message,
+        teamId,
+      });
+
       const { defaultAmount } = await new InstallationController().find(teamId);
       if (response.id) {
         await new WalletController().deposit({

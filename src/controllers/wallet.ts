@@ -1,5 +1,5 @@
 import { AppDataSource } from '@/data-source';
-import { Wallet } from '@/entity/wallet';
+import { Wallet } from '@/entities/wallet';
 
 type BaseParams = {
   ownerId: string;

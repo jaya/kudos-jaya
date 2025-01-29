@@ -1,6 +1,6 @@
 import { InstallationController } from '@/controllers/installation';
 import { storedInstallation } from '@/controllers/test/samples/installation';
-import { Installation } from '@/entity';
+import { Installation } from '@/entities';
 import { fetchInstallation } from '../fetch-install';
 
 jest.mock('@/controllers/installation');

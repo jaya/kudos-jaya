@@ -5,30 +5,26 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { decimalTransformer } from '../utils/decimal-transformer';
 import { Installation } from './installation';
 
 @Entity()
-export class Recognition {
+export class Wallet {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  fromId: string;
+  ownerId: string;
 
-  @Column()
-  fromName: string;
-
-  @Column()
-  toId: string;
-
-  @Column()
-  toName: string;
-
-  @Column({ nullable: true })
-  description: string | null;
-
-  @Column({ default: /* istanbul ignore next */ () => 'NOW()' })
-  createdAt: Date;
+  @Column({
+    name: 'balance',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0.0,
+    transformer: decimalTransformer,
+  })
+  balance: number;
 
   @ManyToOne(/* istanbul ignore next */ () => Installation, {
     nullable: true,
@@ -39,4 +35,11 @@ export class Recognition {
 
   @Column({ nullable: true })
   teamId: string | null;
+
+  // @ManyToOne(/* istanbul ignore next */ () => User, {
+  //   nullable: true,
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn({ name: 'ownerId' })
+  // user: User;
 }

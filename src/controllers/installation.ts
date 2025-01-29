@@ -1,5 +1,5 @@
 import { AppDataSource } from '@/data-source';
-import { Installation } from '@/entity/installation';
+import { Installation } from '@/entities/';
 import { encrypt } from '@/utils/encrypt';
 import logger from '@/utils/logger';
 

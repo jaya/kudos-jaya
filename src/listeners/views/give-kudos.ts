@@ -2,7 +2,6 @@ import { Giphy } from '@/clients/giphy/giphy';
 import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
 import logger from '@/utils/logger';
-import { getSlackUserInfo } from '@/utils/user-slack-info';
 
 const giveKudosViewCallback = async ({ ack, view, client, body }) => {
   await ack();
@@ -22,16 +21,12 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
     const usersText = [];
 
     for (const toId of users) {
-      const fromName = await getSlackUserInfo(botToken, fromId);
-      const toName = await getSlackUserInfo(botToken, toId);
-
       const response = await new RecognitionController().save({
         fromId,
-        fromName,
         toId,
-        toName,
         message,
         teamId,
+        botToken,
       });
 
       if (!response.ok) {

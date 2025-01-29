@@ -1,5 +1,5 @@
-import { decimalTransformer } from '@/utils/decimal-transformer';
 import { Column, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { decimalTransformer } from '../utils/decimal-transformer';
 
 @Entity()
 export class Product {

@@ -1,10 +1,3 @@
-import {
-  Installation,
-  Product,
-  Recognition,
-  Transaction,
-  Wallet,
-} from '@/entity';
 import config from 'config';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
@@ -19,9 +12,8 @@ export const AppDataSource = new DataSource({
   username: user,
   password: password,
   database: name,
-  synchronize: true,
+  synchronize: false,
   logging: false,
-  entities: [Wallet, Recognition, Product, Installation, Transaction],
-  migrations: [],
-  subscribers: [],
+  entities: [`${__dirname}/**/entities/*.{ts,js}`],
+  migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
 });

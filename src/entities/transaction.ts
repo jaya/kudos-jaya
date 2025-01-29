@@ -1,4 +1,3 @@
-import { decimalTransformer } from '@/utils/decimal-transformer';
 import {
   Column,
   Entity,
@@ -6,6 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { decimalTransformer } from '../utils/decimal-transformer';
 import { Installation } from './installation';
 import { Product } from './product';
 import { Wallet } from './wallet';

@@ -1,5 +1,5 @@
-import { decimalTransformer } from '@/utils/decimal-transformer';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { decimalTransformer } from '../utils/decimal-transformer';
 
 @Entity()
 export class Installation {

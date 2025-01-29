@@ -7,7 +7,10 @@ export async function getSlackUserInfo(botToken: string, userId: string) {
     const client = new WebClient(botToken);
     const response = await client.users.info({ user: userId });
 
-    return response?.user?.profile?.real_name;
+    return {
+      name: response?.user?.profile?.real_name,
+      email: response?.user?.profile?.email,
+    };
   } catch (e) {
     logger.error('getSlackUserInfo()', { error: e });
     throw e;
