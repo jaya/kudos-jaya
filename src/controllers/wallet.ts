@@ -52,6 +52,18 @@ export class WalletController {
     return wallet?.balance ?? 0;
   }
 
+  public async getBalanceToBeRedeemed(
+    params: Omit<BaseParams, 'ownerId'>
+  ): Promise<number> {
+    const balance = await this.walletRepository
+      .createQueryBuilder('wallet')
+      .select('SUM(wallet.balance)', 'total')
+      .where('wallet.teamId = :teamId', { teamId: params.teamId })
+      .getRawOne();
+
+    return balance.total ?? 0;
+  }
+
   public async find(params: BaseParams): Promise<Partial<Wallet>> {
     const { ownerId, teamId } = params;
     return await this.walletRepository.findOneBy({ ownerId, teamId });
