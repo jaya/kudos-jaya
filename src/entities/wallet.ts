@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { decimalTransformer } from '../utils/decimal-transformer';
 import { Installation } from './installation';
+import { User } from './user';
 
 @Entity()
 export class Wallet {
@@ -36,10 +37,10 @@ export class Wallet {
   @Column({ nullable: true })
   teamId: string | null;
 
-  // @ManyToOne(/* istanbul ignore next */ () => User, {
-  //   nullable: true,
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'ownerId' })
-  // user: User;
+  @ManyToOne(/* istanbul ignore next */ () => User, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'ownerId' }, { name: 'teamId' }])
+  user: User;
 }

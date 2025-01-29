@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Installation } from './installation';
+import { User } from './user';
 
 @Entity()
 export class Recognition {
@@ -40,17 +41,17 @@ export class Recognition {
   @Column({ nullable: true })
   teamId: string | null;
 
-  // @ManyToOne(/* istanbul ignore next */ () => User, {
-  //   nullable: true,
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'fromId' })
-  // fromUser: User;
+  @ManyToOne(/* istanbul ignore next */ () => User, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'fromId' }, { name: 'teamId' }])
+  fromUser: User;
 
-  // @ManyToOne(/* istanbul ignore next */ () => User, {
-  //   nullable: true,
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'toId' })
-  // toUser: User;
+  @ManyToOne(/* istanbul ignore next */ () => User, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'fromId' }, { name: 'teamId' }])
+  toUser: User;
 }

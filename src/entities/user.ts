@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Installation } from './installation';
 
 @Entity()
 export class User {
@@ -11,12 +12,12 @@ export class User {
   @Column({ nullable: true })
   email: string;
 
-  // @ManyToOne(/* istanbul ignore next */ () => Installation, {
-  //   nullable: true,
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'teamId' })
-  // installation: Installation;
+  @ManyToOne(/* istanbul ignore next */ () => Installation, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'teamId' })
+  installation: Installation;
 
   @Column()
   teamId: string;

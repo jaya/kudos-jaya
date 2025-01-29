@@ -15,7 +15,8 @@
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:create": "dotenv -e .env -- npm run typeorm -- migration:create ./src/migrations/$npm_config_name",
     "migration:gen": "dotenv -e .env -- npm run typeorm -- migration:generate -d ./src/data-source.ts ./src/migrations/$npm_config_name --pretty",
-    "migration:up": "dotenv -e .env -- npm run typeorm -- migration:run -d src/data-source.ts"
+    "migration:up": "dotenv -e .env -- npm run typeorm -- migration:run -d src/data-source.ts",
+    "migration:down": "dotenv -e .env -- npm run typeorm -- migration:revert -d ./src/data-source.ts"
   },
   "author": "",
   "license": "ISC",
