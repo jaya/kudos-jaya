@@ -7,6 +7,12 @@ describe('WalletController', () => {
   let walletController: WalletController;
   let mockWalletRepository;
 
+  const mockQueryBuilder = {
+    select: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
+    getRawOne: jest.fn(),
+  };
+
   const mockParams = {
     ownerId: 'user1',
     balance: 100,
@@ -19,6 +25,7 @@ describe('WalletController', () => {
       findOneBy: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnThis(),
     };
     (AppDataSource.getRepository as jest.Mock).mockReturnValue(
       mockWalletRepository
@@ -111,6 +118,33 @@ describe('WalletController', () => {
       expect(balance).toBe(0);
     });
   });
+
+  describe('getBalanceToBeRedeemed', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      mockWalletRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+    });
+    it('should return the sum of all wallets', async () => {
+      mockQueryBuilder.getRawOne.mockResolvedValueOnce({ total: 3000 });
+
+      const balance = await walletController.getBalanceToBeRedeemed({
+        teamId: 'T1234',
+      });
+
+      expect(balance).toBe(3000);
+    });
+
+    it('should return 0 if there is no data to the team', async () => {
+      mockQueryBuilder.getRawOne.mockResolvedValueOnce({ total: null });
+
+      const balance = await walletController.getBalanceToBeRedeemed({
+        teamId: 'T1234',
+      });
+
+      expect(balance).toBe(0);
+    });
+  });
+
   describe('find', () => {
     it('Should return the wallet of given parameters', async () => {
       mockWalletRepository.findOneBy.mockResolvedValueOnce(mockParams);
