@@ -26,8 +26,8 @@ export class RecognitionController {
   public async save(params: SaveRecognitionParams) {
     const { toId, teamId, fromId, botToken } = params;
     try {
-      let fromUser = await this.userController.find(fromId);
-      let toUser = await this.userController.find(toId);
+      let fromUser = await this.userController.find({ userId: fromId, teamId });
+      let toUser = await this.userController.find({ userId: toId, teamId });
       if (!fromUser) {
         fromUser = await this.userController.create({
           teamId,

@@ -20,7 +20,13 @@ export default class UserController {
     }
   }
 
-  public async find(userId: string): Promise<Partial<User>> {
-    return this.repository.findOneBy({ id: userId });
+  public async find({
+    userId,
+    teamId,
+  }: {
+    userId: string;
+    teamId: string;
+  }): Promise<Partial<User>> {
+    return this.repository.findOneBy({ id: userId, teamId });
   }
 }
