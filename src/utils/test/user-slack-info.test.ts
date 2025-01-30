@@ -14,6 +14,7 @@ describe('user-slack-info', () => {
   const botToken = 'bot-token-mocked';
   const userId = 'U123456';
   const mockRealName = 'John Doe';
+  const mockEmail = 'john@mail.com';
 
   let slack: WebClient;
 
@@ -21,19 +22,20 @@ describe('user-slack-info', () => {
     slack = new WebClient();
   });
   describe('getSlackUserInfo()', () => {
-    it('returns real name on successful response', async () => {
+    it('returns name and email on successful response', async () => {
       (slack.users.info as jest.Mock).mockResolvedValue({
         ok: true,
         user: {
           profile: {
             real_name: mockRealName,
+            email: mockEmail,
           },
         },
       });
 
-      const realName = await getSlackUserInfo(botToken, userId);
+      const user = await getSlackUserInfo(botToken, userId);
 
-      expect(realName).toBe(mockRealName);
+      expect(user).toEqual({ name: mockRealName, email: mockEmail });
       expect(slack.users.info).toHaveBeenCalledWith({ user: userId });
     });
 
