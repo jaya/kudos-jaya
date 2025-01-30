@@ -1,6 +1,7 @@
 import { RecognitionController } from '@/controllers/recognition';
 import { AppDataSource } from '@/data-source';
 import { InstallationController } from '../installation';
+import UserController from '../user';
 
 jest.mock('@/utils/user-slack-info', () => ({
   getSlackUserInfo: jest.fn(),
@@ -30,12 +31,21 @@ describe('RecognitionController', () => {
   let recognitionController: RecognitionController;
   let mockRepository;
 
-  const fromId = 'user1';
-  const fromName = 'From Name';
-  const toId = 'user2';
-  const toName = 'To Name';
-  const message = 'message test';
   const teamId = 'team123';
+  const mockFromUser = {
+    id: 'U1234AD',
+    name: 'User from',
+    teamId,
+  };
+
+  const mockToUser = {
+    id: 'U4321AD',
+    name: 'User To',
+    teamId,
+  };
+
+  const message = 'message test';
+  const botToken = 'bot-token-1234';
 
   beforeEach(() => {
     mockRepository = {
@@ -66,23 +76,30 @@ describe('RecognitionController', () => {
       jest
         .spyOn(InstallationController.prototype, 'find')
         .mockResolvedValueOnce({ defaultAmount: 100 });
+      jest.spyOn(UserController.prototype, 'find').mockResolvedValue(undefined);
+      jest
+        .spyOn(UserController.prototype, 'create')
+        .mockResolvedValueOnce(mockFromUser);
+      jest
+        .spyOn(UserController.prototype, 'create')
+        .mockResolvedValueOnce(mockToUser);
 
       const result = await recognitionController.save({
-        fromId,
-        fromName,
-        toId,
-        toName,
+        fromId: mockFromUser.id,
+        toId: mockToUser.id,
         message,
         teamId,
+        botToken,
       });
 
       expect(mockRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          fromId,
-          fromName,
-          toId,
-          toName,
-          message: 'message test',
+          fromId: mockFromUser.id,
+          fromName: mockFromUser.name,
+          toId: mockToUser.id,
+          toName: mockToUser.name,
+          description: 'message test',
+          teamId,
         })
       );
       expect(result).toEqual({ ok: true });
@@ -97,11 +114,10 @@ describe('RecognitionController', () => {
 
       const result = await recognitionController.save({
         fromId,
-        fromName,
         toId,
-        toName,
         message,
         teamId,
+        botToken,
       });
 
       expect(result).toEqual({ ok: false });

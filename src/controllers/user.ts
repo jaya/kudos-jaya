@@ -10,7 +10,7 @@ export default class UserController {
     botToken: string;
     teamId: string;
     userId: string;
-  }): Promise<User> {
+  }): Promise<Partial<User>> {
     try {
       const { botToken, userId, teamId } = params;
       const user = await getSlackUserInfo(botToken, userId);
@@ -20,7 +20,7 @@ export default class UserController {
     }
   }
 
-  public async find(userId: string): Promise<User> {
+  public async find(userId: string): Promise<Partial<User>> {
     return this.repository.findOneBy({ id: userId });
   }
 }
