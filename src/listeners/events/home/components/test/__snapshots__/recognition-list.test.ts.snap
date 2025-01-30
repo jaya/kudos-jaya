@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getRecognitionListSection() Should return the list of recognitions section of the app home page 1`] = `
+[
+  {
+    "text": {
+      "text": ":sports_medal: #bots 11000 recognitions :sports_medal:",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "text": {
+      "text": "<@user1>: 5 recognitions",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "text": {
+      "text": "<@user2>: 3 recognitions",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
