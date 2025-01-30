@@ -17,31 +17,27 @@ export class TransactionController {
     start: Date;
     end: Date;
   }): Promise<Transaction[]> {
-    try {
-      return this.repository
-        .createQueryBuilder('transaction')
-        .select([
-          'transaction.id as "id"',
-          'installation.teamName as "teamName"',
-          'wallet.ownerId as "ownerId"',
-          'user.name as "name"',
-          'product.name as "product"',
-          'transaction.amount as "amount"',
-          'transaction.createdAt as "createdAt"',
-        ])
-        .innerJoin('transaction.installation', 'installation')
-        .innerJoin('transaction.wallet', 'wallet')
-        .innerJoin('transaction.product', 'product')
-        .innerJoin('wallet.user', 'user')
-        .where('transaction.createdAt BETWEEN :start AND :end', {
-          start: params.start,
-          end: params.end,
-        })
-        .andWhere('transaction.teamId = :teamId', { teamId: params.teamId })
-        .getRawMany();
-    } catch (error) {
-      logger.error('fetchPrizesReport()', error);
-    }
+    return this.repository
+      .createQueryBuilder('transaction')
+      .select([
+        'transaction.id as "id"',
+        'installation.teamName as "teamName"',
+        'wallet.ownerId as "ownerId"',
+        'user.name as "name"',
+        'product.name as "product"',
+        'transaction.amount as "amount"',
+        'transaction.createdAt as "createdAt"',
+      ])
+      .innerJoin('transaction.installation', 'installation')
+      .innerJoin('transaction.wallet', 'wallet')
+      .innerJoin('transaction.product', 'product')
+      .innerJoin('wallet.user', 'user')
+      .where('transaction.createdAt BETWEEN :start AND :end', {
+        start: params.start,
+        end: params.end,
+      })
+      .andWhere('transaction.teamId = :teamId', { teamId: params.teamId })
+      .getRawMany();
   }
 
   public async redeemed(params: {
