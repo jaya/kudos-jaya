@@ -15,13 +15,17 @@ import { customRoutes } from './utils/custom-routes';
 dotenv.config();
 
 const slackConfig = config.get<SlackConfig>('app.slackConfig');
+const scopes = [
+  ...manifest.oauth_config.scopes.bot,
+  ...manifest.oauth_config.scopes.user,
+];
 
 const app = new App({
   signingSecret: slackConfig.signingSecret,
   clientId: slackConfig.clientId,
   clientSecret: slackConfig.clientSecret,
   stateSecret: slackConfig.stateSecret,
-  scopes: manifest.oauth_config.scopes[0],
+  scopes,
   installerOptions: {
     stateVerification: false,
   },
@@ -47,3 +51,4 @@ registerListeners(app);
     logger.error('Unable to start App', error);
   }
 })();
+//TODO: atualizar deps

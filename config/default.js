@@ -13,7 +13,7 @@ const settings = {
       stateSecret: process.env.SLACK_STATE_SECRET,
       token: process.env.SLACK_BOT_TOKEN,
       appToken: process.env.SLACK_APP_TOKEN,
-
+      userToken: process.env.SLACK_BOT_USER_TOKEN,
       logLevel: process.env.SLACK_LOGLEVEL || 'debug',
     },
     port: process.env.PORT || 3000,

@@ -25,12 +25,13 @@
     "axios": "^1.7.7",
     "config": "^3.3.12",
     "dotenv": "~16.4.5",
+    "fast-csv": "^5.0.2",
     "module-alias": "^2.2.3",
     "node-cache": "^5.1.2",
     "pg": "^8.4.0",
+    "pino": "^9.5.0",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "0.3.20",
-    "pino": "^9.5.0"
+    "typeorm": "0.3.20"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",

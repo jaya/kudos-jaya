@@ -24,6 +24,7 @@ export class TransactionController {
           'transaction.id as "id"',
           'installation.teamName as "teamName"',
           'wallet.ownerId as "ownerId"',
+          'user.name as "name"',
           'product.name as "product"',
           'transaction.amount as "amount"',
           'transaction.createdAt as "createdAt"',
@@ -31,6 +32,7 @@ export class TransactionController {
         .innerJoin('transaction.installation', 'installation')
         .innerJoin('transaction.wallet', 'wallet')
         .innerJoin('transaction.product', 'product')
+        .innerJoin('wallet.user', 'user')
         .where('transaction.createdAt BETWEEN :start AND :end', {
           start: params.start,
           end: params.end,
