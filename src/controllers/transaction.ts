@@ -43,4 +43,27 @@ export class TransactionController {
       logger.error('fetchPrizesReport()', error);
     }
   }
+
+  public async redeemed(params: {
+    teamId: string;
+    start?: Date;
+    end?: Date;
+  }): Promise<number> {
+    const { teamId, start, end } = params;
+
+    const query = this.repository
+      .createQueryBuilder('transaction')
+      .select('SUM(transaction.amount)', 'total')
+      .where('transaction.teamId = :teamId', { teamId });
+
+    if (start && end) {
+      query.andWhere('transaction.createdAt BETWEEN :start AND :end', {
+        start,
+        end,
+      });
+    }
+
+    const redeemed = await query.getRawOne();
+    return redeemed.total ?? 0;
+  }
 }

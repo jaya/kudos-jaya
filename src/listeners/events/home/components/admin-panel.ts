@@ -1,3 +1,4 @@
+import { TransactionController } from '@/controllers/transaction';
 import { WalletController } from '@/controllers/wallet';
 import { isUserAdmin } from '@/utils/user-slack-info';
 
@@ -14,6 +15,15 @@ export async function getAdminPanelSection(params: {
 
   const balanceToBeRedeemed =
     await new WalletController().getBalanceToBeRedeemed({ teamId });
+  const transactionController = new TransactionController();
+  const redeemedThisMonth = await transactionController.redeemed({
+    teamId,
+    start: new Date(new Date().setDate(1)),
+    end: new Date(),
+  });
+  const totalRedeemed = await transactionController.redeemed({
+    teamId,
+  });
 
   return [
     {
@@ -22,8 +32,8 @@ export async function getAdminPanelSection(params: {
         type: 'mrkdwn',
         text: `*My team: (for admins only)*
 Balance to be redeemed: R$ ${balanceToBeRedeemed}
-Balance redeemed this month: R$ ${0}
-Total redeemed:`,
+Balance redeemed this month: R$ ${redeemedThisMonth}
+Total redeemed: R$ ${totalRedeemed}`,
       },
     },
     {

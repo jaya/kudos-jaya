@@ -6,7 +6,6 @@ import { getAdminPanelSection } from './home/components/admin-panel';
 import { getRecognitionListSection } from './home/components/recognition-list';
 import { getUserBalanceSection } from './home/components/user-balance';
 
-//TODO: add botões de relatorio solicitados pela Adri
 const appHomeOpenedCallback = async ({ client, event }) => {
   // Ignore the `app_home_opened` event for anything but the Home tab
   if (event.tab !== 'home') return;
