@@ -1,5 +1,4 @@
-import { TransactionController } from '@/controllers/transaction';
-import { WalletController } from '@/controllers/wallet';
+import { TransactionController, WalletController } from '@/controllers';
 import { isUserAdmin } from '@/utils/user-slack-info';
 
 export async function getAdminPanelSection(params: {
