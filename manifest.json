@@ -29,22 +29,18 @@
       "https://230a-2804-56c-c22e-db00-45ea-a96a-12c8-987e.ngrok-free.app/slack/oauth_redirect"
     ],
     "scopes": {
-      "user": [
-        "users:read",
-        "files:write",
-        "groups:write",
-        "mpim:write",
-        "im:write",
-        "channels:write"
-      ],
       "bot": [
         "channels:history",
         "chat:write",
         "chat:write.public",
         "commands",
+        "files:write",
         "team:read",
         "users:read",
-        "files:write"
+        "channels:manage",
+        "groups:write",
+        "im:write",
+        "mpim:write"
       ]
     }
   },

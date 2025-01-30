@@ -15,10 +15,7 @@ import { customRoutes } from './utils/custom-routes';
 dotenv.config();
 
 const slackConfig = config.get<SlackConfig>('app.slackConfig');
-const scopes = [
-  ...manifest.oauth_config.scopes.bot,
-  ...manifest.oauth_config.scopes.user,
-];
+const scopes = [...manifest.oauth_config.scopes.bot];
 
 const app = new App({
   signingSecret: slackConfig.signingSecret,

@@ -19,7 +19,7 @@ export async function getAdminPanelSection(params: {
   const redeemedThisMonth = await transactionController.redeemed({
     teamId,
     start: new Date(new Date().setDate(1)),
-    end: new Date(),
+    end: new Date(new Date().setDate(new Date().getDate() + 1)),
   });
   const totalRedeemed = await transactionController.redeemed({
     teamId,

@@ -19,26 +19,42 @@ const generatePrizesReportCallback = async ({ ack, view, client, body }) => {
       end: new Date(endDate),
     });
 
-    await writeCsv(transactions);
-    const fileUrl = await uploadFile({ channelId: userId });
+    if (transactions.length === 0) {
+      await client.chat.postMessage({
+        channel: userId,
+        text: 'Sorry, we do not have enough data to generate the report yet',
+      });
+      return;
+    }
 
-    await client.chat.postMessage({
-      channel: userId,
-      text: 'Here is the report',
-      attachments: [
-        {
-          fallback: 'You cannot visualize the csv file.',
-          text: 'Click on the file to visualize.',
-          actions: [
-            {
-              type: 'button',
-              text: 'Open',
-              url: fileUrl,
-            },
-          ],
-        },
-      ],
-    });
+    try {
+      await writeCsv(transactions);
+      const fileUrl = await uploadFile({ client, channelId: userId });
+
+      await client.chat.postMessage({
+        channel: userId,
+        text: 'Here is the report',
+        attachments: [
+          {
+            fallback: 'You cannot visualize the csv file.',
+            text: 'Click on the file to visualize.',
+            actions: [
+              {
+                type: 'button',
+                text: 'Open',
+                url: fileUrl,
+              },
+            ],
+          },
+        ],
+      });
+    } catch (error) {
+      await client.chat.postMessage({
+        channel: userId,
+        text: 'Sorry, we had a trouble generating the report',
+      });
+      logger.error('Error while generating the report', { error });
+    }
   } catch (error) {
     logger.error('generatePrizesReportCallback()', { error });
   }

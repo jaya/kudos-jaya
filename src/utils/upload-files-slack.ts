@@ -1,5 +1,4 @@
-import { WebAPICallResult, WebClient } from '@slack/web-api';
-import config from 'config';
+import { WebAPICallResult } from '@slack/web-api';
 import * as fs from 'fs';
 import path from 'path';
 import logger from './logger';
@@ -41,13 +40,10 @@ type UploadFileResponse = {
   files: { ok: boolean; files: SlackFile[] }[];
 } & WebAPICallResult;
 
-export async function uploadFile({ channelId }): Promise<string> {
+export async function uploadFile({ client, channelId }): Promise<string> {
   const dirPath = path.join(__dirname, '../assets');
   const filePath = path.join(dirPath, 'file.csv');
-  const userToken = config.get<string>('app.slackConfig.userToken');
-  const client = new WebClient(userToken);
   let channel_id: string;
-
   try {
     if (channelId.startsWith('U')) {
       const conversationsResponse = await client.conversations.open({
@@ -66,6 +62,6 @@ export async function uploadFile({ channelId }): Promise<string> {
     return data?.files[0]?.files[0]?.url_private_download;
   } catch (error) {
     logger.error('uploadFile()', error);
-    return '';
+    throw error;
   }
 }
