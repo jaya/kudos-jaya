@@ -41,4 +41,31 @@ export class InstallationController {
       logger.error('InstallationController.update()', error);
     }
   }
+
+  public async getCurrentSettings(teamId: string) {
+    const installation = await this.repository.findOneBy({ teamId });
+    const baseApiTokenText = 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const baseAmountText = 'Ex: 100.';
+    const baseDefaultChannelText =
+      'Enter the default Slack channel id (ex: C93LZNJ64, #bots).';
+
+    if (
+      !installation?.giftCardApiToken ||
+      !installation?.defaultRecognitionChannel
+    ) {
+      return {
+        giftCardApiTokenHint: baseApiTokenText,
+        defaultAmountHint: baseAmountText,
+        defaultChannelHint: baseDefaultChannelText,
+        alreadyInstalled: false,
+      };
+    }
+
+    return {
+      giftCardApiTokenHint: `${baseApiTokenText}\nThe token has already been configured`,
+      defaultAmountHint: `${baseAmountText}\nCurrent: ${installation.defaultAmount}`,
+      defaultChannelHint: `${baseDefaultChannelText}\nCurrent: ${installation.defaultRecognitionChannel}`,
+      alreadyInstalled: true,
+    };
+  }
 }

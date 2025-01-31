@@ -1,4 +1,4 @@
-import { InstallationController } from '@/controllers/installation';
+import { InstallationController } from '@/controllers';
 import logger from '@/utils/logger';
 
 const appSettingsButtonCallback = async ({ ack, client, body }) => {
@@ -12,7 +12,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
       defaultChannelHint,
       defaultAmountHint,
       alreadyInstalled,
-    } = await getCurrentSettings(teamId);
+    } = await new InstallationController().getCurrentSettings(teamId);
 
     await client.views.open({
       trigger_id: body.trigger_id,
@@ -94,32 +94,5 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
     logger.error('finishInstallButtonCallback()', { error });
   }
 };
-
-async function getCurrentSettings(teamId: string) {
-  const installation = await new InstallationController().find(teamId);
-  const baseApiTokenText = 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-  const baseAmountText = 'Ex: 100.';
-  const baseDefaultChannelText =
-    'Enter the default Slack channel id (ex: C93LZNJ64, #bots).';
-
-  if (
-    !installation?.giftCardApiToken ||
-    !installation?.defaultRecognitionChannel
-  ) {
-    return {
-      giftCardApiTokenHint: baseApiTokenText,
-      defaultAmountHint: baseAmountText,
-      defaultChannelHint: baseDefaultChannelText,
-      alreadyInstalled: false,
-    };
-  }
-
-  return {
-    giftCardApiTokenHint: `${baseApiTokenText}\nThe token has already been configured`,
-    defaultAmountHint: `${baseAmountText}\nCurrent: ${installation.defaultAmount}`,
-    defaultChannelHint: `${baseDefaultChannelText}\nCurrent: ${installation.defaultRecognitionChannel}`,
-    alreadyInstalled: true,
-  };
-}
 
 export default appSettingsButtonCallback;
