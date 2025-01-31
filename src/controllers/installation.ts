@@ -44,9 +44,9 @@ export class InstallationController {
 
   public async getCurrentSettings(teamId: string) {
     const installation = await this.repository.findOneBy({ teamId });
-    const baseApiTokenText = 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-    const baseAmountText = 'Ex: 100.';
-    const baseDefaultChannelText =
+    const giftCardApiTokenHint = 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const defaultAmountHint = 'Ex: 100.';
+    const defaultChannelHint =
       'Enter the default Slack channel id (ex: C93LZNJ64, #bots).';
 
     if (
@@ -54,17 +54,17 @@ export class InstallationController {
       !installation?.defaultRecognitionChannel
     ) {
       return {
-        giftCardApiTokenHint: baseApiTokenText,
-        defaultAmountHint: baseAmountText,
-        defaultChannelHint: baseDefaultChannelText,
+        giftCardApiTokenHint,
+        defaultAmountHint,
+        defaultChannelHint,
         alreadyInstalled: false,
       };
     }
 
     return {
-      giftCardApiTokenHint: `${baseApiTokenText}\nThe token has already been configured`,
-      defaultAmountHint: `${baseAmountText}\nCurrent: ${installation.defaultAmount}`,
-      defaultChannelHint: `${baseDefaultChannelText}\nCurrent: ${installation.defaultRecognitionChannel}`,
+      giftCardApiTokenHint: `${giftCardApiTokenHint}\nThe token has already been configured`,
+      defaultAmountHint: `${defaultAmountHint}\nCurrent: ${installation.defaultAmount}`,
+      defaultChannelHint: `${defaultChannelHint}\nCurrent: ${installation.defaultRecognitionChannel}`,
       alreadyInstalled: true,
     };
   }

@@ -79,4 +79,40 @@ describe('InstallationController', () => {
       });
     });
   });
+
+  describe('getCurrentSettings()', () => {
+    describe('When it is the first time setting up the app', () => {
+      it('Should build the settings with default texts', async () => {
+        mockInstallRepository.findOneBy.mockResolvedValueOnce({
+          ...storedInstallation,
+          giftCardApiToken: null,
+          defaultRecognitionChannel: null,
+        });
+        const res = await installController.getCurrentSettings('T12345');
+        expect(res).toEqual({
+          alreadyInstalled: false,
+          defaultAmountHint: 'Ex: 100.',
+          defaultChannelHint:
+            'Enter the default Slack channel id (ex: C93LZNJ64, #bots).',
+          giftCardApiTokenHint: 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        });
+      });
+    });
+    describe('When it is already installed', () => {
+      it('Should build the settings with default texts and the current settings', async () => {
+        mockInstallRepository.findOneBy.mockResolvedValueOnce(
+          storedInstallation
+        );
+        const res = await installController.getCurrentSettings('T12345');
+        expect(res).toEqual({
+          alreadyInstalled: true,
+          defaultAmountHint: 'Ex: 100.\nCurrent: 100',
+          defaultChannelHint:
+            'Enter the default Slack channel id (ex: C93LZNJ64, #bots).\nCurrent: #bots',
+          giftCardApiTokenHint:
+            'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\nThe token has already been configured',
+        });
+      });
+    });
+  });
 });
