@@ -2,15 +2,13 @@ import * as fastCsv from 'fast-csv';
 import * as fs from 'fs';
 import path from 'path';
 
-export const writeCsv = async (data: object[]): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const dirPath = path.join(__dirname, '../assets');
-    const filePath = path.join(dirPath, 'file.csv');
-    const ws = fs.createWriteStream(filePath);
+export async function writeCsv(data: object[]): Promise<void> {
+  const filePath = path.join(__dirname, '../assets/file.csv');
+  return new Promise((resolve, reject) =>
     fastCsv
       .write(data, { headers: true })
-      .pipe(ws)
-      .on('finish', () => resolve())
-      .on('error', reject);
-  });
-};
+      .pipe(fs.createWriteStream(filePath))
+      .on('finish', resolve)
+      .on('error', reject)
+  );
+}
