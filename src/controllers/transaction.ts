@@ -1,6 +1,16 @@
 import { AppDataSource } from '@/data-source';
-import { Transaction } from '@/entities/';
+import { Installation, Product, Transaction, User, Wallet } from '@/entities/';
 import logger from '@/utils/logger';
+
+export type PrizesReport = {
+  id: Transaction['id'];
+  teamName: Installation['teamName'];
+  ownerId: Wallet['ownerId'];
+  name: User['name'];
+  product: Product['name'];
+  amount: Transaction['amount'];
+  createdAt: Transaction['createdAt'];
+};
 
 export class TransactionController {
   private readonly repository = AppDataSource.getRepository(Transaction);
@@ -16,7 +26,7 @@ export class TransactionController {
     teamId: string;
     start: Date;
     end: Date;
-  }): Promise<Transaction[]> {
+  }): Promise<PrizesReport[]> {
     return this.repository
       .createQueryBuilder('transaction')
       .select([
