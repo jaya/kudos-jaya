@@ -82,7 +82,7 @@ describe('giveKudosViewCallback', () => {
 
     expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
       channel: 'CHANNEL123',
-      text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* :party-jaya:\n> Great job on the project!`,
+      text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* \n> Great job on the project!`,
       blocks: [
         {
           type: 'image',
@@ -93,7 +93,7 @@ describe('giveKudosViewCallback', () => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* :party-jaya: \nGreat job on the project!`,
+            text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* \nGreat job on the project!`,
           },
         },
       ],

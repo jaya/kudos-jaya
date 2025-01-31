@@ -1,4 +1,5 @@
 export const keywords = [
+  'dance',
   'celebration',
   'cheers',
   'joy',
@@ -15,19 +16,8 @@ export const keywords = [
   'grateful',
   'gratitude',
   'blessing',
-  'thrilled',
-  'ecstatic',
-  'delight',
-  'jubilation',
-  'sparkle',
   'fireworks',
-  'toast',
   'festivity',
-  'elation',
-  'gathering',
-  'milestone',
-  'triumph',
-  'bliss',
 ];
 
 export const gifs = [

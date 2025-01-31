@@ -47,7 +47,7 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
 
     await client.chat.postMessage({
       channel: defaultRecognitionChannel,
-      text: `*<@${fromId}> is recognizing${usersText}!* :party-jaya:\n> ${message}`,
+      text: `*<@${fromId}> is recognizing${usersText}!* \n> ${message}`,
       blocks: [
         {
           type: 'image',
@@ -58,7 +58,7 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*<@${fromId}> is recognizing${usersText}!* :party-jaya: \n${message}`,
+            text: `*<@${fromId}> is recognizing${usersText}!* \n${message}`,
           },
         },
       ],
