@@ -35,7 +35,7 @@ export class TodoCartoes implements IGiftCardDataSource {
 
       const { products } = new TodoProduct(response.data);
 
-      await productController.save(products);
+      await productController.updateCatalog(products);
     }
   }
 

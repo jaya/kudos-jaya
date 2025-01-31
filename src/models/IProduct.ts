@@ -6,6 +6,7 @@ export interface BaseProduct {
   terms: string;
   minValue: number;
   maxValue: number;
+  updatedAt?: Date;
 }
 
 export interface IProduct {

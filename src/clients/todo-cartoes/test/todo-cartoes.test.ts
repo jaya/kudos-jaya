@@ -49,7 +49,7 @@ describe('TodoCartoes', () => {
           Authorization: `Token ${token}`,
         },
       });
-      expect(productControllerMock.save).toHaveBeenCalledWith(
+      expect(productControllerMock.updateCatalog).toHaveBeenCalledWith(
         expect.arrayContaining(fetchProductsResponse)
       );
     });

@@ -8,6 +8,7 @@ describe('ProductController', () => {
   beforeEach(() => {
     mockRepository = {
       delete: jest.fn(),
+      insert: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
       count: jest.fn(),
@@ -24,13 +25,12 @@ describe('ProductController', () => {
   });
 
   describe('save()', () => {
-    it('Should clean products catalog and save the newest one', async () => {
-      mockRepository.delete.mockResolvedValueOnce({});
-      mockRepository.save.mockResolvedValueOnce();
+    it('Should save products', async () => {
+      mockRepository.insert.mockResolvedValueOnce();
 
       await productController.save(fetchProductsResponse);
 
-      expect(mockRepository.save).toHaveBeenCalledWith(fetchProductsResponse);
+      expect(mockRepository.insert).toHaveBeenCalledWith(fetchProductsResponse);
     });
   });
   describe('get()', () => {
@@ -99,6 +99,16 @@ describe('ProductController', () => {
 
         expect(result).toEqual(false);
       });
+    });
+  });
+
+  describe('updateCatalog()', () => {
+    it('Should update the date of the sync between the db and todo and insert new products if they exist', async () => {
+      mockRepository.save.mockResolvedValueOnce();
+
+      await productController.updateCatalog(fetchProductsResponse);
+
+      expect(mockRepository.save).toHaveBeenCalledWith(fetchProductsResponse);
     });
   });
 });

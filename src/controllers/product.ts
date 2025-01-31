@@ -7,9 +7,7 @@ export class ProductController {
   private readonly productRepository = AppDataSource.getRepository(Product);
 
   public async save(products: BaseProduct[]): Promise<void> {
-    logger.info('Updating products catalog');
-    await this.productRepository.delete({});
-    await this.productRepository.save(products);
+    await this.productRepository.insert(products);
   }
 
   public async get(offset: number, limit: number = 5): Promise<BaseProduct[]> {
@@ -41,5 +39,13 @@ export class ProductController {
       }
       return true;
     }
+  }
+
+  public async updateCatalog(products: BaseProduct[]): Promise<void> {
+    logger.info('Updating products catalog');
+    products.forEach((prod) => {
+      prod.updatedAt = new Date();
+    });
+    await this.productRepository.save(products);
   }
 }
