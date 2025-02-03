@@ -45,7 +45,7 @@ export class Recognition {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  @JoinColumn([{ name: 'fromId' }, { name: 'teamId' }])
+  @JoinColumn([{ name: 'toId' }, { name: 'teamId' }])
   fromUser: User;
 
   @ManyToOne(/* istanbul ignore next */ () => User, {
