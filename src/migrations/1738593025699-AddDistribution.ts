@@ -26,7 +26,7 @@ export class AddDistribution1738593025699 implements MigrationInterface {
                 "id" character varying NOT NULL,
                 "name" character varying NOT NULL,
                 "email" character varying,
-                "teamId" character varying NOT NULL,
+                "teamId" character varying,
                 "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
                 CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id")
             )
