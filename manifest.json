@@ -1,9 +1,9 @@
 {
   "display_information": {
-    "name": "Kudos Jaya",
+    "name": "Kudos Jaya (Dev)",
     "description": "Brighten someone's day with a heartfelt thank you",
     "background_color": "#000000",
-    "long_description": "Add a spark to your team’s day with KudosBot. Recognize and celebrate your colleagues’ efforts instantly with a simple command. \r\n\r\nBoost morale, foster a culture of appreciation, and make every accomplishment shine.\r\n\r\nBecause every “thank you” counts. 🌟\n\nTo get started, go to the #wearejaya channel and type the command /give-kudos to start spreading gratitude and giving kudos to a colleague. \n\nIf you were presented with a kudos, check your balance on the app's home page.\nYou can find the app by typing @Kudos Jaya.\n\n\nIf you already have a balance, just click the redeem button on the app's home page and redeem your gift card at one of the partner stores and enjoy!\n\n\nIf you have any suggestions, questions or find a bug. Contact <@leco> or <@rcabral>. :smile: "
+    "long_description": "Add a spark to your team’s day with KudosBot. Recognize and celebrate your colleagues’ efforts instantly with a simple command. \r\n\r\nBoost morale, foster a culture of appreciation, and make every accomplishment shine.\r\n\r\nBecause every “thank you” counts. 🌟"
   },
   "features": {
     "app_home": {
@@ -12,38 +12,46 @@
       "messages_tab_read_only_enabled": true
     },
     "bot_user": {
-      "display_name": "Kudos Jaya",
+      "display_name": "Kudos Jaya (Dev)",
       "always_online": true
     },
     "slash_commands": [
       {
         "command": "/give-kudos",
-        "url": "https://dc33-2804-56c-c230-a800-819e-4e5b-a5d1-8674.ngrok-free.app/slack/events",
+        "url": "https://bed3-2804-56c-c20d-6a00-9cef-7611-8a78-56e7.ngrok-free.app/slack/events",
         "description": "Acknowledge the impact someone had on you",
         "should_escape": false
       }
     ]
   },
   "oauth_config": {
+    "redirect_urls": [
+      "https://bed3-2804-56c-c20d-6a00-9cef-7611-8a78-56e7.ngrok-free.app/slack/oauth_redirect"
+    ],
     "scopes": {
       "bot": [
         "channels:history",
         "chat:write",
         "chat:write.public",
-        "users:read",
+        "commands",
+        "files:write",
         "team:read",
-        "commands"
+        "users:read",
+        "channels:manage",
+        "groups:write",
+        "im:write",
+        "mpim:write"
       ]
     }
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://dc33-2804-56c-c230-a800-819e-4e5b-a5d1-8674.ngrok-free.app/slack/events",
+      "request_url": "https://bed3-2804-56c-c20d-6a00-9cef-7611-8a78-56e7.ngrok-free.app/slack/events",
       "bot_events": ["app_home_opened", "message.channels"]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://dc33-2804-56c-c230-a800-819e-4e5b-a5d1-8674.ngrok-free.app/slack/events"
+      "request_url": "https://bed3-2804-56c-c20d-6a00-9cef-7611-8a78-56e7.ngrok-free.app/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,

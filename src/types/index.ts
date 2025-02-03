@@ -1,9 +1,12 @@
 import { LogLevel } from '@slack/bolt';
 
 export type SlackConfig = {
+  signingSecret: string;
+  clientId: string;
+  clientSecret: string;
+  stateSecret: string;
   token: string;
   appToken: string;
-  signingSecret: string;
   logLevel: LogLevel;
 };
 

@@ -1,9 +1,6 @@
 import config from 'config';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Product } from './entity/product';
-import { Recognition } from './entity/recognition';
-import { Wallet } from './entity/wallet';
 import { DbConfig } from './types';
 
 const { host, port, user, password, name } = config.get<DbConfig>('database');
@@ -15,9 +12,8 @@ export const AppDataSource = new DataSource({
   username: user,
   password: password,
   database: name,
-  synchronize: true,
+  synchronize: false,
   logging: false,
-  entities: [Wallet, Recognition, Product],
-  migrations: [],
-  subscribers: [],
+  entities: [`${__dirname}/**/entities/*.{ts,js}`],
+  migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
 });

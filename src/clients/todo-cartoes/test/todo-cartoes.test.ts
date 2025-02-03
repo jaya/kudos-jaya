@@ -1,8 +1,8 @@
 import { ProductController } from '@/controllers/product';
-import { IGiftCardPayload } from '@/models/IGiftCard';
-import logger from '@/utils/logger';
 import * as HTTPUtil from '@/utils/request';
 import config from 'config';
+import { IGiftCardPayload } from '../../../models/IGiftCard';
+import logger from '../../../utils/logger';
 import { TodoCartoes } from '../todo-cartoes';
 import {
   fetchProductsResponse,
@@ -24,7 +24,7 @@ describe('TodoCartoes', () => {
 
   beforeEach(() => {
     requestMock = new HTTPUtil.Request() as jest.Mocked<HTTPUtil.Request>;
-    todoCartoes = new TodoCartoes(requestMock);
+    todoCartoes = new TodoCartoes(requestMock, token);
   });
 
   afterEach(() => {
@@ -46,10 +46,10 @@ describe('TodoCartoes', () => {
       expect(productControllerMock.isCatalogUpdated).toHaveBeenCalled();
       expect(requestMock.get).toHaveBeenCalledWith(`${baseUrl}/product_lines`, {
         headers: {
-          Authorization: token,
+          Authorization: `Token ${token}`,
         },
       });
-      expect(productControllerMock.save).toHaveBeenCalledWith(
+      expect(productControllerMock.updateCatalog).toHaveBeenCalledWith(
         expect.arrayContaining(fetchProductsResponse)
       );
     });
@@ -85,7 +85,7 @@ describe('TodoCartoes', () => {
         `${baseUrl}/orders`,
         {
           headers: {
-            Authorization: token,
+            Authorization: `Token ${token}`,
           },
           timeout: 35000,
         },
@@ -111,7 +111,7 @@ describe('TodoCartoes', () => {
 
       jest.spyOn(HTTPUtil.Request.prototype, 'post').mockRejectedValue(error);
 
-      const todoInstance = new TodoCartoes();
+      const todoInstance = new TodoCartoes(undefined, token);
 
       await todoInstance.emitGiftCard(payload);
 

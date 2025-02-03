@@ -1,5 +1,5 @@
-import { decimalTransformer } from '@/utils/decimal-transformer';
 import { Column, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { decimalTransformer } from '../utils/decimal-transformer';
 
 @Entity()
 export class Product {
@@ -38,7 +38,6 @@ export class Product {
   })
   maxValue: number;
 
-  /* istanbul ignore next */
-  @UpdateDateColumn({ default: () => 'NOW()' })
+  @UpdateDateColumn({ default: /* istanbul ignore next */ () => 'NOW()' })
   updatedAt: Date;
 }

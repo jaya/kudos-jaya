@@ -6,6 +6,7 @@ const generateGiftCardCallback = async ({ ack, view, client, body }) => {
   try {
     await ack();
     const cardId = body.view.private_metadata;
+    const teamId = body.user.team_id;
     const amount =
       view.state.values['card_amount_block']['card_amount_value'].value;
 
@@ -13,6 +14,7 @@ const generateGiftCardCallback = async ({ ack, view, client, body }) => {
       userId,
       amount: Number(amount),
       cardId,
+      teamId,
     });
 
     if (!card?.url) {

@@ -11,12 +11,12 @@ import {
   TodoProductLineResponse,
 } from './types';
 
-const { token, baseUrl } = config.get<{ token: string; baseUrl: string }>(
+const { baseUrl } = config.get<{ token: string; baseUrl: string }>(
   'externalClients.todoCartoes'
 );
 
 export class TodoCartoes implements IGiftCardDataSource {
-  constructor(protected request = new HTTPUtil.Request()) {}
+  constructor(protected request = new HTTPUtil.Request(), private todoToken) {}
 
   public async fetchProducts(): Promise<void> {
     const productController = new ProductController();
@@ -28,14 +28,14 @@ export class TodoCartoes implements IGiftCardDataSource {
         `${baseUrl}/product_lines`,
         {
           headers: {
-            Authorization: `${token}`,
+            Authorization: `Token ${this.todoToken}`,
           },
         }
       );
 
       const { products } = new TodoProduct(response.data);
 
-      await productController.save(products);
+      await productController.updateCatalog(products);
     }
   }
 
@@ -50,7 +50,7 @@ export class TodoCartoes implements IGiftCardDataSource {
         `${baseUrl}/orders`,
         {
           headers: {
-            Authorization: `${token}`,
+            Authorization: `Token ${this.todoToken}`,
           },
           timeout: 35000,
         },

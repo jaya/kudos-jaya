@@ -1,0 +1,71 @@
+import { AppDataSource } from '@/data-source';
+import { Installation } from '@/entities/';
+import { encrypt } from '@/utils/encrypt';
+import logger from '@/utils/logger';
+
+export class InstallationController {
+  private readonly repository = AppDataSource.getRepository(Installation);
+
+  public async find(teamId: string): Promise<Partial<Installation>> {
+    return await this.repository.findOneBy({ teamId });
+  }
+
+  public async create(installation): Promise<Installation> {
+    return await this.repository.save({
+      teamId: installation.team.id,
+      teamName: installation.team.name,
+      defaultAmount: 100,
+      ...installation,
+    });
+  }
+
+  public async update(
+    installation: Partial<Installation>
+  ): Promise<Partial<Installation>> {
+    try {
+      const { teamId, giftCardApiToken } = installation;
+
+      if (giftCardApiToken) {
+        installation['giftCardApiToken'] = encrypt(giftCardApiToken);
+      }
+
+      await this.repository.update(
+        { teamId },
+        {
+          ...installation,
+        }
+      );
+
+      return await this.find(teamId);
+    } catch (error) {
+      logger.error('InstallationController.update()', error);
+    }
+  }
+
+  public async getCurrentSettings(teamId: string) {
+    const installation = await this.repository.findOneBy({ teamId });
+    const giftCardApiTokenHint = 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const defaultAmountHint = 'Ex: 100.';
+    const defaultChannelHint =
+      'Enter the default Slack channel id (ex: C93LZNJ64, #bots).';
+
+    if (
+      !installation?.giftCardApiToken ||
+      !installation?.defaultRecognitionChannel
+    ) {
+      return {
+        giftCardApiTokenHint,
+        defaultAmountHint,
+        defaultChannelHint,
+        alreadyInstalled: false,
+      };
+    }
+
+    return {
+      giftCardApiTokenHint: `${giftCardApiTokenHint}\nThe token has already been configured`,
+      defaultAmountHint: `${defaultAmountHint}\nCurrent: ${installation.defaultAmount}`,
+      defaultChannelHint: `${defaultChannelHint}\nCurrent: ${installation.defaultRecognitionChannel}`,
+      alreadyInstalled: true,
+    };
+  }
+}

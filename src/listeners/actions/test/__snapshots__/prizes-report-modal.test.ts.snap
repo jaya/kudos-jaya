@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`prizesReportModalCallback() Should build the prizes report modal successfully 1`] = `
+{
+  "blocks": [
+    {
+      "block_id": "report_dates",
+      "elements": [
+        {
+          "action_id": "report_start_date",
+          "initial_date": "2024-01-01",
+          "placeholder": {
+            "emoji": true,
+            "text": "Select a date",
+            "type": "plain_text",
+          },
+          "type": "datepicker",
+        },
+        {
+          "action_id": "report_end_date",
+          "initial_date": "2025-1-31",
+          "placeholder": {
+            "emoji": true,
+            "text": "Select a date",
+            "type": "plain_text",
+          },
+          "type": "datepicker",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "callback_id": "generate_prizes_report",
+  "submit": {
+    "text": "Submit",
+    "type": "plain_text",
+  },
+  "title": {
+    "text": "Prizes report",
+    "type": "plain_text",
+  },
+  "type": "modal",
+}
+`;
