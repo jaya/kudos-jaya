@@ -33,5 +33,3 @@ docker run --name kudos-jaya \
  -e POSTGRES_PASSWORD=testpassword \
  -e POSTGRES_DB=kudos-jaya \
  -d -p 5432:5432 postgres
-
-Não esquecer de definir o token da TODO
