@@ -1,7 +1,7 @@
 FROM node:lts-alpine AS builder
 LABEL authors="leandrocosta"
 
-ENV PORT=3000
+ENV PORT=PORT
 ENV DB_HOST=DB_HOST
 ENV DB_USER=DB_USER
 ENV DB_PASSWORD=DB_PASSWORD
@@ -36,4 +36,5 @@ COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/config /app/config
 RUN npm install --omit=dev
 USER node
+EXPOSE $PORT
 CMD ["node", "dist/src/app.js"]
