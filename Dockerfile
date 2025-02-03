@@ -1,31 +1,39 @@
-FROM node:lts-alpine
+FROM node:lts-alpine AS builder
 LABEL authors="leandrocosta"
 
-ENV PORT=8080
-ENV DB_HOST='localhost'
-ENV DB_PORT=5432
-ENV DB_USERNAME='postgres'
-ENV DB_PASSWORD='testpassword'
-ENV DB_DATABASE='kudos-jaya'
+ENV PORT=3000
+ENV DB_HOST=DB_HOST
+ENV DB_USER=DB_USER
+ENV DB_PASSWORD=DB_PASSWORD
+ENV DB_NAME=DB_NAME
 
 ENV SLACK_CLIENT_ID=YOUR_SLACK_CLIENT_ID
 ENV SLACK_CLIENT_SECRET=YOUR_SLACK_CLIENT_SECRET
 ENV SLACK_SIGNING_SECRET=YOUR_SLACK_SIGNING_SECRET
 ENV SLACK_APP_TOKEN=YOUR_SLACK_APP_TOKEN
 ENV SLACK_BOT_TOKEN=YOUR_SLACK_BOT_TOKEN
+ENV SLACK_STATE_SECRET=SLACK_STATE_SECRET
+ENV TODO_BASE_URL=TODO_BASE_URL
+ENV SLACK_LOGLEVEL=SLACK_LOGLEVEL
+ENV SLACK_STATE_SECRET=SLACK_STATE_SECRET
+ENV ENCRYPTION_KEY=ENCRYPTION_KEY
+ENV GIPHY_API_KEY=GIPHY_API_KEY
 
 WORKDIR /app
 
-RUN chown -R node:node /app
-
-COPY package.json /app
-
-USER node
-
+COPY package.json package-lock.json ./
 RUN npm install
+COPY . ./
 
-COPY . /app
+# Compila o TypeScript para JavaScript
+RUN npm run build
 
-EXPOSE $PORT
-
-CMD [ "npm", "start"]
+#Run stage
+FROM node:lts-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/config /app/config
+RUN npm install --omit=dev
+USER node
+CMD ["node", "dist/src/app.js"]
