@@ -14,4 +14,12 @@ export const customRoutes = [
       res.end(workspaceInstallHtml);
     },
   },
+  {
+    path: '/healthcheck',
+    method: ['GET'],
+    handler: (req, res) => {
+      res.writeHead(200);
+      res.end('{ ok: "ok" }');
+    },
+  },
 ];
