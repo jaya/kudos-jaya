@@ -18,7 +18,7 @@
     "slash_commands": [
       {
         "command": "/give-kudos",
-        "url": "https://bed3-2804-56c-c20d-6a00-9cef-7611-8a78-56e7.ngrok-free.app/slack/events",
+        "url": "https://kudos-jaya-808955318050.us-west1.run.app/slack/events",
         "description": "Acknowledge the impact someone had on you",
         "should_escape": false
       }
@@ -26,7 +26,7 @@
   },
   "oauth_config": {
     "redirect_urls": [
-      "https://bed3-2804-56c-c20d-6a00-9cef-7611-8a78-56e7.ngrok-free.app/slack/oauth_redirect"
+      "https://kudos-jaya-808955318050.us-west1.run.app/slack/oauth_redirect"
     ],
     "scopes": {
       "bot": [
@@ -46,12 +46,12 @@
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://bed3-2804-56c-c20d-6a00-9cef-7611-8a78-56e7.ngrok-free.app/slack/events",
+      "request_url": "https://kudos-jaya-808955318050.us-west1.run.app/slack/events",
       "bot_events": ["app_home_opened", "message.channels"]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://bed3-2804-56c-c20d-6a00-9cef-7611-8a78-56e7.ngrok-free.app/slack/events"
+      "request_url": "https://kudos-jaya-808955318050.us-west1.run.app/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,
