@@ -6,7 +6,7 @@ import config from 'config';
 import { GiphyResponse } from './types';
 
 const { baseUrl, apiKey } = config.get<{ baseUrl: string; apiKey: string }>(
-  'externalClients.giphy'
+  'externalClients.giphy',
 );
 
 export class Giphy {
@@ -15,7 +15,7 @@ export class Giphy {
     const keyword = this.getGifKeyword();
     try {
       const response = await this.request.get<GiphyResponse>(
-        `${baseUrl}/v1/gifs/random?api_key=${apiKey}&tag=${keyword}&rating=g`
+        `${baseUrl}/v1/gifs/random?api_key=${apiKey}&tag=${keyword}&rating=g`,
       );
       return response?.data?.data?.images?.original.webp;
     } catch (e) {

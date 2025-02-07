@@ -18,7 +18,7 @@ exports[`prizesReportModalCallback() Should build the prizes report modal succes
         },
         {
           "action_id": "report_end_date",
-          "initial_date": "2025-1-31",
+          "initial_date": "2025-2-5",
           "placeholder": {
             "emoji": true,
             "text": "Select a date",

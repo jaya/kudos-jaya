@@ -82,6 +82,7 @@ describe('giveKudosViewCallback', () => {
 
     expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
       channel: 'CHANNEL123',
+      // eslint-disable-next-line quotes
       text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* \n> Great job on the project!`,
       blocks: [
         {
@@ -93,6 +94,7 @@ describe('giveKudosViewCallback', () => {
           type: 'section',
           text: {
             type: 'mrkdwn',
+            // eslint-disable-next-line quotes
             text: `*<@U12345> is recognizing <@U67890>, <@U1234>!* \nGreat job on the project!`,
           },
         },

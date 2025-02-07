@@ -39,7 +39,7 @@ describe('chooseCardButtonCallback', () => {
           ]),
           private_metadata: cardId,
         }),
-      })
+      }),
     );
   });
   it('should handle errors and log them', async () => {

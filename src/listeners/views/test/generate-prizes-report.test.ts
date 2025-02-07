@@ -122,7 +122,7 @@ describe('generatePrizesReportCallback()', () => {
       });
       expect(logger.error).toHaveBeenCalledWith(
         'Error while generating the report',
-        { error }
+        { error },
       );
     });
   });
@@ -143,7 +143,7 @@ describe('generatePrizesReportCallback()', () => {
 
       expect(logger.error).toHaveBeenCalledWith(
         'generatePrizesReportCallback()',
-        { error }
+        { error },
       );
     });
   });

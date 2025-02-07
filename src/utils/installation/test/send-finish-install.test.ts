@@ -59,7 +59,7 @@ describe('sendFinishInstallMessage()', () => {
       await sendFinishInstallMessage('bot-token-test', 'userid123');
       expect(logger.error).toHaveBeenCalledWith(
         'Error while sending finish install message',
-        new Error()
+        new Error(),
       );
     });
   });

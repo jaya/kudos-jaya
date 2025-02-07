@@ -62,6 +62,7 @@ describe('saveSettingsCallback()', () => {
       });
       expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
         channel: body.user.id,
+        // eslint-disable-next-line quotes
         text: "*Awesome!* 🎉 Now that we're ready, type `/give-kudos` in chat and spread the *gratitude* and *love* with your colleagues.",
       });
     });

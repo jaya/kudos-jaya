@@ -46,13 +46,13 @@ describe('appHomeOpenedCallback()', () => {
         .spyOn(TodoCartoes.prototype, 'fetchProducts')
         .mockResolvedValue(undefined);
       (getAdminPanelSection as jest.Mock).mockResolvedValue(
-        adminPanelSectionResponse
+        adminPanelSectionResponse,
       );
       (getUserBalanceSection as jest.Mock).mockResolvedValue(
-        userBalanceSectionResponse
+        userBalanceSectionResponse,
       );
       (getRecognitionListSection as jest.Mock).mockResolvedValue(
-        recognitionListSectionResponse
+        recognitionListSectionResponse,
       );
 
       await appHomeOpenedCallback({ client, event: mockEvent });

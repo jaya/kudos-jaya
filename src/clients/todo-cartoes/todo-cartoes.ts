@@ -12,11 +12,14 @@ import {
 } from './types';
 
 const { baseUrl } = config.get<{ token: string; baseUrl: string }>(
-  'externalClients.todoCartoes'
+  'externalClients.todoCartoes',
 );
 
 export class TodoCartoes implements IGiftCardDataSource {
-  constructor(protected request = new HTTPUtil.Request(), private todoToken) {}
+  constructor(
+    protected request = new HTTPUtil.Request(),
+    private todoToken,
+  ) {}
 
   public async fetchProducts(): Promise<void> {
     const productController = new ProductController();
@@ -30,7 +33,7 @@ export class TodoCartoes implements IGiftCardDataSource {
           headers: {
             Authorization: `Token ${this.todoToken}`,
           },
-        }
+        },
       );
 
       const { products } = new TodoProduct(response.data);
@@ -54,7 +57,7 @@ export class TodoCartoes implements IGiftCardDataSource {
           },
           timeout: 35000,
         },
-        todoPayload
+        todoPayload,
       );
       return { url: response?.data?.magic_link };
     } catch (e) {
@@ -65,7 +68,7 @@ export class TodoCartoes implements IGiftCardDataSource {
           code: e?.code,
           status: e?.response?.status,
           data: e?.response?.data,
-        }
+        },
       );
     }
   }

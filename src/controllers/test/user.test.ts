@@ -15,7 +15,7 @@ describe('UserController()', () => {
       save: jest.fn(),
     };
     (AppDataSource.getRepository as jest.Mock).mockReturnValue(
-      mockUserRepository
+      mockUserRepository,
     );
     userController = new UserController();
   });

@@ -100,7 +100,7 @@ describe('RecognitionController', () => {
           toName: mockToUser.name,
           description: 'message test',
           teamId,
-        })
+        }),
       );
       expect(result).toEqual({ ok: true });
     });
@@ -108,7 +108,6 @@ describe('RecognitionController', () => {
     it('should return an error if recognition save fails', async () => {
       const fromId = 'user1';
       const toId = 'user2';
-      const message = 'message test';
 
       mockRepository.save.mockRejectedValueOnce(new Error('Save failed'));
 
@@ -176,25 +175,24 @@ describe('RecognitionController', () => {
 
       mockQueryBuilder.getRawMany.mockResolvedValueOnce(recognitionSummary);
 
-      const summary = await recognitionController.getUsersRecognitionSummary(
-        teamId
-      );
+      const summary =
+        await recognitionController.getUsersRecognitionSummary(teamId);
 
       expect(mockRepository.createQueryBuilder).toHaveBeenCalledWith(
-        'recognition'
+        'recognition',
       );
       expect(mockQueryBuilder.select).toHaveBeenCalledWith(
         'recognition.toId',
-        'userId'
+        'userId',
       );
       expect(mockQueryBuilder.addSelect).toHaveBeenCalledWith(
         'COUNT(recognition.id)',
-        'recognitionCount'
+        'recognitionCount',
       );
       expect(mockQueryBuilder.groupBy).toHaveBeenCalledWith('recognition.toId');
       expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith(
         'COUNT(recognition.id)',
-        'DESC'
+        'DESC',
       );
       expect(mockQueryBuilder.limit).toHaveBeenCalledWith(20);
 
@@ -204,9 +202,8 @@ describe('RecognitionController', () => {
     it('should return an empty array if no recognitions are found', async () => {
       mockQueryBuilder.getRawMany.mockResolvedValueOnce([]);
 
-      const summary = await recognitionController.getUsersRecognitionSummary(
-        teamId
-      );
+      const summary =
+        await recognitionController.getUsersRecognitionSummary(teamId);
 
       expect(summary).toEqual([]);
     });

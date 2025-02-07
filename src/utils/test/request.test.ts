@@ -118,7 +118,7 @@ describe('Request', () => {
       const error = new Error('Test Error');
 
       expect(() => Request.extractErrorData(error)).toThrow(
-        `The error ${error} is not a Request Error`
+        `The error ${error} is not a Request Error`,
       );
     });
   });

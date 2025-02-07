@@ -4,17 +4,17 @@ import { Installation } from '@slack/bolt';
 const installationController = new InstallationController();
 
 export const fetchInstallation = async (
-  installQuery
+  installQuery,
 ): Promise<Installation<'v1' | 'v2', boolean>> => {
   if (installQuery.isEnterpriseInstall && installQuery?.enterpriseId) {
     return (await installationController.find(
-      installQuery.enterpriseId
+      installQuery.enterpriseId,
     )) as unknown as Installation<'v1' | 'v2', boolean>;
   }
 
   if (installQuery?.teamId) {
     const storedInstallation = await installationController.find(
-      installQuery.teamId
+      installQuery.teamId,
     );
     if (!storedInstallation) {
       throw new Error('Failed fetching installation');

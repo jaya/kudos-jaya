@@ -38,5 +38,5 @@ class Logger {
 }
 
 export default new Logger(
-  config.get<keyof typeof LoggerSeverity>('app.slackConfig.logLevel')
+  config.get<keyof typeof LoggerSeverity>('app.slackConfig.logLevel'),
 );

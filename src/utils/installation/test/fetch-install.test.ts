@@ -65,7 +65,7 @@ describe('fetchInstallation', () => {
           };
 
           await expect(fetchInstallation(installQuery)).rejects.toThrow(
-            'Failed fetching installation'
+            'Failed fetching installation',
           );
           expect(mockInstallController).toHaveBeenCalledWith('team-123');
         });
@@ -75,7 +75,7 @@ describe('fetchInstallation', () => {
   describe('When there is an error trying to fetch installation', () => {
     it('Should throw the error', async () => {
       await expect(fetchInstallation({})).rejects.toThrow(
-        'Failed fetching installation'
+        'Failed fetching installation',
       );
     });
   });

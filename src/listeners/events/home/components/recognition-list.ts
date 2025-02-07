@@ -7,14 +7,13 @@ export async function getRecognitionListSection(params: { teamId: string }) {
 
   const recsController = new RecognitionController();
   const { defaultRecognitionChannel } = await new InstallationController().find(
-    teamId
+    teamId,
   );
 
   const totalRecognitions = await recsController.getTotal({ teamId });
 
-  const recognitionSummary = await recsController.getUsersRecognitionSummary(
-    teamId
-  );
+  const recognitionSummary =
+    await recsController.getUsersRecognitionSummary(teamId);
 
   const recognitionsList: (Divider | TextSection)[] = [
     {
