@@ -159,7 +159,7 @@ describe('generateGiftCardCallback', () => {
     const error = new Error('Gift card error');
     expect(mockConsoleError).toHaveBeenCalledWith(
       'generateGiftCardCallback()',
-      { error }
+      { error },
     );
   });
 });

@@ -1,9 +1,9 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-/* eslint-disable @typescript-eslint/no-empty-interface */
+/* eslint-disable-next-line  */
 export interface RequestConfig extends AxiosRequestConfig {}
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable-next-line */
 export interface Response<T = any> extends AxiosResponse<T> {}
 
 export class Request {
@@ -16,8 +16,10 @@ export class Request {
   public post<T>(
     url: string,
     /* istanbul ignore next */
+    // eslint-disable-next-line default-param-last
     config: RequestConfig = {},
-    data?: any
+    /* eslint-disable-next-line  */
+    data?: any,
   ): Promise<Response<T>> {
     return this.request.post<T, Response<T>>(url, data, config);
   }
@@ -29,7 +31,7 @@ export class Request {
   }
 
   public static extractErrorData(
-    error: unknown
+    error: unknown,
   ): Pick<AxiosResponse, 'data' | 'status'> {
     const axiosError = error as AxiosError;
     if (axiosError.response && axiosError.response.status) {

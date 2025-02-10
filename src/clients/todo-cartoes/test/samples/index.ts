@@ -47,7 +47,7 @@ export const giftCardResponse = {
 export const giftCardErrorResponse = {
   error_code: '005',
   error_message:
-    "Error while generating. The order was created, but giftcards not activated. It won't generate a charge",
+    '"Error while generating. The order was created, but giftcards not activated. It won\'t generate a charge"',
   additional_data: {
     response: {
       identifier: 'OO-00000504-0004406323',

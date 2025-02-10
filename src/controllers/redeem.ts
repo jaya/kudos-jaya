@@ -1,6 +1,7 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import { IGiftCardPayload } from '@/models/IGiftCard';
 import { decrypt } from '@/utils/encrypt';
+import logger from '../utils/logger';
 import { InstallationController } from './installation';
 import { TransactionController } from './transaction';
 import { WalletController } from './wallet';
@@ -47,13 +48,13 @@ export class RedeemController {
       amount,
     };
     const { giftCardApiToken } = await new InstallationController().find(
-      teamId
+      teamId,
     );
 
     try {
       const response = await new TodoCartoes(
         undefined,
-        decrypt(giftCardApiToken)
+        decrypt(giftCardApiToken),
       ).emitGiftCard(payload);
       if (!response.url) {
         return {
@@ -77,6 +78,7 @@ export class RedeemController {
           ':tada: *Your Gift Card has arrived* :tada: \nClick to access your gift card',
       };
     } catch (error) {
+      logger.error('RedeemController.emitGiftCard()', error);
       return {
         success: false,
         message: 'We had a problem generating your card :cry:',

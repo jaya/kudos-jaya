@@ -15,7 +15,7 @@ const appHomeOpenedCallback = async ({ client, event }) => {
     const teamId = event?.view?.app_installed_team_id;
 
     const { giftCardApiToken } = await new InstallationController().find(
-      teamId
+      teamId,
     );
 
     await new TodoCartoes(undefined, decrypt(giftCardApiToken)).fetchProducts();

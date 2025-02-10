@@ -63,6 +63,7 @@ export const gifs = [
   },
   {
     URL: 'https://media2.giphy.com/media/3ohs7NuHL3gjbe2uGI/giphy-downsized.gif',
+    // eslint-disable-next-line quotes
     alt_text: "You're noticed and appreciated <3",
     tags: keywords,
   },

@@ -29,12 +29,13 @@ const saveSettingsCallback = async ({ ack, view, client, body }) => {
     }
 
     const updatedSettings = await new InstallationController().update(
-      updateObject
+      updateObject,
     );
 
     if (updatedSettings.defaultRecognitionChannel === defaulChannelId) {
       await client.chat.postMessage({
         channel: userId,
+        // eslint-disable-next-line quotes
         text: "*Awesome!* 🎉 Now that we're ready, type `/give-kudos` in chat and spread the *gratitude* and *love* with your colleagues.",
       });
     }

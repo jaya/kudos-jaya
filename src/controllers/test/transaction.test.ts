@@ -57,7 +57,7 @@ describe('TransactionController()', () => {
 
         expect(logger.error).toHaveBeenCalledWith(
           'TransactionController.register()',
-          error
+          error,
         );
       });
     });
@@ -70,7 +70,7 @@ describe('TransactionController()', () => {
     describe('success', () => {
       it('Should return the prizes report data', async () => {
         mockQueryBuilder.getRawMany.mockResolvedValueOnce(
-          fetchPrizesReportResponse
+          fetchPrizesReportResponse,
         );
         const prizes = await transactionController.fetchPrizesReport({
           teamId,

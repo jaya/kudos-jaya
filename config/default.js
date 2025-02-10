@@ -18,7 +18,8 @@ const settings = {
     port: process.env.PORT || 3000,
     productsPageSize: process.env.PRODUCTS_PAGE_SIZE || 5,
     baseUrl: process.env.APP_BASE_URL || 'localhost',
-    encryptionKey: process.env.ENCRYPTION_KEY,
+    encryptionKey:
+      process.env.ENCRYPTION_KEY || 'encryption_key_must_length32char',
   },
   database: {
     host: process.env.DB_HOST,

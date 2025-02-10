@@ -3,7 +3,6 @@ import './utils/module-alias';
 import { fetchInstallation, storeInstallation } from '@/utils/installation';
 import logger from '@/utils/logger';
 import { App } from '@slack/bolt';
-import axios from 'axios';
 import config from 'config';
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
@@ -41,9 +40,6 @@ registerListeners(app);
     await AppDataSource.initialize();
     await app.start(config.get<number>('app.port'));
     logger.info('⚡️ Bolt app is running! ⚡️');
-
-    const res = await axios.get('https://curlmyip.org');
-    logger.info('The app public IP is: ' + res.data);
   } catch (error) {
     logger.error('Unable to start App', error);
   }

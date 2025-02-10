@@ -41,11 +41,11 @@ describe('user-slack-info', () => {
 
     it('handles errors when Slack API fails', async () => {
       (slack.users.info as jest.Mock).mockRejectedValue(
-        new Error('user_not_found')
+        new Error('user_not_found'),
       );
 
       await expect(getSlackUserInfo(botToken, userId)).rejects.toThrow(
-        'user_not_found'
+        'user_not_found',
       );
       expect(slack.users.info).toHaveBeenCalledWith({ user: userId });
     });
@@ -87,11 +87,11 @@ describe('user-slack-info', () => {
     describe('When there is an error', () => {
       it('should log and throw the error', async () => {
         (slack.users.info as jest.Mock).mockRejectedValue(
-          new Error('user_not_found')
+          new Error('user_not_found'),
         );
 
         await expect(isUserAdmin(botToken, userId)).rejects.toThrow(
-          'user_not_found'
+          'user_not_found',
         );
         expect(slack.users.info).toHaveBeenCalledWith({ user: userId });
       });

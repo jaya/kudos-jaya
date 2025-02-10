@@ -28,7 +28,7 @@ describe('WalletController', () => {
       createQueryBuilder: jest.fn().mockReturnThis(),
     };
     (AppDataSource.getRepository as jest.Mock).mockReturnValue(
-      mockWalletRepository
+      mockWalletRepository,
     );
 
     walletController = new WalletController();
@@ -63,7 +63,7 @@ describe('WalletController', () => {
       expect(existingWallet.balance).toBe(150);
       expect(mockWalletRepository.update).toHaveBeenCalledWith(
         { ownerId: mockParams.ownerId, teamId: mockParams.teamId },
-        { balance: 150 }
+        { balance: 150 },
       );
     });
   });
@@ -89,7 +89,7 @@ describe('WalletController', () => {
       expect(existingWallet.balance).toBe(50);
       expect(mockWalletRepository.update).toHaveBeenCalledWith(
         { ownerId: mockParams.ownerId, teamId: mockParams.teamId },
-        { balance: 50 }
+        { balance: 50 },
       );
     });
   });

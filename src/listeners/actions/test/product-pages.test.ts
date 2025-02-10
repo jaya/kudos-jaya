@@ -58,7 +58,7 @@ describe('productPagesCallback', () => {
             expect.objectContaining({ type: 'divider' }),
           ]),
         }),
-      })
+      }),
     );
   });
 
@@ -102,7 +102,7 @@ describe('productPagesCallback', () => {
             expect.objectContaining({ type: 'section' }),
           ]),
         }),
-      })
+      }),
     );
   });
 
@@ -125,7 +125,7 @@ describe('productPagesCallback', () => {
 
     expect(logger.error).toHaveBeenCalledWith(
       'productPagesCallback() - Error trying to build structure',
-      { error }
+      { error },
     );
   });
 });

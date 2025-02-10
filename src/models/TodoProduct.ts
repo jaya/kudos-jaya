@@ -8,7 +8,7 @@ export class TodoProduct implements IProduct {
   }
 
   private productsHandler(
-    product_lines: TodoProductLineResponse['product_lines']
+    product_lines: TodoProductLineResponse['product_lines'],
   ): BaseProduct[] {
     const products: BaseProduct[] = [];
 
@@ -39,21 +39,21 @@ export class TodoProduct implements IProduct {
   }
 
   private getMinMaxCardValue(
-    cards: TodoProductLineResponse['product_lines'][number]['products']
+    cards: TodoProductLineResponse['product_lines'][number]['products'],
   ) {
     const { minMinValue, maxMaxValue } = cards.reduce(
       (acc, product) => {
         const minValue =
-          product?.min_value != null ? parseFloat(product?.min_value) : 1;
+          product?.min_value !== null ? parseFloat(product?.min_value) : 1;
         const maxValue =
-          product?.max_value != null ? parseFloat(product?.max_value) : 0;
+          product?.max_value !== null ? parseFloat(product?.max_value) : 0;
 
         return {
           minMinValue: Math.min(acc.minMinValue, minValue),
           maxMaxValue: Math.max(acc.maxMaxValue, maxValue),
         };
       },
-      { minMinValue: Infinity, maxMaxValue: 1 }
+      { minMinValue: Infinity, maxMaxValue: 1 },
     );
     return { minValue: minMinValue, maxValue: maxMaxValue };
   }

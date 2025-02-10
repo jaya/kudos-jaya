@@ -50,7 +50,7 @@ describe('giveKudosCommandCallback', () => {
 
     expect(consoleSpy).toHaveBeenCalledWith(
       'giveKudosCommandCallback()',
-      new Error(errorMessage)
+      new Error(errorMessage),
     );
 
     consoleSpy.mockRestore();

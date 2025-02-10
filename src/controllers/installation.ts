@@ -7,11 +7,11 @@ export class InstallationController {
   private readonly repository = AppDataSource.getRepository(Installation);
 
   public async find(teamId: string): Promise<Partial<Installation>> {
-    return await this.repository.findOneBy({ teamId });
+    return this.repository.findOneBy({ teamId });
   }
 
   public async create(installation): Promise<Installation> {
-    return await this.repository.save({
+    return this.repository.save({
       teamId: installation.team.id,
       teamName: installation.team.name,
       defaultAmount: 100,
@@ -20,7 +20,7 @@ export class InstallationController {
   }
 
   public async update(
-    installation: Partial<Installation>
+    installation: Partial<Installation>,
   ): Promise<Partial<Installation>> {
     try {
       const { teamId, giftCardApiToken } = installation;
@@ -33,7 +33,7 @@ export class InstallationController {
         { teamId },
         {
           ...installation,
-        }
+        },
       );
 
       return await this.find(teamId);

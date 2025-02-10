@@ -3,7 +3,7 @@ import { WebClient } from '@slack/web-api';
 
 export async function sendFinishInstallMessage(
   token: string,
-  user: string
+  user: string,
 ): Promise<void> {
   try {
     const client = new WebClient(token);

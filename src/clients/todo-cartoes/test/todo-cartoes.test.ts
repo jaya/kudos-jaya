@@ -1,8 +1,8 @@
 import { ProductController } from '@/controllers/product';
+import { IGiftCardPayload } from '@/models/IGiftCard';
+import logger from '@/utils/logger';
 import * as HTTPUtil from '@/utils/request';
 import config from 'config';
-import { IGiftCardPayload } from '../../../models/IGiftCard';
-import logger from '../../../utils/logger';
 import { TodoCartoes } from '../todo-cartoes';
 import {
   fetchProductsResponse,
@@ -15,7 +15,7 @@ jest.mock('@/utils/logger');
 jest.mock('@/utils/request');
 
 const { token, baseUrl } = config.get<{ token: string; baseUrl: string }>(
-  'externalClients.todoCartoes'
+  'externalClients.todoCartoes',
 );
 
 describe('TodoCartoes', () => {
@@ -50,7 +50,7 @@ describe('TodoCartoes', () => {
         },
       });
       expect(productControllerMock.updateCatalog).toHaveBeenCalledWith(
-        expect.arrayContaining(fetchProductsResponse)
+        expect.arrayContaining(fetchProductsResponse),
       );
     });
 
@@ -93,7 +93,7 @@ describe('TodoCartoes', () => {
           card_identificator: '12345',
           external_partner_load_id: 'jayatech123',
           total: 5000,
-        }
+        },
       );
       expect(result).toEqual({
         url: 'https://giftcard-hmg.todo.gift/_-Po7zh7pUB5kGXf9AgowAijgq-HIrIGdjYX',
@@ -122,7 +122,7 @@ describe('TodoCartoes', () => {
           code: undefined,
           status: undefined,
           data: undefined,
-        }
+        },
       );
     });
   });

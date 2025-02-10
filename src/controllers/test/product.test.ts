@@ -72,15 +72,15 @@ describe('ProductController', () => {
         const result = await productController.isCatalogUpdated();
 
         expect(mockRepository.createQueryBuilder).toHaveBeenCalledWith(
-          'product'
+          'product',
         );
         expect(mockQueryBuilder.select).toHaveBeenCalledWith(
-          'product.updatedAt'
+          'product.updatedAt',
         );
 
         expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith(
           'product.updatedAt',
-          'ASC'
+          'ASC',
         );
         expect(result).toEqual(true);
       });

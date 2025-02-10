@@ -81,7 +81,7 @@ export class RecognitionController {
   }
 
   public async getUsersRecognitionSummary(
-    teamId: string
+    teamId: string,
   ): Promise<RecognitionSummary> {
     const summary = this.recognitionRepository
       .createQueryBuilder('recognition')

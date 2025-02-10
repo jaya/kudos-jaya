@@ -23,7 +23,7 @@ describe('giveKudosCommandModule.register', () => {
 
     expect(mockApp.command).toHaveBeenCalledWith(
       '/give-kudos',
-      giveKudosCommandCallback
+      giveKudosCommandCallback,
     );
   });
 });

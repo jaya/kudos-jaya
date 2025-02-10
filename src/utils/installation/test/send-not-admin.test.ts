@@ -45,7 +45,7 @@ describe('sendNotAdminMessage()', () => {
       await sendNotAdminMessage('bot-token-test', 'userid123');
       expect(logger.error).toHaveBeenCalledWith(
         'sendNotAdminMessage()',
-        new Error()
+        new Error(),
       );
     });
   });

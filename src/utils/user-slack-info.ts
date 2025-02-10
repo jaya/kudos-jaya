@@ -19,7 +19,7 @@ export async function getSlackUserInfo(botToken: string, userId: string) {
 
 export async function isUserAdmin(
   botToken: string,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   try {
     const client = new WebClient(botToken);

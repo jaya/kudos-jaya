@@ -55,7 +55,7 @@ const prizesReportModalCallback = async ({ ack, client, body }) => {
       'prizesReportModalCallback() - Error trying to build structure',
       {
         error,
-      }
+      },
     );
   }
 };

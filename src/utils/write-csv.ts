@@ -9,6 +9,6 @@ export async function writeCsv(data: object[]): Promise<void> {
       .write(data, { headers: true })
       .pipe(fs.createWriteStream(filePath))
       .on('finish', resolve)
-      .on('error', reject)
+      .on('error', reject),
   );
 }

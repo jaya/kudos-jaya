@@ -26,7 +26,7 @@ export class WalletController {
     existWallet.balance = existWallet.balance + amount;
     await this.walletRepository.update(
       { ownerId, teamId },
-      { balance: existWallet.balance }
+      { balance: existWallet.balance },
     );
   }
 
@@ -42,7 +42,7 @@ export class WalletController {
     existWallet.balance = existWallet.balance - amount;
     await this.walletRepository.update(
       { ownerId, teamId },
-      { balance: existWallet.balance }
+      { balance: existWallet.balance },
     );
   }
 
@@ -53,7 +53,7 @@ export class WalletController {
   }
 
   public async getBalanceToBeRedeemed(
-    params: Omit<BaseParams, 'ownerId'>
+    params: Omit<BaseParams, 'ownerId'>,
   ): Promise<number> {
     const balance = await this.walletRepository
       .createQueryBuilder('wallet')
@@ -66,6 +66,6 @@ export class WalletController {
 
   public async find(params: BaseParams): Promise<Partial<Wallet>> {
     const { ownerId, teamId } = params;
-    return await this.walletRepository.findOneBy({ ownerId, teamId });
+    return this.walletRepository.findOneBy({ ownerId, teamId });
   }
 }

@@ -21,7 +21,7 @@ describe('InstallationController', () => {
       update: jest.fn(),
     };
     (AppDataSource.getRepository as jest.Mock).mockReturnValue(
-      mockInstallRepository
+      mockInstallRepository,
     );
     installController = new InstallationController();
   });
@@ -43,7 +43,7 @@ describe('InstallationController', () => {
       const res = await installController.create(installationPayload);
       expect(res).toEqual(storedInstallation);
       expect(mockInstallRepository.save).toHaveBeenCalledWith(
-        installationPayload
+        installationPayload,
       );
     });
   });
@@ -74,7 +74,7 @@ describe('InstallationController', () => {
         await installController.update({});
         expect(logger.error).toHaveBeenCalledWith(
           'InstallationController.update()',
-          error
+          error,
         );
       });
     });
@@ -101,7 +101,7 @@ describe('InstallationController', () => {
     describe('When it is already installed', () => {
       it('Should build the settings with default texts and the current settings', async () => {
         mockInstallRepository.findOneBy.mockResolvedValueOnce(
-          storedInstallation
+          storedInstallation,
         );
         const res = await installController.getCurrentSettings('T12345');
         expect(res).toEqual({

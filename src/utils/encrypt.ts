@@ -9,7 +9,7 @@ export function encrypt(text: string): string {
   const cipher = crypto.createCipheriv(
     'aes-256-cbc',
     Buffer.from(ENCRYPTION_KEY),
-    iv
+    iv,
   );
   let encrypted = cipher.update(text);
 
@@ -25,7 +25,7 @@ export function decrypt(text: string): string {
   const decipher = crypto.createDecipheriv(
     'aes-256-cbc',
     Buffer.from(ENCRYPTION_KEY),
-    iv
+    iv,
   );
   let decrypted = decipher.update(encryptedText);
 

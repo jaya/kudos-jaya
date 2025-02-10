@@ -59,7 +59,7 @@ async function mountBlocks(page: number) {
 
   const products = await productController.get(
     (page - 1) * productsPageSize,
-    productsPageSize
+    productsPageSize,
   );
 
   const lastPage = Math.ceil(size / productsPageSize);
