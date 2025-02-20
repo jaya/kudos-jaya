@@ -66,7 +66,7 @@ const responseView = {
           type: 'number_input',
           is_decimal_allowed: true,
           action_id: 'default_amount',
-          min_value: '100',
+          min_value: '10',
         },
         label: {
           type: 'plain_text',

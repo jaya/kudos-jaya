@@ -163,9 +163,9 @@ Use the `/give-kudos` command in Slack to send kudos:
    ```
 3. Locally, generate a new version tag based on the change:
    ```sh
-   make version-patch   # For patches (e.g., 1.0.1 → 1.0.2)
-   make version-minor   # For minor updates (e.g., 1.0.2 → 1.1.0)
-   make version-major   # For major updates (e.g., 1.1.0 → 2.0.0)
+   npm version patch   # For patches (e.g., 1.0.1 → 1.0.2)
+   npm version minor   # For minor updates (e.g., 1.0.2 → 1.1.0)
+   npm version major   # For major updates (e.g., 1.1.0 → 2.0.0)
    ```
 4. Push the new tag to trigger production deployment:
    ```sh
