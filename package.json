@@ -28,7 +28,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@slack/bolt": "^4.2.0",
+    "@slack/bolt": "^4.2.1",
     "axios": "^1.7.9",
     "config": "^3.3.12",
     "dotenv": "~16.4.7",
