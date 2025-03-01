@@ -29,7 +29,7 @@
   "license": "ISC",
   "dependencies": {
     "@slack/bolt": "^4.2.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.1",
     "config": "^3.3.12",
     "dotenv": "~16.4.7",
     "fast-csv": "^5.0.2",
