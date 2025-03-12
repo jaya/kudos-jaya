@@ -10,6 +10,8 @@ export async function getRecognitionListSection(params: { teamId: string }) {
     teamId,
   );
 
+  if (!defaultRecognitionChannel) return [];
+
   const totalRecognitions = await recsController.getTotal({ teamId });
 
   const recognitionSummary =

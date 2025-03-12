@@ -44,4 +44,3 @@ registerListeners(app);
     logger.error('Unable to start App', error);
   }
 })();
-//TODO: atualizar deps
