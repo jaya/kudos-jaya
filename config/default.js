@@ -3,9 +3,6 @@ const settings = {
     deposit: {
       defaultAmount: Number(process.env.DEPOSIT_DEFAULT_AMOUNT) || 100,
     },
-    recognition: {
-      defaultChannel: process.env.DEFAULT_RECOGNITION_CHANNEL || '#wearejaya',
-    },
     slackConfig: {
       signingSecret: process.env.SLACK_SIGNING_SECRET,
       clientId: process.env.SLACK_CLIENT_ID,

@@ -11,7 +11,13 @@ export class ProductController {
   }
 
   public async get(offset: number, limit: number = 5): Promise<BaseProduct[]> {
-    return this.productRepository.find({ skip: offset, take: limit });
+    return this.productRepository.find({
+      skip: offset,
+      take: limit,
+      order: {
+        name: 'ASC',
+      },
+    });
   }
 
   public async getCatalogSize(): Promise<number> {

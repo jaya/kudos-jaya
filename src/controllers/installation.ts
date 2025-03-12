@@ -62,7 +62,7 @@ export class InstallationController {
     }
 
     return {
-      giftCardApiTokenHint: `${giftCardApiTokenHint}\nThe token has already been configured`,
+      giftCardApiTokenHint: `${giftCardApiTokenHint}\nCurrent: ${installation.giftCardApiToken.substring(0, 15)}...`,
       defaultAmountHint: `${defaultAmountHint}\nCurrent: ${installation.defaultAmount}`,
       defaultChannelHint: `${defaultChannelHint}\nCurrent: ${installation.defaultRecognitionChannel}`,
       alreadyInstalled: true,

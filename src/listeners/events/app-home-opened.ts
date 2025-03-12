@@ -18,7 +18,12 @@ const appHomeOpenedCallback = async ({ client, event }) => {
       teamId,
     );
 
-    await new TodoCartoes(undefined, decrypt(giftCardApiToken)).fetchProducts();
+    if (giftCardApiToken) {
+      await new TodoCartoes(
+        undefined,
+        decrypt(giftCardApiToken),
+      ).fetchProducts();
+    }
 
     const adminPanel = await getAdminPanelSection({
       token,
