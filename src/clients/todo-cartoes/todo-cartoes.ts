@@ -41,17 +41,14 @@ export class TodoCartoes implements IGiftCardDataSource {
 
         await productController.updateCatalog(products);
       }
-      console.log('retorno teste');
+
       return { status: 200, data: undefined };
     } catch (e) {
-      console.log('caiu no catch ' + e);
       logger.error(
         'TodoCartoes.fetchProducts() - Error trying to fetch products',
         e,
       );
-      const teste = HTTPUtil.Request.extractErrorData(e);
-      console.log('teste + ' + teste);
-      return teste;
+      return HTTPUtil.Request.extractErrorData(e);
     }
   }
 

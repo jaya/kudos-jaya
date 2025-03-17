@@ -20,7 +20,7 @@ export const storedInstallation = {
     userId: 'U088DN0MZ26',
   },
   giftCardApiToken:
-    '590d0ed288a740388ff3144395005513:9164f65958b04329612761e26d8a903d',
+    '3bd9cd5a667ff467ab3a8f70edfc70cf:e4b39e68e3a63e1a777b888b19f49796',
   defaultRecognitionChannel: '#bots',
   defaultAmount: 100,
   createdAt: '2025-01-24T16:08:05.970Z',
