@@ -44,7 +44,7 @@ describe('appHomeOpenedCallback()', () => {
       });
       jest
         .spyOn(TodoCartoes.prototype, 'fetchProducts')
-        .mockResolvedValue(undefined);
+        .mockResolvedValue({ data: undefined, status: 200 });
       (getAdminPanelSection as jest.Mock).mockResolvedValue(
         adminPanelSectionResponse,
       );
@@ -57,6 +57,65 @@ describe('appHomeOpenedCallback()', () => {
 
       await appHomeOpenedCallback({ client, event: mockEvent });
       expect(client.views.publish).toHaveBeenCalledWith(appHomeResponse);
+    });
+
+    describe('When there is no giftCardApiToken set up', () => {
+      it('Should build only the admin section', async () => {
+        jest.spyOn(InstallationController.prototype, 'find').mockResolvedValue({
+          giftCardApiToken: undefined,
+        });
+        (getAdminPanelSection as jest.Mock).mockResolvedValue(
+          adminPanelSectionResponse,
+        );
+        await appHomeOpenedCallback({ client, event: mockEvent });
+        expect(client.views.publish).toHaveBeenCalledWith({
+          ...appHomeResponse,
+          view: {
+            type: 'home',
+            blocks: [
+              ...adminPanelSectionResponse,
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: 'Contact your admin to set up a valid token.',
+                },
+              },
+            ],
+          },
+        });
+      });
+    });
+
+    describe('When there is an error trying to fetch the products catalog', () => {
+      it('Should build only the admin section and inform the user the error', async () => {
+        jest.spyOn(InstallationController.prototype, 'find').mockResolvedValue({
+          giftCardApiToken: 'mocked-decrypted-token',
+        });
+        jest
+          .spyOn(TodoCartoes.prototype, 'fetchProducts')
+          .mockResolvedValue({ data: undefined, status: 401 });
+        (getAdminPanelSection as jest.Mock).mockResolvedValue(
+          adminPanelSectionResponse,
+        );
+        await appHomeOpenedCallback({ client, event: mockEvent });
+        expect(client.views.publish).toHaveBeenCalledWith({
+          ...appHomeResponse,
+          view: {
+            type: 'home',
+            blocks: [
+              ...adminPanelSectionResponse,
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: 'There is a problem with the configured token. Please contact your admin to configure it correctly.',
+                },
+              },
+            ],
+          },
+        });
+      });
     });
   });
 

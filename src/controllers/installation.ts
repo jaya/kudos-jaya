@@ -1,6 +1,6 @@
 import { AppDataSource } from '@/data-source';
 import { Installation } from '@/entities/';
-import { encrypt } from '@/utils/encrypt';
+import { decrypt, encrypt } from '@/utils/encrypt';
 import logger from '@/utils/logger';
 
 export class InstallationController {
@@ -62,7 +62,7 @@ export class InstallationController {
     }
 
     return {
-      giftCardApiTokenHint: `${giftCardApiTokenHint}\nCurrent: ${installation.giftCardApiToken.substring(0, 15)}...`,
+      giftCardApiTokenHint: `${giftCardApiTokenHint}\nCurrent: ${decrypt(installation.giftCardApiToken).substring(0, 15)}...`,
       defaultAmountHint: `${defaultAmountHint}\nCurrent: ${installation.defaultAmount}`,
       defaultChannelHint: `${defaultChannelHint}\nCurrent: ${installation.defaultRecognitionChannel}`,
       alreadyInstalled: true,

@@ -21,24 +21,37 @@ export class TodoCartoes implements IGiftCardDataSource {
     private todoToken,
   ) {}
 
-  public async fetchProducts(): Promise<void> {
-    const productController = new ProductController();
+  public async fetchProducts(): Promise<{ data: unknown; status: number }> {
+    try {
+      const productController = new ProductController();
 
-    const isCatalogUpdated = await productController.isCatalogUpdated();
+      const isCatalogUpdated = await productController.isCatalogUpdated();
 
-    if (!isCatalogUpdated) {
-      const response = await this.request.get<TodoProductLineResponse>(
-        `${baseUrl}/product_lines`,
-        {
-          headers: {
-            Authorization: `Token ${this.todoToken}`,
+      if (!isCatalogUpdated) {
+        const response = await this.request.get<TodoProductLineResponse>(
+          `${baseUrl}/product_lines`,
+          {
+            headers: {
+              Authorization: `Token ${this.todoToken}`,
+            },
           },
-        },
+        );
+
+        const { products } = new TodoProduct(response.data);
+
+        await productController.updateCatalog(products);
+      }
+      console.log('retorno teste');
+      return { status: 200, data: undefined };
+    } catch (e) {
+      console.log('caiu no catch ' + e);
+      logger.error(
+        'TodoCartoes.fetchProducts() - Error trying to fetch products',
+        e,
       );
-
-      const { products } = new TodoProduct(response.data);
-
-      await productController.updateCatalog(products);
+      const teste = HTTPUtil.Request.extractErrorData(e);
+      console.log('teste + ' + teste);
+      return teste;
     }
   }
 
