@@ -18,18 +18,56 @@ const appHomeOpenedCallback = async ({ client, event }) => {
       teamId,
     );
 
-    if (giftCardApiToken) {
-      await new TodoCartoes(
-        undefined,
-        decrypt(giftCardApiToken),
-      ).fetchProducts();
-    }
-
     const adminPanel = await getAdminPanelSection({
       token,
       user,
       teamId,
     });
+
+    if (!giftCardApiToken) {
+      await client.views.publish({
+        user_id: event.user,
+        view: {
+          type: 'home',
+          blocks: [
+            ...adminPanel,
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: 'Contact your admin to set up a valid token.',
+              },
+            },
+          ],
+        },
+      });
+      return;
+    }
+
+    const res = await new TodoCartoes(
+      undefined,
+      decrypt(giftCardApiToken),
+    ).fetchProducts();
+
+    if (res.status !== 200) {
+      await client.views.publish({
+        user_id: event.user,
+        view: {
+          type: 'home',
+          blocks: [
+            ...adminPanel,
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: 'There is a problem with the configured token. Please contact your admin to configure it correctly.',
+              },
+            },
+          ],
+        },
+      });
+      return;
+    }
 
     const userBalance = await getUserBalanceSection({
       user,

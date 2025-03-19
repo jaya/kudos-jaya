@@ -21,6 +21,9 @@ const { token, baseUrl } = config.get<{ token: string; baseUrl: string }>(
 describe('TodoCartoes', () => {
   let todoCartoes: TodoCartoes;
   let requestMock: jest.Mocked<HTTPUtil.Request>;
+  const requestStaticMock = HTTPUtil.Request as jest.Mocked<
+    typeof HTTPUtil.Request
+  >;
 
   beforeEach(() => {
     requestMock = new HTTPUtil.Request() as jest.Mocked<HTTPUtil.Request>;
@@ -64,6 +67,35 @@ describe('TodoCartoes', () => {
       expect(productControllerMock.isCatalogUpdated).toHaveBeenCalled();
       expect(requestMock.get).not.toHaveBeenCalled();
       expect(productControllerMock.save).not.toHaveBeenCalled();
+    });
+
+    it('should log and return the error response', async () => {
+      const productControllerMock =
+        ProductController.prototype as jest.Mocked<ProductController>;
+      productControllerMock.isCatalogUpdated.mockResolvedValue(false);
+
+      class FakeAxiosError extends Error {
+        constructor(public response: object) {
+          super();
+        }
+      }
+      const error = new FakeAxiosError({
+        status: 401,
+        data: undefined,
+      });
+
+      jest.spyOn(HTTPUtil.Request.prototype, 'get').mockRejectedValue(error);
+      requestStaticMock.extractErrorData.mockReturnValue({
+        status: 401,
+        data: undefined,
+      });
+
+      const res = await todoCartoes.fetchProducts();
+      expect(logger.error).toHaveBeenCalledWith(
+        'TodoCartoes.fetchProducts() - Error trying to fetch products',
+        error,
+      );
+      expect(res).toEqual({ status: 401 });
     });
   });
 

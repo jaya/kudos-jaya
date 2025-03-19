@@ -15,9 +15,7 @@ export const keywords = [
   'awesome',
   'grateful',
   'gratitude',
-  'blessing',
   'fireworks',
-  'festivity',
 ];
 
 export const gifs = [
