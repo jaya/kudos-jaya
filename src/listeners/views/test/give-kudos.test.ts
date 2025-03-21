@@ -1,7 +1,6 @@
-import { Giphy } from '@/clients/giphy/giphy';
 import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
-import logger from '@/utils/logger';
+import logger from '../../../utils/logger';
 import giveKudosViewCallback from '../give-kudos';
 
 jest.mock('@/controllers/recognition');
@@ -26,6 +25,7 @@ describe('giveKudosViewCallback', () => {
       team_id: 'TEAM1234',
     },
   };
+  const mockedGifUrl = 'https://test-url.gif.com';
 
   const view = {
     state: {
@@ -42,19 +42,21 @@ describe('giveKudosViewCallback', () => {
         },
       },
     },
+    blocks: [
+      {
+        type: 'image',
+        block_id: 'gif_block',
+        image_url: mockedGifUrl,
+        alt_text: 'Gif image that will be sent',
+      },
+    ],
   };
-
-  const mockedGifUrl = 'https://test-url.gif.com';
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should send kudos to the correct channel and users', async () => {
-    const giphyMocked = jest
-      .spyOn(Giphy.prototype, 'fetchGif')
-      .mockResolvedValueOnce(mockedGifUrl);
-
     const installControllerMocked = jest
       .spyOn(InstallationController.prototype, 'find')
       .mockResolvedValueOnce({ defaultRecognitionChannel: 'CHANNEL123' });
@@ -101,12 +103,10 @@ describe('giveKudosViewCallback', () => {
       ],
     });
     expect(mockClient.chat.postMessage).toHaveBeenCalledTimes(3);
-    expect(giphyMocked).toHaveBeenCalled();
     expect(installControllerMocked).toHaveBeenCalledWith(body.user.team_id);
   });
 
   it('should handle errors from RecognitionController and notify the user', async () => {
-    jest.spyOn(Giphy.prototype, 'fetchGif').mockResolvedValueOnce(mockedGifUrl);
     jest
       .spyOn(InstallationController.prototype, 'find')
       .mockResolvedValueOnce({ defaultRecognitionChannel: 'CHANNEL123' });
@@ -128,7 +128,6 @@ describe('giveKudosViewCallback', () => {
   });
 
   it('should log a non mapped error', async () => {
-    jest.spyOn(Giphy.prototype, 'fetchGif').mockResolvedValueOnce(mockedGifUrl);
     jest
       .spyOn(InstallationController.prototype, 'find')
       .mockResolvedValueOnce({ defaultRecognitionChannel: 'CHANNEL123' });

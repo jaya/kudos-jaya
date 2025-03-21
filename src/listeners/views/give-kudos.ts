@@ -1,4 +1,3 @@
-import { Giphy } from '@/clients/giphy/giphy';
 import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
 import logger from '@/utils/logger';
@@ -8,10 +7,9 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
   try {
     const botToken = client.token;
     const users = view.state.values['to_id_block']['to_id'].selected_users;
-
+    const gif = view.blocks.slice(-1)[0].image_url;
     const message =
       view.state.values['kudo_message_block']['kudo_message'].value;
-    const gif = await new Giphy().fetchGif();
     const fromId = body.user.id;
     const teamId = body.user.team_id;
 
