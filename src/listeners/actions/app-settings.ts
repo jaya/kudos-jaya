@@ -12,6 +12,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
       defaultChannelHint,
       defaultAmountHint,
       alreadyInstalled,
+      companyValuesHint,
     } = await new InstallationController().getCurrentSettings(teamId);
 
     await client.views.open({
@@ -80,6 +81,25 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
             hint: {
               type: 'plain_text',
               text: defaultAmountHint,
+              emoji: true,
+            },
+          },
+          {
+            type: 'input',
+            block_id: 'setup_company_values',
+            optional: true,
+            element: {
+              type: 'plain_text_input',
+              action_id: 'company_values',
+            },
+            label: {
+              type: 'plain_text',
+              text: 'The company values to be selected when giving a kudo',
+              emoji: true,
+            },
+            hint: {
+              type: 'plain_text',
+              text: companyValuesHint,
               emoji: true,
             },
           },

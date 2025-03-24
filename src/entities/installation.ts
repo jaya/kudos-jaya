@@ -53,4 +53,7 @@ export class Installation {
 
   @Column({ default: /* istanbul ignore next */ () => 'NOW()' })
   createdAt: Date;
+
+  @Column({ nullable: true })
+  companyValues: string;
 }

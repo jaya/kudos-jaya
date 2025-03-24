@@ -1,7 +1,15 @@
-import { Giphy } from '../../clients/giphy/giphy';
+import { Giphy } from '@/clients/giphy/giphy';
+import { InstallationController } from '@/controllers';
 import { handleGetAnotherGif, openKudosView } from '../give-kudos';
 
+jest.mock('@/controllers/installation');
+
 describe('openKudosView', () => {
+  const installControllerMocked = jest
+    .spyOn(InstallationController.prototype, 'find')
+    .mockResolvedValueOnce({
+      companyValues: 'Love your day, Connect yourself with the impact',
+    });
   const mockedGifUrl = 'https://test-url.gif.com';
   const giphyMocked = jest
     .spyOn(Giphy.prototype, 'fetchGif')
@@ -17,6 +25,7 @@ describe('openKudosView', () => {
     client,
     body: {
       trigger_id: 'trigger_id_123',
+      team_id: 'TEAM123',
     },
     context: {
       botToken: 'bot_token_abc',
@@ -34,6 +43,7 @@ describe('openKudosView', () => {
     });
     expect(giphyMocked).toHaveBeenCalled();
     expect(client.views.open.mock.calls[0][0].view).toMatchSnapshot();
+    expect(installControllerMocked).toHaveBeenCalledWith(params.body.team_id);
   });
 
   describe('When clicking the button to get another gif', () => {

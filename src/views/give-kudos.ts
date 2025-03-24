@@ -1,23 +1,45 @@
 import { Giphy } from '../clients/giphy/giphy';
+import { InstallationController } from '../controllers';
 
 export const openKudosView = async ({ client, body, context }) => {
   const gif = await new Giphy().fetchGif();
+  const selectOptions = await getCompanyValues(body.team_id);
 
   await client.views.open({
     token: context.botToken,
     trigger_id: body.trigger_id,
-    view: getKudosView(gif),
+    view: getKudosView(gif, selectOptions),
   });
 };
 
-export const getKudosView = (gif: string) => ({
-  type: 'modal',
-  callback_id: 'give_kudos_view',
-  title: {
-    type: 'plain_text',
-    text: 'Give someone kudos',
-  },
-  blocks: [
+const getCompanyValues = async (teamId: string) => {
+  const { companyValues } = await new InstallationController().find(teamId);
+  const separatedValues = companyValues?.split(',');
+
+  return separatedValues?.map((value, index) => ({
+    text: {
+      type: 'plain_text',
+      text: value,
+      emoji: true,
+    },
+    value: index.toString(),
+  }));
+};
+
+export function getKudosView(
+  gif: string,
+  companyValues: {
+    text: {
+      type: string;
+      text: string;
+      emoji: boolean;
+    };
+    value: string;
+  }[],
+) {
+  const blocks = [];
+
+  blocks.push(
     {
       block_id: 'to_id_block',
       type: 'input',
@@ -50,6 +72,32 @@ export const getKudosView = (gif: string) => ({
         multiline: true,
       },
     },
+  );
+
+  if (companyValues?.length > 0) {
+    blocks.push({
+      type: 'input',
+      block_id: 'company_values_block',
+      optional: true,
+      element: {
+        type: 'multi_static_select',
+        placeholder: {
+          type: 'plain_text',
+          text: 'Select the company values',
+          emoji: true,
+        },
+        options: [...companyValues],
+        action_id: 'company_values_select_action',
+      },
+      label: {
+        type: 'plain_text',
+        text: 'Select the company values related to this kudos',
+        emoji: true,
+      },
+    });
+  }
+
+  blocks.push(
     {
       type: 'section',
       text: {
@@ -73,12 +121,22 @@ export const getKudosView = (gif: string) => ({
       image_url: gif,
       alt_text: 'Gif image that will be sent',
     },
-  ],
-  submit: {
-    type: 'plain_text',
-    text: 'Share',
-  },
-});
+  );
+
+  return {
+    type: 'modal',
+    callback_id: 'give_kudos_view',
+    title: {
+      type: 'plain_text',
+      text: 'Give someone kudos',
+    },
+    blocks,
+    submit: {
+      type: 'plain_text',
+      text: 'Share',
+    },
+  };
+}
 
 export const handleGetAnotherGif = async ({ client, body, context, ack }) => {
   await ack();

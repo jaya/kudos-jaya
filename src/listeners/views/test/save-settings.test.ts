@@ -32,6 +32,11 @@ describe('saveSettingsCallback()', () => {
             value: '100',
           },
         },
+        setup_company_values: {
+          company_values: {
+            value: 'Love your day, Connect yourself with the impact',
+          },
+        },
       },
     },
   };

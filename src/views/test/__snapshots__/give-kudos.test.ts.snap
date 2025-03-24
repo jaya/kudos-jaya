@@ -36,6 +36,43 @@ exports[`openKudosView should call client.views.open with the correct payload 1`
       "type": "input",
     },
     {
+      "block_id": "company_values_block",
+      "element": {
+        "action_id": "company_values_select_action",
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "Love your day",
+              "type": "plain_text",
+            },
+            "value": "0",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": " Connect yourself with the impact",
+              "type": "plain_text",
+            },
+            "value": "1",
+          },
+        ],
+        "placeholder": {
+          "emoji": true,
+          "text": "Select the company values",
+          "type": "plain_text",
+        },
+        "type": "multi_static_select",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Select the company values related to this kudos",
+        "type": "plain_text",
+      },
+      "optional": true,
+      "type": "input",
+    },
+    {
       "accessory": {
         "action_id": "get_another_gif",
         "text": {
