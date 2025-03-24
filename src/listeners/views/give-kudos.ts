@@ -9,7 +9,7 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
     const fromId = body.user.id;
     const teamId = body.user.team_id;
     const users = view.state.values['to_id_block']['to_id'].selected_users;
-
+    const gif = view.blocks.slice(-1)[0].image_url;
     const message =
       view.state.values['kudo_message_block']['kudo_message'].value;
 
@@ -17,9 +17,6 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
       view?.state?.values?.['company_values_block']?.[
         'company_values_select_action'
       ]?.['selected_options'];
-
-    const gif = view.blocks.slice(-1)[0].image_url;
-
     const companyValues =
       selectedCompanyValues?.length > 0
         ? selectedCompanyValues.map((value) => value?.text?.text).join(', ')

@@ -1,6 +1,6 @@
 import { InstallationController } from '@/controllers/installation';
 import { RecognitionController } from '@/controllers/recognition';
-import logger from '@/utils/logger';
+import logger from '../../../utils/logger';
 import giveKudosViewCallback from '../give-kudos';
 
 jest.mock('@/controllers/recognition');
