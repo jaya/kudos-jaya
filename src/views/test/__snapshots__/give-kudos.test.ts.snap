@@ -35,6 +35,29 @@ exports[`openKudosView should call client.views.open with the correct payload 1`
       },
       "type": "input",
     },
+    {
+      "accessory": {
+        "action_id": "get_another_gif",
+        "text": {
+          "emoji": true,
+          "text": "Get Another gif",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "value": "get_another_gif",
+      },
+      "text": {
+        "text": "The gif below will be sent with the kudo",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "alt_text": "Gif image that will be sent",
+      "block_id": "gif_block",
+      "image_url": "https://test-url.gif.com",
+      "type": "image",
+    },
   ],
   "callback_id": "give_kudos_view",
   "submit": {
