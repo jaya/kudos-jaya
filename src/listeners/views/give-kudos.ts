@@ -83,7 +83,6 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
       blocks,
     });
   } catch (e) {
-    console.log(e);
     logger.error('giveKudosViewCallback()', { error: e });
   }
 };
