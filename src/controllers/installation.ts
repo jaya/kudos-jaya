@@ -48,7 +48,7 @@ export class InstallationController {
     const defaultAmountHint = 'Ex: 100.';
     const defaultChannelHint =
       'Enter the default Slack channel id (ex: C93LZNJ64, #bots).';
-
+    const companyValuesHint = 'Separate by comma';
     if (
       !installation?.giftCardApiToken ||
       !installation?.defaultRecognitionChannel
@@ -66,6 +66,7 @@ export class InstallationController {
       defaultAmountHint: `${defaultAmountHint}\nCurrent: ${installation.defaultAmount}`,
       defaultChannelHint: `${defaultChannelHint}\nCurrent: ${installation.defaultRecognitionChannel}`,
       alreadyInstalled: true,
+      companyValuesHint: `${companyValuesHint}\nCurrent: ${installation.companyValues ?? ''}`,
     };
   }
 }

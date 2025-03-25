@@ -111,6 +111,7 @@ describe('InstallationController', () => {
             'Enter the default Slack channel id (ex: C93LZNJ64, #bots).\nCurrent: #bots',
           giftCardApiTokenHint:
             'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\nCurrent: testetoken...',
+          companyValuesHint: 'Separate by comma\nCurrent: ',
         });
       });
     });

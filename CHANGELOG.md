@@ -1,6 +1,20 @@
 # CHANGELOG
 
-## versão [1.1.3](https://github.com/l3co/kudos-jaya/compare/1.1.1...1.1.3)
+## version [1.3.0](https://github.com/l3co/kudos-jaya/compare/1.2.0...1.3.0)
+
+### added
+
+- Store the company values on app settings
+- Set the company values related to that kudos that were achieved
+
+## versão [1.2.0](https://github.com/l3co/kudos-jaya/compare/1.1.3...1.2.0)
+
+### added
+
+- GIF preview before sending
+- Possibility to get a new gif before sending a kudos
+
+## version [1.1.3](https://github.com/l3co/kudos-jaya/compare/1.1.1...1.1.3)
 
 ### fixed
 

@@ -6,12 +6,21 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
   await ack();
   try {
     const botToken = client.token;
+    const fromId = body.user.id;
+    const teamId = body.user.team_id;
     const users = view.state.values['to_id_block']['to_id'].selected_users;
     const gif = view.blocks.slice(-1)[0].image_url;
     const message =
       view.state.values['kudo_message_block']['kudo_message'].value;
-    const fromId = body.user.id;
-    const teamId = body.user.team_id;
+
+    const selectedCompanyValues =
+      view?.state?.values?.['company_values_block']?.[
+        'company_values_select_action'
+      ]?.['selected_options'];
+    const companyValues =
+      selectedCompanyValues?.length > 0
+        ? selectedCompanyValues.map((value) => value?.text?.text).join(', ')
+        : [];
 
     const { defaultRecognitionChannel } =
       await new InstallationController().find(teamId);
@@ -43,23 +52,35 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
       usersText.push(` <@${toId}>`);
     }
 
+    const blocks = [
+      {
+        type: 'image',
+        image_url: gif,
+        alt_text: 'GIF',
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*<@${fromId}> is recognizing${usersText}!* \n${message}`,
+        },
+      },
+    ];
+
+    if (companyValues?.length > 0) {
+      blocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `> ${companyValues}`,
+        },
+      });
+    }
+
     await client.chat.postMessage({
       channel: defaultRecognitionChannel,
       text: `*<@${fromId}> is recognizing${usersText}!* \n> ${message}`,
-      blocks: [
-        {
-          type: 'image',
-          image_url: gif,
-          alt_text: 'GIF',
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*<@${fromId}> is recognizing${usersText}!* \n${message}`,
-          },
-        },
-      ],
+      blocks,
     });
   } catch (e) {
     logger.error('giveKudosViewCallback()', { error: e });

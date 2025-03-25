@@ -13,6 +13,8 @@ const saveSettingsCallback = async ({ ack, view, client, body }) => {
         ?.value;
     const defaultAmount =
       view.state.values['setup_default_amount']['default_amount']?.value;
+    const companyValues =
+      view.state.values['setup_company_values']['company_values']?.value;
 
     const updateObject = { teamId };
 
@@ -26,6 +28,10 @@ const saveSettingsCallback = async ({ ack, view, client, body }) => {
 
     if (defaultAmount) {
       updateObject['defaultAmount'] = Number(defaultAmount);
+    }
+
+    if (companyValues) {
+      updateObject['companyValues'] = companyValues;
     }
 
     const updatedSettings = await new InstallationController().update(
