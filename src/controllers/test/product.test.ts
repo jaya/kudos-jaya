@@ -80,7 +80,7 @@ describe('ProductController', () => {
 
         expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith(
           'product.updatedAt',
-          'ASC',
+          'DESC',
         );
         expect(result).toEqual(true);
       });

@@ -35,7 +35,7 @@ export class ProductController {
     const queryBuilder = this.productRepository
       .createQueryBuilder('product')
       .select('product.updatedAt')
-      .orderBy('product.updatedAt', 'ASC')
+      .orderBy('product.updatedAt', 'DESC')
       .limit(1);
     const result = await queryBuilder.getOne();
 
