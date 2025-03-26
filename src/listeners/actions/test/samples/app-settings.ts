@@ -6,6 +6,22 @@ const alreadyInstalled = false;
 const companyValuesHint =
   'The company values to be selected when giving a kudo';
 
+const user1 = {
+  id: 'U123456',
+  name: 'Name 1',
+  email: null,
+};
+
+const user2 = {
+  id: 'U654321',
+  name: 'Name 1',
+  email: null,
+};
+
+const users = [user1, user2];
+
+const initial_users = [user1.id, user2.id];
+
 const currentSettingsResponse = {
   giftCardApiTokenHint,
   defaultAmountHint,
@@ -101,6 +117,26 @@ const responseView = {
           emoji: true,
         },
       },
+      {
+        block_id: 'auditor_users',
+        type: 'input',
+        optional: true,
+        element: {
+          focus_on_load: false,
+          type: 'multi_users_select',
+          placeholder: {
+            type: 'plain_text',
+            text: 'Select users',
+            emoji: false,
+          },
+          action_id: 'auditor_users',
+          initial_users,
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Select users who will be notified when someone redeems a card',
+        },
+      },
     ],
     submit: {
       type: 'plain_text',
@@ -109,4 +145,4 @@ const responseView = {
   },
 };
 
-export { currentSettingsResponse, responseView };
+export { currentSettingsResponse, responseView, users };

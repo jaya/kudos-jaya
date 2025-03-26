@@ -1,4 +1,8 @@
-import { RedeemController } from '@/controllers/redeem';
+import {
+  ProductController,
+  RedeemController,
+  UserController,
+} from '@/controllers';
 import logger from '@/utils/logger';
 import generateGiftCardCallback from '../generate-card';
 
@@ -71,6 +75,14 @@ describe('generateGiftCardCallback', () => {
     (RedeemController as jest.Mock).mockImplementation(() => ({
       emitGiftCard: mockEmitGiftCard,
     }));
+
+    jest
+      .spyOn(UserController.prototype, 'findMany')
+      .mockResolvedValueOnce([{ id: 'U123' }, { id: 'U456' }]);
+
+    jest
+      .spyOn(ProductController.prototype, 'get')
+      .mockResolvedValueOnce([{ name: 'TEST PRODUCT' }]);
 
     await generateGiftCardCallback({
       ack: mockAck,

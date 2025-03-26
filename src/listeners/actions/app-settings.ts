@@ -1,4 +1,4 @@
-import { InstallationController } from '@/controllers';
+import { InstallationController, UserController } from '@/controllers';
 import logger from '@/utils/logger';
 
 const appSettingsButtonCallback = async ({ ack, client, body }) => {
@@ -14,6 +14,12 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
       alreadyInstalled,
       companyValuesHint,
     } = await new InstallationController().getCurrentSettings(teamId);
+
+    const auditorUsers = await new UserController().findMany({
+      teamId,
+      params: { isAuditor: true },
+    });
+    const initial_users = auditorUsers.map(({ id }) => id);
 
     await client.views.open({
       trigger_id: body.trigger_id,
@@ -101,6 +107,26 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
               type: 'plain_text',
               text: companyValuesHint,
               emoji: true,
+            },
+          },
+          {
+            block_id: 'auditor_users',
+            type: 'input',
+            optional: true,
+            element: {
+              focus_on_load: false,
+              type: 'multi_users_select',
+              placeholder: {
+                type: 'plain_text',
+                text: 'Select users',
+                emoji: false,
+              },
+              action_id: 'auditor_users',
+              initial_users,
+            },
+            label: {
+              type: 'plain_text',
+              text: 'Select users who will be notified when someone redeems a card',
             },
           },
         ],

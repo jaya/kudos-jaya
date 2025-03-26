@@ -1,4 +1,8 @@
-import { RedeemController } from '@/controllers/redeem';
+import {
+  ProductController,
+  RedeemController,
+  UserController,
+} from '@/controllers';
 import logger from '@/utils/logger';
 
 const generateGiftCardCallback = async ({ ack, view, client, body }) => {
@@ -60,6 +64,20 @@ const generateGiftCardCallback = async ({ ack, view, client, body }) => {
         },
       ],
     });
+
+    const auditUsers = await new UserController().findMany({
+      teamId,
+      params: { isAuditor: true },
+    });
+
+    const [{ name }] = await new ProductController().get(0, 1, { id: cardId });
+
+    for (const user of auditUsers) {
+      await client.chat.postMessage({
+        channel: user.id,
+        text: `<@${userId}> redeemed R$${amount} in ${name}.`,
+      });
+    }
   } catch (error) {
     logger.error('generateGiftCardCallback()', { error });
     await client.chat.postMessage({

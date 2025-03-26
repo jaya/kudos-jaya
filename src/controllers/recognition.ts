@@ -1,9 +1,7 @@
 import { AppDataSource } from '@/data-source';
 import { Recognition } from '@/entities/';
 import logger from '@/utils/logger';
-import { InstallationController } from './installation';
-import UserController from './user';
-import { WalletController } from './wallet';
+import { InstallationController, UserController, WalletController } from './';
 
 export type RecognitionSummary = {
   userId: string;

@@ -2,8 +2,9 @@ import { AppDataSource } from '@/data-source';
 import { User } from '@/entities/user';
 import logger from '@/utils/logger';
 import { getSlackUserInfo } from '@/utils/user-slack-info';
+import { In, Not } from 'typeorm';
 
-export default class UserController {
+export class UserController {
   private readonly repository = AppDataSource.getRepository(User);
 
   public async create(params: {
@@ -28,5 +29,45 @@ export default class UserController {
     teamId: string;
   }): Promise<Partial<User>> {
     return this.repository.findOneBy({ id: userId, teamId });
+  }
+
+  public async setAuditors(params: {
+    botToken: string;
+    teamId: string;
+    userIds: string[];
+  }): Promise<void> {
+    try {
+      const { botToken, teamId, userIds } = params;
+
+      await this.repository.update(
+        { teamId, id: Not(In(userIds)) },
+        { isAuditor: false },
+      );
+
+      const users = await Promise.all(
+        userIds.map((userId) => getSlackUserInfo(botToken, userId)),
+      );
+
+      const updatedUsers = users.map((user, index) => ({
+        id: userIds[index],
+        teamId,
+        ...user,
+        isAuditor: true,
+      }));
+
+      await this.repository.save(updatedUsers);
+    } catch (error) {
+      logger.error('UserController.setAuditors()', error);
+    }
+  }
+
+  public async findMany({
+    teamId,
+    params = {},
+  }: {
+    teamId: string;
+    params?: Partial<User>;
+  }): Promise<Partial<User>[]> {
+    return this.repository.find({ where: { teamId, ...params } });
   }
 }

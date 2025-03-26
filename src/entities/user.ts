@@ -24,4 +24,7 @@ export class User {
 
   @Column({ default: /* istanbul ignore next */ () => 'NOW()' })
   createdAt: Date;
+
+  @Column({ nullable: true })
+  isAuditor: boolean;
 }
