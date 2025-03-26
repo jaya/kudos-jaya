@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## version [1.4.1](https://github.com/l3co/kudos-jaya/compare/1.4.0...1.4.1)
+
+### fixed
+
+- Catalog update method checking
+
+### changed
+
+- Deps version
+
 ## version [1.4.0](https://github.com/l3co/kudos-jaya/compare/1.3.0...1.4.0)
 
 ### added
