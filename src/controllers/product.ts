@@ -10,8 +10,15 @@ export class ProductController {
     await this.productRepository.insert(products);
   }
 
-  public async get(offset: number, limit: number = 5): Promise<BaseProduct[]> {
+  public async get(
+    offset: number,
+    limit: number = 5,
+    params = {},
+  ): Promise<Partial<BaseProduct>[]> {
     return this.productRepository.find({
+      where: {
+        ...params,
+      },
       skip: offset,
       take: limit,
       order: {

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## version [1.4.0](https://github.com/l3co/kudos-jaya/compare/1.3.0...1.4.0)
+
+### added
+
+- Set the auditor users in the app settings
+- Notificate the auditor users when someone redeems a prize
+
 ## version [1.3.0](https://github.com/l3co/kudos-jaya/compare/1.2.0...1.3.0)
 
 ### added

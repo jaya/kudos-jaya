@@ -1,7 +1,11 @@
-import { InstallationController } from '@/controllers';
+import { InstallationController, UserController } from '@/controllers';
 import logger from '@/utils/logger';
 import appSettingsButtonCallback from '../app-settings';
-import { currentSettingsResponse, responseView } from './samples/app-settings';
+import {
+  currentSettingsResponse,
+  responseView,
+  users,
+} from './samples/app-settings';
 
 const ack = jest.fn();
 jest.mock('@/utils/logger');
@@ -21,6 +25,9 @@ describe('appSettingsButtonCallback()', () => {
     jest
       .spyOn(InstallationController.prototype, 'getCurrentSettings')
       .mockResolvedValueOnce(currentSettingsResponse);
+    jest
+      .spyOn(UserController.prototype, 'findMany')
+      .mockResolvedValueOnce(users);
 
     await appSettingsButtonCallback({ ack, client, body });
     expect(client.views.open).toHaveBeenCalledWith(responseView);

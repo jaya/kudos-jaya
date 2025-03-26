@@ -1,4 +1,4 @@
-import { InstallationController } from '@/controllers/installation';
+import { InstallationController, UserController } from '@/controllers';
 import logger from '@/utils/logger';
 
 const saveSettingsCallback = async ({ ack, view, client, body }) => {
@@ -6,6 +6,8 @@ const saveSettingsCallback = async ({ ack, view, client, body }) => {
     await ack();
     const userId = body.user.id;
     const teamId = view.team_id;
+    const botToken = client.token;
+
     const todoToken =
       view.state.values['setup_todo_token']['todo_token']?.value;
     const defaulChannelId =
@@ -15,6 +17,9 @@ const saveSettingsCallback = async ({ ack, view, client, body }) => {
       view.state.values['setup_default_amount']['default_amount']?.value;
     const companyValues =
       view.state.values['setup_company_values']['company_values']?.value;
+
+    const auditorUsers =
+      view.state.values['auditor_users']['auditor_users'].selected_users;
 
     const updateObject = { teamId };
 
@@ -37,6 +42,14 @@ const saveSettingsCallback = async ({ ack, view, client, body }) => {
     const updatedSettings = await new InstallationController().update(
       updateObject,
     );
+
+    if (auditorUsers?.length > 0) {
+      await new UserController().setAuditors({
+        botToken,
+        teamId,
+        userIds: auditorUsers,
+      });
+    }
 
     if (updatedSettings.defaultRecognitionChannel === defaulChannelId) {
       await client.chat.postMessage({

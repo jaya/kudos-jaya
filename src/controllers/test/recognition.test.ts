@@ -1,7 +1,9 @@
-import { RecognitionController } from '@/controllers/recognition';
 import { AppDataSource } from '@/data-source';
-import { InstallationController } from '../installation';
-import UserController from '../user';
+import {
+  InstallationController,
+  RecognitionController,
+  UserController,
+} from '../';
 
 jest.mock('@/utils/user-slack-info', () => ({
   getSlackUserInfo: jest.fn(),
