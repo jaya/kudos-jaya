@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## version [1.5.1](https://github.com/l3co/kudos-jaya/compare/1.5.0...1.5.1)
+
+### fixed
+
+- App manifest pointing to prod environment and adds cancel kudos command
+
 ## version [1.5.0](https://github.com/l3co/kudos-jaya/compare/1.4.1...1.5.0)
 
 ### added
