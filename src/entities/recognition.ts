@@ -4,11 +4,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Installation } from './installation';
 import { User } from './user';
 
 @Entity()
+@Unique(['id', 'teamId'])
 export class Recognition {
   @PrimaryGeneratedColumn()
   id: number;
@@ -45,13 +47,25 @@ export class Recognition {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  @JoinColumn([{ name: 'toId' }, { name: 'teamId' }])
+  @JoinColumn([
+    { name: 'fromId', referencedColumnName: 'id' },
+    { name: 'teamId', referencedColumnName: 'teamId' },
+  ])
   fromUser: User;
 
   @ManyToOne(/* istanbul ignore next */ () => User, {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  @JoinColumn([{ name: 'fromId' }, { name: 'teamId' }])
+  @JoinColumn([
+    { name: 'toId', referencedColumnName: 'id' },
+    { name: 'teamId', referencedColumnName: 'teamId' },
+  ])
   toUser: User;
+
+  @Column({ nullable: true })
+  slackMessageId: string | null;
+
+  @Column({ nullable: true })
+  slackChannelId: string | null;
 }

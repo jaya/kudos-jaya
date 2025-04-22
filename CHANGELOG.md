@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## version [1.5.0](https://github.com/l3co/kudos-jaya/compare/1.4.1...1.5.0)
+
+### added
+
+- Option to cancel a given kuodo
+
+### fixed
+
+- Default hint to company values when is first setup
+
 ## version [1.4.1](https://github.com/l3co/kudos-jaya/compare/1.4.0...1.4.1)
 
 ### fixed

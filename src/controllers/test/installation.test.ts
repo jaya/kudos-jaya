@@ -91,6 +91,7 @@ describe('InstallationController', () => {
         const res = await installController.getCurrentSettings('T12345');
         expect(res).toEqual({
           alreadyInstalled: false,
+          companyValuesHint: 'Separate by comma',
           defaultAmountHint: 'Ex: 100.',
           defaultChannelHint:
             'Enter the default Slack channel id (ex: C93LZNJ64, #bots).',

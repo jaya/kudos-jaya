@@ -18,6 +18,9 @@ const mockClient = {
   token: 'bot-token-test-mock',
 };
 
+const defaultRecognitionChannel = 'CHANNEL123';
+const ts = '1234567890.123456';
+
 describe('giveKudosViewCallback', () => {
   const body = {
     user: {
@@ -89,11 +92,17 @@ describe('giveKudosViewCallback', () => {
   it('should send kudos to the correct channel and users', async () => {
     const installControllerMocked = jest
       .spyOn(InstallationController.prototype, 'find')
-      .mockResolvedValueOnce({ defaultRecognitionChannel: 'CHANNEL123' });
+      .mockResolvedValueOnce({ defaultRecognitionChannel });
 
+    const saveRecognitionMocked = { ok: true, id: 1 };
     jest
       .spyOn(RecognitionController.prototype, 'save')
-      .mockResolvedValue({ ok: true });
+      .mockResolvedValue(saveRecognitionMocked);
+
+    mockClient.chat.postMessage.mockResolvedValue({
+      channel: defaultRecognitionChannel,
+      ts,
+    });
 
     await giveKudosViewCallback({
       ack: mockAck,
@@ -101,6 +110,10 @@ describe('giveKudosViewCallback', () => {
       client: mockClient,
       body,
     });
+
+    const recsControllerMock = jest
+      .spyOn(RecognitionController.prototype, 'update')
+      .mockResolvedValue();
 
     expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
       channel: 'U67890',
@@ -141,6 +154,15 @@ describe('giveKudosViewCallback', () => {
     });
     expect(mockClient.chat.postMessage).toHaveBeenCalledTimes(3);
     expect(installControllerMocked).toHaveBeenCalledWith(body.user.team_id);
+
+    expect(recsControllerMock).toHaveBeenCalledWith({
+      teamId: body.user.team_id,
+      id: [saveRecognitionMocked.id, saveRecognitionMocked.id],
+      params: {
+        slackChannelId: defaultRecognitionChannel,
+        slackMessageId: ts,
+      },
+    });
   });
 
   it('should handle errors from RecognitionController and notify the user', async () => {

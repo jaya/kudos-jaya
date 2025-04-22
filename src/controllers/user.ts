@@ -36,6 +36,7 @@ export class UserController {
     teamId: string;
     userIds: string[];
   }): Promise<void> {
+    //TODO: Verificar se a wallet existe e se não existe, criar
     try {
       const { botToken, teamId, userIds } = params;
 
