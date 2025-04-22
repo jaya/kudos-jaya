@@ -1,6 +1,6 @@
 {
   "name": "kudos-jaya",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Share warm kudos and kind words with anyone in your workspace using functions and a workflow!",
   "main": "index.js",
   "scripts": {
