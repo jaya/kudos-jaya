@@ -58,6 +58,7 @@ export class InstallationController {
         defaultAmountHint,
         defaultChannelHint,
         alreadyInstalled: false,
+        companyValuesHint,
       };
     }
 

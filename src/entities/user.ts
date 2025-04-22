@@ -1,7 +1,15 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  Unique,
+} from 'typeorm';
 import { Installation } from './installation';
 
 @Entity()
+@Unique(['id', 'teamId'])
 export class User {
   @PrimaryColumn()
   id: string;

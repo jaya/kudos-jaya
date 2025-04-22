@@ -90,7 +90,8 @@ describe('ProductController', () => {
       it('Should return false', async () => {
         mockRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
         const date = new Date();
-        const mockNotUpdated = date.getDate() - 15;
+        const mockNotUpdated = new Date(date);
+        mockNotUpdated.setDate(date.getDate() - 15);
         const latestProductDate = { updatedAt: mockNotUpdated };
 
         mockQueryBuilder.getOne.mockResolvedValueOnce(latestProductDate);

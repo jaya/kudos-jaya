@@ -1,4 +1,7 @@
 import { AppDataSource } from '@/data-source';
+import { Recognition } from '@/entities';
+import logger from '@/utils/logger';
+import { In } from 'typeorm';
 import {
   InstallationController,
   RecognitionController,
@@ -12,6 +15,7 @@ jest.mock('@/utils/user-slack-info', () => ({
 jest.mock('@/controllers/wallet', () => ({
   WalletController: jest.fn().mockImplementation(() => ({
     deposit: jest.fn().mockResolvedValue(undefined),
+    withdraw: jest.fn().mockResolvedValue(undefined),
   })),
 }));
 
@@ -28,6 +32,8 @@ jest.mock('@slack/web-api', () => ({
     },
   })),
 }));
+
+jest.mock('@/utils/logger');
 
 describe('RecognitionController', () => {
   let recognitionController: RecognitionController;
@@ -53,6 +59,9 @@ describe('RecognitionController', () => {
     mockRepository = {
       save: jest.fn(),
       count: jest.fn(),
+      find: jest.fn(),
+      delete: jest.fn(),
+      update: jest.fn(),
       createQueryBuilder: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -104,7 +113,7 @@ describe('RecognitionController', () => {
           teamId,
         }),
       );
-      expect(result).toEqual({ ok: true });
+      expect(result).toEqual({ ok: true, id: 1 });
     });
 
     it('should return an error if recognition save fails', async () => {
@@ -208,6 +217,105 @@ describe('RecognitionController', () => {
         await recognitionController.getUsersRecognitionSummary(teamId);
 
       expect(summary).toEqual([]);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a recognition', async () => {
+      const recognitionId = 1;
+      const updatedMessage = 'Updated message';
+
+      const updatedRecognition = {
+        id: recognitionId,
+        description: updatedMessage,
+      };
+
+      mockRepository.update.mockResolvedValueOnce(updatedRecognition);
+      await recognitionController.update({
+        teamId,
+        id: [recognitionId],
+        params: { description: updatedMessage },
+      });
+
+      expect(mockRepository.update).toHaveBeenCalledWith(
+        { teamId, id: In([recognitionId]) },
+        { description: updatedMessage },
+      );
+    });
+  });
+
+  describe('find', () => {
+    it('should find a recognition by ID', async () => {
+      const recognitionId = 1;
+      const mockRecognition = { id: recognitionId, message };
+
+      mockRepository.find.mockResolvedValueOnce(mockRecognition);
+
+      const recognition = await recognitionController.find({
+        teamId,
+        params: { id: recognitionId },
+      });
+
+      expect(mockRepository.find).toHaveBeenCalledWith({
+        where: { id: recognitionId, teamId },
+      });
+      expect(recognition).toEqual(mockRecognition);
+    });
+  });
+
+  describe('delete', () => {
+    const paramsToDelete = {
+      slackChannelId: 'test-channel-id',
+      slackMessageId: 'test-message-id',
+    };
+    it('should delete recognitions and withdraw from associated wallets', async () => {
+      const defaultAmount = 10;
+      const mockRecognitionsToDelete = [
+        { id: 1, teamId, toId: 'user-1' },
+        { id: 2, teamId, toId: 'user-2' },
+      ] as Recognition[];
+
+      mockRepository.find.mockResolvedValueOnce(mockRecognitionsToDelete);
+      jest
+        .spyOn(InstallationController.prototype, 'find')
+        .mockResolvedValueOnce({ defaultAmount });
+
+      mockRepository.delete.mockResolvedValueOnce({
+        affected: mockRecognitionsToDelete.length,
+      });
+
+      await recognitionController.delete({ teamId, params: paramsToDelete });
+
+      expect(mockRepository.find).toHaveBeenCalledWith({
+        where: { teamId, ...paramsToDelete },
+      });
+      expect(mockRepository.delete).toHaveBeenCalledWith({
+        teamId,
+        ...paramsToDelete,
+      });
+
+      expect(mockRepository.delete).toHaveBeenCalledWith({
+        teamId,
+        ...paramsToDelete,
+      });
+    });
+
+    it('should handle errors during deletion', async () => {
+      const errorMessage = 'Database error during delete';
+
+      mockRepository.find.mockRejectedValueOnce(new Error(errorMessage));
+
+      await expect(
+        recognitionController.delete({ teamId, params: paramsToDelete }),
+      ).resolves.toBeUndefined();
+
+      expect(logger.error).toHaveBeenCalledWith(
+        'RecognitionController.delete()',
+        {
+          error: new Error(errorMessage),
+        },
+      );
+      expect(mockRepository.delete).not.toHaveBeenCalled();
     });
   });
 });

@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { decimalTransformer } from '../utils/decimal-transformer';
@@ -37,10 +38,14 @@ export class Wallet {
   @Column({ nullable: true })
   teamId: string | null;
 
-  @ManyToOne(/* istanbul ignore next */ () => User, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([{ name: 'ownerId' }, { name: 'teamId' }])
-  user: User;
+  @OneToOne(
+    /* istanbul ignore next */ () => User,
+    /* istanbul ignore next */ (user) => user.id,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn([{ name: 'ownerId', referencedColumnName: 'id' }])
+  user: User | null;
 }

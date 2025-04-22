@@ -25,10 +25,13 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
     const { defaultRecognitionChannel } =
       await new InstallationController().find(teamId);
 
+    const recsController = new RecognitionController();
+
     const usersText = [];
+    const recIds = [];
 
     for (const toId of users) {
-      const response = await new RecognitionController().save({
+      const response = await recsController.save({
         fromId,
         toId,
         message,
@@ -50,6 +53,7 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
       });
 
       usersText.push(` <@${toId}>`);
+      recIds.push(response.id);
     }
 
     const blocks = [
@@ -77,10 +81,16 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
       });
     }
 
-    await client.chat.postMessage({
+    const { ts, channel } = await client.chat.postMessage({
       channel: defaultRecognitionChannel,
       text: `*<@${fromId}> is recognizing${usersText}!* \n> ${message}`,
       blocks,
+    });
+
+    await recsController.update({
+      teamId,
+      id: recIds,
+      params: { slackChannelId: channel, slackMessageId: ts },
     });
   } catch (e) {
     logger.error('giveKudosViewCallback()', { error: e });
