@@ -31,7 +31,7 @@
     "@slack/bolt": "^4.2.1",
     "axios": "^1.8.4",
     "config": "^3.3.12",
-    "dotenv": "~16.4.7",
+    "dotenv": "~16.5.0",
     "fast-csv": "^5.0.2",
     "module-alias": "^2.2.3",
     "node-cache": "^5.1.2",
