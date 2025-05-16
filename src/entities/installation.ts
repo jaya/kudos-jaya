@@ -56,4 +56,7 @@ export class Installation {
 
   @Column({ nullable: true })
   companyValues: string;
+
+  @Column({ nullable: true })
+  clientApiKey: string;
 }

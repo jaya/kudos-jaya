@@ -10,6 +10,14 @@ export class InstallationController {
     return this.repository.findOneBy({ teamId });
   }
 
+  public async findMany({
+    params,
+  }: {
+    params: Partial<Installation>;
+  }): Promise<Partial<Installation>[]> {
+    return this.repository.find({ where: { ...params } });
+  }
+
   public async create(installation): Promise<Installation> {
     return this.repository.save({
       teamId: installation.team.id,

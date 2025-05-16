@@ -5,7 +5,7 @@ export class Migrations1743616078834 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-            ALTER TABLE "recognition" DROP CONSTRAINT "FK_cb3d242db49f14bb3a835b60585"
+            ALTER TABLE "recognition" DROP CONSTRAINT "FK_2616d36637552752058e1ecf82a"
         `);
     await queryRunner.query(`
             ALTER TABLE "recognition" DROP CONSTRAINT "FK_cb3d242db49f14bb3a835b60584"
@@ -82,7 +82,7 @@ export class Migrations1743616078834 implements MigrationInterface {
         `);
     await queryRunner.query(`
             ALTER TABLE "recognition"
-            ADD CONSTRAINT "FK_cb3d242db49f14bb3a835b60585" FOREIGN KEY ("toId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+            ADD CONSTRAINT "FK_2616d36637552752058e1ecf82a" FOREIGN KEY ("toId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `);
   }
 }
