@@ -19,6 +19,7 @@ describe('InstallationController', () => {
       findOneBy: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
+      find: jest.fn(),
     };
     (AppDataSource.getRepository as jest.Mock).mockReturnValue(
       mockInstallRepository,
@@ -37,6 +38,22 @@ describe('InstallationController', () => {
       });
     });
   });
+
+  describe('findMany()', () => {
+    it('should return the installation of the given parameters', async () => {
+      mockInstallRepository.find.mockResolvedValueOnce([storedInstallation]);
+
+      const res = await installController.findMany({
+        params: { teamId: 'T081PEJ3G9F' },
+      });
+
+      expect(res).toEqual([storedInstallation]);
+      expect(mockInstallRepository.find).toHaveBeenCalledWith({
+        where: { teamId: 'T081PEJ3G9F' },
+      });
+    });
+  });
+
   describe('create()', () => {
     it('should create an installation based on the given paylaod', async () => {
       mockInstallRepository.save.mockResolvedValueOnce(storedInstallation);

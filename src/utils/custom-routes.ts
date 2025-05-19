@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 import manifest from '../../manifest.json';
+import { userHandler } from '../handlers/user';
 const oauthRedirect = manifest.oauth_config.redirect_urls[0];
 const botScopes = manifest.oauth_config.scopes.bot;
 
@@ -21,5 +22,10 @@ export const customRoutes = [
       res.writeHead(200);
       res.end('{ ok: "ok" }');
     },
+  },
+  {
+    path: '/users/:email/kudos',
+    method: ['GET'],
+    handler: userHandler,
   },
 ];

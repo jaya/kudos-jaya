@@ -69,6 +69,7 @@ describe('RecognitionController', () => {
       groupBy: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       limit: jest.fn().mockReturnThis(),
+      findAndCount: jest.fn(),
       getRawMany: jest.fn(),
     };
 
@@ -241,6 +242,33 @@ describe('RecognitionController', () => {
         { teamId, id: In([recognitionId]) },
         { description: updatedMessage },
       );
+    });
+  });
+
+  describe('findWithPagination', () => {
+    it('should find a recognition by given parameters', async () => {
+      const recognitionId = 1;
+      const mockRecognition = { id: recognitionId, message };
+
+      mockRepository.findAndCount.mockResolvedValueOnce([[mockRecognition], 1]);
+
+      const recognition = await recognitionController.findWithPagination({
+        teamId,
+        params: { id: recognitionId },
+      });
+
+      expect(mockRepository.findAndCount).toHaveBeenCalledWith({
+        where: { id: recognitionId, teamId },
+        skip: 0,
+        take: 20,
+      });
+      expect(recognition).toEqual({
+        data: [mockRecognition],
+        currentPage: 1,
+        pageSize: 20,
+        totalCount: 1,
+        totalPages: 1,
+      });
     });
   });
 

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## version [1.6.0](https://github.com/l3co/kudos-jaya/compare/1.5.1...1.6.0)
+
+### added
+
+- API route to fetch kudos of a user
+
 ## version [1.5.1](https://github.com/l3co/kudos-jaya/compare/1.5.0...1.5.1)
 
 ### fixed

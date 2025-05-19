@@ -122,6 +122,44 @@ export class RecognitionController {
     });
   }
 
+  public async findWithPagination({
+    teamId,
+    params,
+    page = 1,
+    pageSize = 20,
+  }: {
+    teamId: string;
+    params: Partial<Recognition>;
+    page?: number;
+    pageSize?: number;
+  }): Promise<{
+    data: Recognition[];
+    currentPage: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+  }> {
+    const skip = (page - 1) * pageSize;
+
+    const [recognitions, totalCount] =
+      await this.recognitionRepository.findAndCount({
+        where: {
+          teamId,
+          ...params,
+        },
+        skip,
+        take: pageSize,
+      });
+
+    return {
+      data: recognitions,
+      currentPage: page,
+      pageSize: pageSize,
+      totalCount: totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+    };
+  }
+
   public async delete({
     teamId,
     params,

@@ -43,6 +43,7 @@
         "files:write",
         "team:read",
         "users:read",
+        "users:read.email",
         "channels:manage",
         "groups:write",
         "im:write",
