@@ -14,7 +14,7 @@ const settings = {
     },
     port: process.env.PORT || 3000,
     productsPageSize: process.env.PRODUCTS_PAGE_SIZE || 5,
-    baseUrl: process.env.APP_BASE_URL || 'localhost',
+    baseUrl: process.env.APP_BASE_URL || '0.0.0.0',
     encryptionKey:
       process.env.ENCRYPTION_KEY || 'encryption_key_must_length32char',
   },

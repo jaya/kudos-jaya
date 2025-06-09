@@ -18,13 +18,13 @@
     "slash_commands": [
       {
         "command": "/give-kudos",
-        "url": "https://kudos-jaya-808955318050.us-west1.run.app/slack/events",
+        "url": "https://kudos-jaya-gp663.ondigitalocean.app/kudos-jaya2/slack/events",
         "description": "Acknowledge the impact someone had on you",
         "should_escape": false
       },
       {
         "command": "/cancel-kudos",
-        "url": "https://kudos-jaya-808955318050.us-west1.run.app/slack/events",
+        "url": "https://kudos-jaya-gp663.ondigitalocean.app/kudos-jaya2/slack/events",
         "description": "Cancel a given kudos",
         "should_escape": false
       }
@@ -32,33 +32,33 @@
   },
   "oauth_config": {
     "redirect_urls": [
-      "https://kudos-jaya-808955318050.us-west1.run.app/slack/oauth_redirect"
+      "https://kudos-jaya-gp663.ondigitalocean.app/kudos-jaya2/slack/oauth_redirect"
     ],
     "scopes": {
       "bot": [
         "channels:history",
+        "channels:manage",
         "chat:write",
         "chat:write.public",
         "commands",
         "files:write",
-        "team:read",
-        "users:read",
-        "users:read.email",
-        "channels:manage",
         "groups:write",
         "im:write",
-        "mpim:write"
+        "mpim:write",
+        "team:read",
+        "users:read",
+        "users:read.email"
       ]
     }
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://kudos-jaya-808955318050.us-west1.run.app/slack/events",
+      "request_url": "https://kudos-jaya-gp663.ondigitalocean.app/kudos-jaya2/slack/events",
       "bot_events": ["app_home_opened", "message.channels"]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://kudos-jaya-808955318050.us-west1.run.app/slack/events"
+      "request_url": "https://kudos-jaya-gp663.ondigitalocean.app/kudos-jaya2/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,

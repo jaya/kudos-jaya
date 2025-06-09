@@ -3,6 +3,9 @@
   "version": "1.6.0",
   "description": "Share warm kudos and kind words with anyone in your workspace using functions and a workflow!",
   "main": "index.js",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "build": "tsc && cp -r config dist",
     "start": "node dist/src/app.js",
