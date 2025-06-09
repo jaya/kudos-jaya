@@ -38,9 +38,11 @@ registerListeners(app);
 (async () => {
   try {
     await AppDataSource.initialize();
+    const host = config.get<string>('app.baseUrl');
+    const port = config.get<number>('app.port');
     await app.start({
-      port: config.get<number>('app.port'),
-      host: config.get<string>('app.baseUrl'),
+      port,
+      host,
     });
     logger.info('⚡️ Bolt app is running! ⚡️');
   } catch (error) {
