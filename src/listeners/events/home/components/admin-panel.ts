@@ -57,6 +57,15 @@ Total redeemed: R$ ${totalRedeemed}`,
           },
           action_id: 'open_prizes_report_modal',
         },
+        {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Wallet report',
+            emoji: true,
+          },
+          action_id: 'open_wallet_report',
+        },
       ],
     },
     {

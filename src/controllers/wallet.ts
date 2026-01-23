@@ -1,4 +1,5 @@
 import { AppDataSource } from '@/data-source';
+import { User } from '@/entities/user';
 import { Wallet } from '@/entities/wallet';
 
 type BaseParams = {
@@ -67,5 +68,16 @@ export class WalletController {
   public async find(params: BaseParams): Promise<Partial<Wallet>> {
     const { ownerId, teamId } = params;
     return this.walletRepository.findOneBy({ ownerId, teamId });
+  }
+
+  public async fetchWalletReport(params: { teamId: string }) {
+    return this.walletRepository
+      .createQueryBuilder('w')
+      .select('w.balance', 'balance')
+      .addSelect('u.name', 'name')
+      .innerJoin(User, 'u', 'u.id = w.ownerId AND u.teamId = w.teamId')
+      .where('w.teamId = :teamId', { teamId: params.teamId })
+      .orderBy('w.balance', 'DESC')
+      .getRawMany();
   }
 }
