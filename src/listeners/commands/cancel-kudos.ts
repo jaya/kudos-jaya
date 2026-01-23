@@ -75,7 +75,7 @@ export function getCancelKudosView(
       return {
         text: {
           type: 'mrkdwn',
-          text: `Kudo given to ${toIds}\n Description: ${description}`,
+          text: `${toIds}\nDescription: ${description}`.slice(0, 147) + '...',
         },
         value: `${slackMessageId},${slackChannelId}`,
       };
