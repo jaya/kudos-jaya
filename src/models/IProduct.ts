@@ -7,6 +7,7 @@ export interface BaseProduct {
   minValue: number;
   maxValue: number;
   updatedAt?: Date;
+  isActive: boolean;
 }
 
 export interface IProduct {

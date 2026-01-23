@@ -40,4 +40,9 @@ export class Product {
 
   @UpdateDateColumn({ default: /* istanbul ignore next */ () => 'NOW()' })
   updatedAt: Date;
+
+  @Column({
+    default: true,
+  })
+  isActive: boolean;
 }

@@ -10,6 +10,7 @@ describe('ProductController', () => {
       delete: jest.fn(),
       insert: jest.fn(),
       save: jest.fn(),
+      upsert: jest.fn(),
       find: jest.fn(),
       count: jest.fn(),
       createQueryBuilder: jest.fn().mockReturnThis(),
@@ -37,8 +38,8 @@ describe('ProductController', () => {
     it('Should return the products from db limited to 5', async () => {
       mockRepository.find.mockResolvedValueOnce(fetchProductsResponse);
       const response = await productController.get(0);
-      expect(response.length).toEqual(5);
-      expect(response).toEqual(fetchProductsResponse.slice(0, 5));
+      expect(response.length).toEqual(6);
+      expect(response).toEqual(fetchProductsResponse.slice(0, 6));
     });
   });
 
@@ -105,11 +106,17 @@ describe('ProductController', () => {
 
   describe('updateCatalog()', () => {
     it('Should update the date of the sync between the db and todo and insert new products if they exist', async () => {
-      mockRepository.save.mockResolvedValueOnce();
+      mockRepository.upsert.mockResolvedValueOnce();
 
       await productController.updateCatalog(fetchProductsResponse);
 
-      expect(mockRepository.save).toHaveBeenCalledWith(fetchProductsResponse);
+      expect(mockRepository.upsert).toHaveBeenCalledWith(
+        fetchProductsResponse,
+        {
+          conflictPaths: ['id'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
     });
   });
 });

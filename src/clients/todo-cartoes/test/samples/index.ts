@@ -61,6 +61,83 @@ export const todoProductsResponse = {
   success: true,
   product_lines: [
     {
+      id: 444,
+      updated_at: '2025-11-12T10:16:08.089-03:00',
+      categories: ['Varejo'],
+      product_line_name: 'Shopee',
+      identificator: 'SHOPEE',
+      online_redemption: true,
+      store_redemption: false,
+      brand_name: 'SHOPEE',
+      logo_url: 'https://cdn.todoincomm.com.br/01pr21v3fd7cmxo8vkdxmk52ce9q',
+      product_line_description:
+        'A Shopee é uma plataforma de e-commerce que conecta vendedores, marcas e consumidores, proporcionando uma experiência de compra fácil, segura e divertida. Com o Cartão Presente Shopee, você tem acesso a uma ampla gama de produtos, divididos em mais de 30 categorias, como Beleza, Casa \u0026 Decoração, PET, Moda, Tecnologia e muito mais. Aproveite ainda diversos benefícios que ajudam a economizar e a comodidade de fazer suas compras diretamente pelo aplicativo.',
+      subscription: false,
+      terms_and_conditions:
+        '[Política] Termos e Condições – Vale Presente Shopee (Gift Cards) Antes de prosseguir com a compra, você, usuário, deve ler atentamente os termos e condições a seguir. Ao realizar a compra, você concorda e consente com os termos abaixo, que integram os Termos de Serviço da Shopee, reconhecendo estar sujeito às regras estabelecidas para compras do Vale Presente Shopee. Caso não concorde com qualquer uma das regras indicadas abaixo, não conclua sua compra.  Créditos Virtuais. O Vale Presente Shopee é um produto digital que possibilita ao comprador ter acesso a uma determinada quantidade de créditos a ser aplicada e utilizada em produtos comercializados na plataforma. Resgate e uso do produto. Os Créditos Virtuais são produtos de natureza exclusivamente digital, sendo fornecidos pela Shopee para serem resgatados e utilizados digitalmente na compra de produtos da plataforma, no prazo máximo a ser definido pelo respectivo comprador no ato da compra do vale-presente. O uso dos Créditos Virtuais atrelados a determinado Vale Presente podem ser utilizados somente em uma única compra. Assim, ainda que o valor da compra seja menor que a quantidade de Créditos Virtuais adquiridos naquele Vale Presente, referido Vale Presente Shopee será integralmente consumido, sem que haja qualquer saldo em favor do usuário. Após a conclusão do pagamento, não será mais possível solicitar reembolso ou cancelamento para o Vale Presente Shopee. Nenhum item físico será fornecido ou entregue a você em decorrência da compra do Vale Presente Shopee. Quaisquer produtos consumidos na plataforma, ainda que mediante uso do crédito contido no Vale Presente Shopee, são fornecidos sob exclusiva responsabilidade do vendedor e, portanto, está sujeito aos termos de uso, políticas de privacidade e demais especificações indicadas pelo vendedor. Nesse sentido, quaisquer questões, limitações ou problemas relacionados ao uso do produto são de responsabilidade do vendedor. Cancelamento ou Devoluções de Produtos Adquiridos com Créditos Virtuais. A Política de Reembolsos e Devoluções da Shopee será normalmente aplicada nos casos de cancelamento e/ou devolução do(s) produto(s) adquiridos com o uso de Vale Presente Shopee / Créditos Virtuais. Nestes casos, o reembolso ocorrerá por meio da devolução dos Créditos Virtuais gastos pelo usuário comprador na compra. Se a compra tiver sido parcialmente paga com outro método de pagamento (ex. cartão de crédito), o valor será proporcionalmente reembolsado ao comprador por meio do mesmo método.',
+      steps_to_use:
+        'O código pode ser aplicado diretamente durante a finalização da compra, garantindo uma experiência fluida e sem complicações.  Para resgatar, basta copiar e colar o código em “Meus Cupons” \u003e “Inserir código” no aplicativo Shopee.   Também é possível aplicar o código recebido por e-mail ou compartilhado via WhatsApp pelo remetente. Basta acessar “Cupom Shopee” \u003e Digite o código recebido \u003e Clique em “Aplicar” \u003e toque em “OK”. O valor será descontado automaticamente de sua compra. ',
+      card_images: [
+        {
+          default: true,
+          id: 'SHOPEE-3A4E130C8CB7',
+          image_url:
+            'https://cdn.todoincomm.com.br/spxtoa56bvy0vkbl3k8zgy3ro8uw',
+        },
+      ],
+      products: [
+        {
+          card_identificator: '196742106794',
+          updated_at: '2025-11-12T10:54:50.103-03:00',
+          min_value: '20.0',
+          max_value: '20.0',
+          subscription_period: null,
+          product_identifier: 'SHOPEE CORPORATIVO',
+        },
+        {
+          card_identificator: '196742106787',
+          updated_at: '2025-11-12T10:54:50.103-03:00',
+          min_value: '10.0',
+          max_value: '10.0',
+          subscription_period: null,
+          product_identifier: 'SHOPEE-DIGITAL-10',
+        },
+        {
+          card_identificator: '196742106794',
+          updated_at: '2025-11-12T10:54:50.103-03:00',
+          min_value: '100.0',
+          max_value: '100.0',
+          subscription_period: null,
+          product_identifier: 'SHOPEE-DIGITAL-100',
+        },
+        {
+          card_identificator: '196742106817',
+          updated_at: '2025-11-12T10:54:50.103-03:00',
+          min_value: '50.0',
+          max_value: '50.0',
+          subscription_period: null,
+          product_identifier: 'SHOPEE-DIGITAL-50',
+        },
+        {
+          card_identificator: '196742106800',
+          updated_at: '2025-11-12T10:54:50.103-03:00',
+          min_value: '30.0',
+          max_value: '30.0',
+          subscription_period: null,
+          product_identifier: 'SHOPEE-DIGITAL-30',
+        },
+        {
+          card_identificator: '196742106824',
+          updated_at: '2025-11-12T10:54:50.103-03:00',
+          min_value: '100.0',
+          max_value: '100.0',
+          subscription_period: null,
+          product_identifier: 'SHOPEE-DIGITAL-100',
+        },
+      ],
+    },
+    {
+      id: 8,
       identificator: 'dummy-ddp-open-denom',
       online_redemption: true,
       store_redemption: false,
@@ -69,7 +146,8 @@ export const todoProductsResponse = {
       brand_name: 'InComm DDP Open Denom',
       logo_url:
         'https://vendas-corp-teste.s3.sa-east-1.amazonaws.com/uploads/product_line_configuration/plataform/logo/6/thumb_giftcard-todo-incomm-002.png',
-      product_line_description: 'About this Product Line Text',
+      product_line_description:
+        'About this Product Line Text About this Product Line Text About this Product Line Text About this Product Line Text About this Product Line Text About this Product Line Text About this Product Line Text',
       subscription: false,
       updated_at: '2023-11-27T16:40:54.770-03:00',
       terms_and_conditions: 'Terms & Conditions Dummy Product DDP',
@@ -135,6 +213,7 @@ export const todoProductsResponse = {
       ],
     },
     {
+      id: 7,
       identificator: 'dummy-local-code',
       online_redemption: true,
       store_redemption: false,
@@ -183,6 +262,7 @@ export const todoProductsResponse = {
       ],
     },
     {
+      id: 6,
       identificator: 'dummy-ddp-fixed-denom',
       online_redemption: true,
       store_redemption: false,
@@ -259,6 +339,7 @@ export const todoProductsResponse = {
       ],
     },
     {
+      id: 5,
       identificator: 'dummy-local-open-denom',
       online_redemption: true,
       store_redemption: true,
@@ -357,6 +438,7 @@ export const todoProductsResponse = {
       ],
     },
     {
+      id: 4,
       identificator: 'GIFT_CARD_DIGITAL_PSN_GT7',
       online_redemption: true,
       store_redemption: true,
@@ -384,6 +466,7 @@ export const todoProductsResponse = {
       ],
     },
     {
+      id: 3,
       identificator: null,
       online_redemption: null,
       store_redemption: null,
@@ -401,6 +484,7 @@ export const todoProductsResponse = {
       products: [],
     },
     {
+      id: 2,
       identificator: 'Vivara',
       online_redemption: true,
       store_redemption: true,
@@ -418,6 +502,7 @@ export const todoProductsResponse = {
       products: [],
     },
     {
+      id: 1,
       identificator: 'another_company',
       online_redemption: true,
       store_redemption: true,
@@ -451,46 +536,65 @@ export const fetchProductsResponse = [
     id: 'TODO TI TESTES',
     name: 'Company A',
     description: 'Company A',
-    terms: ' ',
+    terms: 'Os valores disponíveis para este produto são: NaN',
     logo: 'http://mylogo.com',
     minValue: 1,
     maxValue: 1,
+    isActive: true,
   },
   {
     id: 'TODO TI TESTES',
     name: 'Dummy Qualita Open Denom',
     description: 'Dummy Qualita Open Denom',
-    terms: 'rwar',
+    terms:
+      'Os valores disponíveis para este produto são: 0 - 10 - 50 - 150 - 200 - 400 - 1000',
     logo: 'https://vendas-corp-teste.s3.sa-east-1.amazonaws.com/uploads/product_line_configuration/plataform/logo/49/1000x600_logo_amaro_black__1_.png',
     minValue: 1,
     maxValue: 1000,
+    isActive: true,
   },
   {
     id: '799366454847',
     name: 'InComm DDP Fixed Denom',
     description:
-      'Plataforma de processamento de cartões presente integrada à sua loja física e virtual para criar, vender e receber seus gift cards de forma simples e incrível....',
-    terms: 'Terms & Conditions Dummy Product DDP Fixed Denom',
+      'Plataforma de processamento de cartões presente integrada à sua loja física e virtual para criar, vender e receber seus gift cards de forma simples e incrível.',
+
+    terms: 'Os valores disponíveis para este produto são: 30 - 60 - 100',
     logo: 'https://vendas-corp-teste.s3.sa-east-1.amazonaws.com/uploads/product_line_configuration/plataform/logo/10/logo_todo_resize.jpg',
     minValue: 30,
     maxValue: 100,
+    isActive: true,
   },
   {
     id: '799366454854',
     name: 'InComm DDP Open Denom',
-    description: 'About this Product Line Text...',
-    terms: 'Terms & Conditions Dummy Product DDP',
+    description:
+      'About this Product Line Text About this Product Line Text About this Product Line Text About this Product Line Text About this Product Line Text About this Product Line Text About this Product Line...',
+    terms:
+      'Os valores disponíveis para este produto são: 60 - 80 - 90 - 100 - 150 - 200 - 600',
     logo: 'https://vendas-corp-teste.s3.sa-east-1.amazonaws.com/uploads/product_line_configuration/plataform/logo/6/thumb_giftcard-todo-incomm-002.png',
     minValue: 60,
     maxValue: 600,
+    isActive: true,
   },
   {
     id: '799366436775',
     name: 'PSN',
     description: 'PSN',
-    terms: ' ',
+    terms: 'Os valores disponíveis para este produto são: 10',
     logo: 'https://vendas-corp-teste.s3.sa-east-1.amazonaws.com/uploads/product_line_configuration/plataform/logo/48/download.png',
     minValue: 10,
     maxValue: 10,
+    isActive: true,
+  },
+  {
+    id: 'TODO TI TESTES CODE',
+    name: 'Staging Outback',
+    description: 'Staging Outback',
+    terms: 'Os valores disponíveis para este produto são: 0 - 100 - 1000',
+    logo: 'https://vendas-corp-teste.s3.sa-east-1.amazonaws.com/uploads/product_line_configuration/plataform/logo/4/outback.png',
+    minValue: 1,
+    maxValue: 1000,
+    isActive: true,
   },
 ];

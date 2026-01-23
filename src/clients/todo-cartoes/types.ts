@@ -13,6 +13,7 @@ type Product = {
 };
 
 export type ProductLine = {
+  id: number;
   identificator: string | null;
   online_redemption: boolean | null;
   store_redemption: boolean | null;
