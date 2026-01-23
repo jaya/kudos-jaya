@@ -18,6 +18,7 @@ export class ProductController {
     return this.productRepository.find({
       where: {
         ...params,
+        isActive: true,
       },
       skip: offset,
       take: limit,
@@ -28,7 +29,7 @@ export class ProductController {
   }
 
   public async getCatalogSize(): Promise<number> {
-    return this.productRepository.count();
+    return this.productRepository.count({ where: { isActive: true } });
   }
 
   public async isCatalogUpdated(): Promise<boolean> {
@@ -44,10 +45,9 @@ export class ProductController {
     logger.info('Last catalog update ', { updatedAt });
 
     if (updatedAt) {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-      if (updatedAt < sevenDaysAgo) {
+      const now = new Date();
+      const oneHourAgo = new Date(now.getTime() - 3600000);
+      if (updatedAt < oneHourAgo) {
         return false;
       }
       return true;
@@ -56,9 +56,9 @@ export class ProductController {
 
   public async updateCatalog(products: BaseProduct[]): Promise<void> {
     logger.info('Updating products catalog');
-    products.forEach((prod) => {
-      prod.updatedAt = new Date();
+    await this.productRepository.upsert(products, {
+      conflictPaths: ['id'],
+      skipUpdateIfNoValuesChanged: true,
     });
-    await this.productRepository.save(products);
   }
 }
