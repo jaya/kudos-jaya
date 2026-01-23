@@ -1,0 +1,39 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_SSH_HOST }}
+          username: ${{ secrets.DO_SSH_USER }}
+          key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+
+            export NODE_PATH=/root/.nvm/versions/node/v20.19.2/lib/node_modules
+            export PATH=/root/.nvm/versions/node/v20.19.2/bin:$PATH
+
+            cd /var/www/kudos-jaya || exit
+
+            git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/l3co/kudos-jaya.git
+            git checkout main
+            git pull origin main
+
+            npm install
+            npm run build
+
+            pm2 delete kudos-jaya || true
+            pm2 start npm --name "kudos-jaya" -- run start
+            pm2 save
