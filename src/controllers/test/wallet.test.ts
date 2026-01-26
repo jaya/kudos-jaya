@@ -10,6 +10,11 @@ describe('WalletController', () => {
   const mockQueryBuilder = {
     select: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    addSelect: jest.fn().mockReturnThis(),
+    innerJoin: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    getRawMany: jest.fn(),
     getRawOne: jest.fn(),
   };
 
@@ -150,6 +155,27 @@ describe('WalletController', () => {
       mockWalletRepository.findOneBy.mockResolvedValueOnce(mockParams);
       const wallet = await walletController.find(mockParams);
       expect(wallet).toEqual(mockParams);
+    });
+  });
+
+  describe('fetchWalletReport', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      mockWalletRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+    });
+    it('Should return the wallet report data for the given team', async () => {
+      const reportData = [
+        { name: 'User A', balance: 100 },
+        { name: 'User B', balance: 200 },
+      ];
+
+      mockQueryBuilder.getRawMany.mockResolvedValueOnce(reportData);
+
+      const result = await walletController.fetchWalletReport({
+        teamId: 'TEAM1234',
+      });
+
+      expect(result).toEqual(reportData);
     });
   });
 });
