@@ -22,8 +22,8 @@ jobs:
           port: 22
           script: |
 
-            export NODE_PATH=/root/.nvm/versions/node/v20.19.2/lib/node_modules
-            export PATH=/root/.nvm/versions/node/v20.19.2/bin:$PATH
+            export NODE_PATH=/root/.nvm/versions/node/v24.13.0/lib/node_modules
+            export PATH=/root/.nvm/versions/node/v24.13.0/bin:$PATH
 
             cd /var/www/kudos-jaya || exit
 
