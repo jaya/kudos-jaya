@@ -114,65 +114,18 @@ Use the `/give-kudos` command in Slack to send kudos:
 
 ---
 
-## Staging Environment
+## Deployment
 
-- The staging environment runs on **Google Cloud Platform (GCP)** and can be accessed at:
-  ```
-  https://console.cloud.google.com/run/detail/us-west1/kudos-jaya-hml/metrics?inv=1&invt=Abo8Hg&project=kudos-jaya-438616
-  ```
-- The database is a copy of the production database:
-  ```
-  https://console.cloud.google.com/sql/instances/kudos-jaya-instance/studio?inv=1&invt=Abo8Hg&project=kudos-jaya-438616
-  ```
-- Deployment to staging is automated via CI/CD:
-  1. Create a branch from `main`, commit changes, and push.
-  2. Run the Cloud Build trigger at:
-     ```
-     https://console.cloud.google.com/cloud-build/triggers;region=global?inv=1&invt=Abo70g&project=kudos-jaya-438616
-     ```
-  3. Select the trigger **"kudos-jaya-hml-trigger"**.
-  4. Choose the branch and click **"Run trigger"**.
-  5. Monitor deployment logs at:
-     ```
-     https://console.cloud.google.com/cloud-build/builds?inv=1&invt=Abo70g&project=kudos-jaya-438616
-     ```
+The application is deployed to a DigitalOcean droplet via GitHub Actions. Every push to the `main` branch triggers a new deployment.
 
----
+The deployment process is defined in the `.github/workflows/deploy.yml` file. It consists of the following steps:
 
-## Production Deployment
-
-- The production environment runs on **GCP Cloud Run**:
-  ```
-  https://console.cloud.google.com/run/detail/us-west1/kudos-jaya/metrics?inv=1&invt=Abo8Hg&project=kudos-jaya-438616
-  ```
-- The production database is available at:
-
-  ```
-  https://console.cloud.google.com/sql/instances/kudos-jaya-instance/studio?inv=1&invt=Abo8Hg&project=kudos-jaya-438616
-  ```
-
-- Deployments are automated via CI/CD when a new tag is pushed.
-- Environment variables and secrets are managed via **Google Cloud Secret Manager**.
-
-### Tagging a New Release
-
-1. Merge the Pull Request into `main`, ensuring **CHANGELOG.md** is updated.
-2. Checkout `main`:
-   ```sh
-   git checkout main
-   ```
-3. Locally, generate a new version tag based on the change:
-   ```sh
-   npm version patch   # For patches (e.g., 1.0.1 → 1.0.2)
-   npm version minor   # For minor updates (e.g., 1.0.2 → 1.1.0)
-   npm version major   # For major updates (e.g., 1.1.0 → 2.0.0)
-   ```
-4. Push the new tag to trigger production deployment:
-   ```sh
-   git push --force-with-lease && git push --tags
-   ```
-
-Once pushed, CI/CD will automatically deploy the latest release to production.
+1.  Checkout the code.
+2.  SSH into the DigitalOcean droplet.
+3.  Pull the latest changes from the `main` branch.
+4.  Install dependencies with `npm install`.
+5.  Build the application with `npm run build`.
+6.  Restart the application with `pm2`.
 
 ---
 
