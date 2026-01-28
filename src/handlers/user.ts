@@ -28,7 +28,9 @@ export async function userHandler(
 
     let response: UsersLookupByEmailResponse;
     try {
-      response = await client.users.lookupByEmail({ email });
+      response = await client.users.lookupByEmail({
+        email: Array.isArray(email) ? email[0] : email,
+      });
     } catch (error) {
       logger.error(error);
       return sendJsonResponse(res, 404, {
