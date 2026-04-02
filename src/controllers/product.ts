@@ -24,6 +24,7 @@ export class ProductController {
       take: limit,
       order: {
         name: 'ASC',
+        minValue: 'ASC',
       },
     });
   }
