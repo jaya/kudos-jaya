@@ -22,6 +22,10 @@ export class TodoProduct implements IProduct {
       for (const card of cards) {
         const { min_value, max_value } = card;
 
+        if (item.brand_name === 'SHOPEE' && min_value < 30) {
+          continue;
+        }
+
         const product: BaseProduct = {
           id: card.card_identificator,
           name: item.brand_name,
