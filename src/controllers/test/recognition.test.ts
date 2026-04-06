@@ -135,6 +135,27 @@ describe('RecognitionController', () => {
     });
   });
 
+  describe('getMonthlyKudosGivenCount', () => {
+    it('should return the count of kudos given by a user in the current month', async () => {
+      const fromId = 'user1';
+      mockRepository.count.mockResolvedValueOnce(3);
+
+      const count = await recognitionController.getMonthlyKudosGivenCount(
+        teamId,
+        fromId,
+      );
+
+      expect(mockRepository.count).toHaveBeenCalledWith({
+        where: {
+          teamId,
+          fromId,
+          createdAt: expect.any(Object),
+        },
+      });
+      expect(count).toBe(3);
+    });
+  });
+
   describe('getTotal', () => {
     it('should return the total count of recognitions for a specific user', async () => {
       const userId = 'user1';

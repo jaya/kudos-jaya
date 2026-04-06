@@ -268,4 +268,40 @@ describe('giveKudosViewCallback', () => {
       expect(installControllerMocked).toHaveBeenCalledWith(body.user.team_id);
     });
   });
+
+  describe('When the monthly kudos limit has been reached', () => {
+    it('should notify the user and not save any recognition', async () => {
+      jest
+        .spyOn(InstallationController.prototype, 'find')
+        .mockResolvedValueOnce({
+          defaultRecognitionChannel,
+          monthlyKudosLimit: 5,
+        });
+      jest
+        .spyOn(RecognitionController.prototype, 'getMonthlyKudosGivenCount')
+        .mockResolvedValueOnce(5);
+
+      await giveKudosViewCallback({
+        ack: mockAck,
+        view: {
+          state: {
+            values: {
+              to_id_block: view.state.values.to_id_block,
+              kudo_message_block: view.state.values.kudo_message_block,
+            },
+          },
+          blocks: view.blocks,
+        },
+        client: mockClient,
+        body,
+      });
+
+      expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
+        channel: body.user.id,
+        text: 'You have reached your monthly kudos limit of 5. You can give more kudos next month! :pray:',
+      });
+      expect(mockClient.chat.postMessage).toHaveBeenCalledTimes(1);
+      expect(RecognitionController.prototype.save).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -1,7 +1,7 @@
 import { AppDataSource } from '@/data-source';
 import { Recognition } from '@/entities/';
 import logger from '@/utils/logger';
-import { In } from 'typeorm';
+import { Between, In } from 'typeorm';
 import { InstallationController, UserController, WalletController } from './';
 
 export type RecognitionSummary = {
@@ -65,6 +65,22 @@ export class RecognitionController {
       logger.error('RecognitionController.save()', { error });
       return { ok: false };
     }
+  }
+
+  public async getMonthlyKudosGivenCount(
+    teamId: string,
+    fromId: string,
+  ): Promise<number> {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    return this.recognitionRepository.count({
+      where: {
+        teamId,
+        fromId,
+        createdAt: Between(startOfMonth, startOfNextMonth),
+      },
+    });
   }
 
   public async getTotal(params: {

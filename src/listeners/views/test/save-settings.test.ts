@@ -37,6 +37,11 @@ describe('saveSettingsCallback()', () => {
             value: 'Love your day, Connect yourself with the impact',
           },
         },
+        setup_monthly_kudos_limit: {
+          monthly_kudos_limit: {
+            value: '5',
+          },
+        },
         auditor_users: {
           auditor_users: {
             selected_users: ['U123456', 'U654321'],

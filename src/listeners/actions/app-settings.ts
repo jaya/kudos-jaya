@@ -13,6 +13,7 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
       defaultAmountHint,
       alreadyInstalled,
       companyValuesHint,
+      monthlyKudosLimitHint,
     } = await new InstallationController().getCurrentSettings(teamId);
 
     const auditorUsers = await new UserController().findMany({
@@ -106,6 +107,27 @@ const appSettingsButtonCallback = async ({ ack, client, body }) => {
             hint: {
               type: 'plain_text',
               text: companyValuesHint,
+              emoji: true,
+            },
+          },
+          {
+            type: 'input',
+            block_id: 'setup_monthly_kudos_limit',
+            optional: true,
+            element: {
+              type: 'number_input',
+              is_decimal_allowed: false,
+              action_id: 'monthly_kudos_limit',
+              min_value: '1',
+            },
+            label: {
+              type: 'plain_text',
+              text: 'Monthly kudos limit per user',
+              emoji: true,
+            },
+            hint: {
+              type: 'plain_text',
+              text: monthlyKudosLimitHint,
               emoji: true,
             },
           },

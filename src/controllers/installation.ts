@@ -57,6 +57,8 @@ export class InstallationController {
     const defaultChannelHint =
       'Enter the default Slack channel id (ex: C93LZNJ64, #bots).';
     const companyValuesHint = 'Separate by comma';
+    const monthlyKudosLimitHint =
+      'Leave empty for unlimited. Ex: 5 (users can give at most 5 kudos per month).';
     if (
       !installation?.giftCardApiToken ||
       !installation?.defaultRecognitionChannel
@@ -67,6 +69,7 @@ export class InstallationController {
         defaultChannelHint,
         alreadyInstalled: false,
         companyValuesHint,
+        monthlyKudosLimitHint,
       };
     }
 
@@ -76,6 +79,9 @@ export class InstallationController {
       defaultChannelHint: `${defaultChannelHint}\nCurrent: ${installation.defaultRecognitionChannel}`,
       alreadyInstalled: true,
       companyValuesHint: `${companyValuesHint}\nCurrent: ${installation.companyValues ?? ''}`,
+      monthlyKudosLimitHint: installation.monthlyKudosLimit
+        ? `${monthlyKudosLimitHint}\nCurrent: ${installation.monthlyKudosLimit}`
+        : `${monthlyKudosLimitHint}\nCurrent: unlimited`,
     };
   }
 }

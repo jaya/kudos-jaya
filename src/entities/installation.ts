@@ -59,4 +59,7 @@ export class Installation {
 
   @Column({ nullable: true })
   clientApiKey: string;
+
+  @Column({ type: 'int', nullable: true, default: null })
+  monthlyKudosLimit: number | null;
 }
