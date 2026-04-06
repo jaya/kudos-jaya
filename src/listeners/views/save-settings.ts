@@ -18,6 +18,10 @@ const saveSettingsCallback = async ({ ack, view, client, body }) => {
     const companyValues =
       view.state.values['setup_company_values']['company_values']?.value;
 
+    const monthlyKudosLimitValue =
+      view.state.values['setup_monthly_kudos_limit']?.['monthly_kudos_limit']
+        ?.value;
+
     const auditorUsers =
       view.state.values['auditor_users']['auditor_users'].selected_users;
 
@@ -38,6 +42,9 @@ const saveSettingsCallback = async ({ ack, view, client, body }) => {
     if (companyValues) {
       updateObject['companyValues'] = companyValues;
     }
+
+    updateObject['monthlyKudosLimit'] =
+      monthlyKudosLimitValue != null ? Number(monthlyKudosLimitValue) : null;
 
     const updatedSettings = await new InstallationController().update(
       updateObject,

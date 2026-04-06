@@ -22,10 +22,24 @@ const giveKudosViewCallback = async ({ ack, view, client, body }) => {
         ? selectedCompanyValues.map((value) => value?.text?.text).join(', ')
         : [];
 
-    const { defaultRecognitionChannel } =
+    const { defaultRecognitionChannel, monthlyKudosLimit } =
       await new InstallationController().find(teamId);
 
     const recsController = new RecognitionController();
+
+    if (monthlyKudosLimit !== null) {
+      const givenThisMonth = await recsController.getMonthlyKudosGivenCount(
+        teamId,
+        fromId,
+      );
+      if (givenThisMonth >= monthlyKudosLimit) {
+        await client.chat.postMessage({
+          channel: fromId,
+          text: `You have reached your monthly kudos limit of ${monthlyKudosLimit}. You can give more kudos next month! :pray:`,
+        });
+        return;
+      }
+    }
 
     const usersText = [];
     const recIds = [];

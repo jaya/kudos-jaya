@@ -5,6 +5,8 @@ const defaultChannelHint =
 const alreadyInstalled = false;
 const companyValuesHint =
   'The company values to be selected when giving a kudo';
+const monthlyKudosLimitHint =
+  'Leave empty for unlimited. Ex: 5 (users can give at most 5 kudos per month).';
 
 const user1 = {
   id: 'U123456',
@@ -28,6 +30,7 @@ const currentSettingsResponse = {
   defaultChannelHint,
   alreadyInstalled,
   companyValuesHint,
+  monthlyKudosLimitHint,
 };
 
 const responseView = {
@@ -114,6 +117,27 @@ const responseView = {
         hint: {
           type: 'plain_text',
           text: companyValuesHint,
+          emoji: true,
+        },
+      },
+      {
+        type: 'input',
+        block_id: 'setup_monthly_kudos_limit',
+        optional: true,
+        element: {
+          type: 'number_input',
+          is_decimal_allowed: false,
+          action_id: 'monthly_kudos_limit',
+          min_value: '1',
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Monthly kudos limit per user',
+          emoji: true,
+        },
+        hint: {
+          type: 'plain_text',
+          text: monthlyKudosLimitHint,
           emoji: true,
         },
       },

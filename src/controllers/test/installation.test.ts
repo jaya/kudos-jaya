@@ -113,6 +113,8 @@ describe('InstallationController', () => {
           defaultChannelHint:
             'Enter the default Slack channel id (ex: C93LZNJ64, #bots).',
           giftCardApiTokenHint: 'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+          monthlyKudosLimitHint:
+            'Leave empty for unlimited. Ex: 5 (users can give at most 5 kudos per month).',
         });
       });
     });
@@ -130,6 +132,8 @@ describe('InstallationController', () => {
           giftCardApiTokenHint:
             'Ex: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\nCurrent: testetoken...',
           companyValuesHint: 'Separate by comma\nCurrent: ',
+          monthlyKudosLimitHint:
+            'Leave empty for unlimited. Ex: 5 (users can give at most 5 kudos per month).\nCurrent: unlimited',
         });
       });
     });
