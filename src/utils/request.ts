@@ -4,7 +4,9 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 export interface RequestConfig extends AxiosRequestConfig {}
 
 /* eslint-disable-next-line */
-export interface Response<T = any> extends AxiosResponse<T> {}
+export interface Response<T = any> extends AxiosResponse<T> {
+  data: T;
+}
 
 export class Request {
   constructor(private request = axios) {}
@@ -16,7 +18,7 @@ export class Request {
   public post<T>(
     url: string,
     /* istanbul ignore next */
-    // eslint-disable-next-line default-param-last
+
     config: RequestConfig = {},
     /* eslint-disable-next-line  */
     data?: any,
