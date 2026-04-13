@@ -7,9 +7,9 @@ describe('ProductController', () => {
   let mockRepository;
   beforeEach(() => {
     mockRepository = {
-      clear: jest.fn(),
       delete: jest.fn(),
       insert: jest.fn(),
+      update: jest.fn(),
       save: jest.fn(),
       upsert: jest.fn(),
       find: jest.fn(),
@@ -55,6 +55,7 @@ describe('ProductController', () => {
   describe('isCatalogUpdated()', () => {
     const mockQueryBuilder = {
       select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       limit: jest.fn().mockReturnThis(),
       getOne: jest.fn(),
@@ -106,14 +107,52 @@ describe('ProductController', () => {
   });
 
   describe('updateCatalog()', () => {
-    it('Should clear all products and insert the received catalog', async () => {
-      mockRepository.clear.mockResolvedValueOnce();
-      mockRepository.insert.mockResolvedValueOnce();
+    const incomingProducts = [
+      {
+        id: '1',
+        name: 'Product 1',
+        logo: 'logo-1',
+        description: 'Description 1',
+        terms: 'Terms 1',
+        minValue: 10,
+        maxValue: 100,
+        isActive: true,
+      },
+    ];
 
-      await productController.updateCatalog(fetchProductsResponse);
+    it('Should deactivate missing products and upsert received catalog', async () => {
+      mockRepository.find.mockResolvedValueOnce([
+        { id: '1', isActive: true },
+        { id: '2', isActive: true },
+      ]);
+      mockRepository.update.mockResolvedValueOnce();
+      mockRepository.upsert.mockResolvedValueOnce();
 
-      expect(mockRepository.clear).toHaveBeenCalled();
-      expect(mockRepository.insert).toHaveBeenCalledWith(fetchProductsResponse);
+      await productController.updateCatalog(incomingProducts);
+
+      expect(mockRepository.update).toHaveBeenCalledWith(['2'], {
+        isActive: false,
+      });
+      expect(mockRepository.upsert).toHaveBeenCalledWith(
+        incomingProducts.map((product) => ({
+          ...product,
+          isActive: true,
+        })),
+        {
+          conflictPaths: ['id'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
+    });
+
+    it('Should not deactivate when all db products are in received catalog', async () => {
+      mockRepository.find.mockResolvedValueOnce([{ id: '1', isActive: true }]);
+      mockRepository.upsert.mockResolvedValueOnce();
+
+      await productController.updateCatalog(incomingProducts);
+
+      expect(mockRepository.update).not.toHaveBeenCalled();
+      expect(mockRepository.upsert).toHaveBeenCalled();
     });
   });
 });
