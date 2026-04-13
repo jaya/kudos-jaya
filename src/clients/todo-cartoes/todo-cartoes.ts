@@ -78,6 +78,7 @@ export class TodoCartoes implements IGiftCardDataSource {
           code: e?.code,
           status: e?.response?.status,
           data: e?.response?.data,
+          payload: todoPayload,
         },
       );
     }

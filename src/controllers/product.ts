@@ -57,9 +57,7 @@ export class ProductController {
 
   public async updateCatalog(products: BaseProduct[]): Promise<void> {
     logger.info('Updating products catalog');
-    await this.productRepository.upsert(products, {
-      conflictPaths: ['id'],
-      skipUpdateIfNoValuesChanged: true,
-    });
+    await this.productRepository.clear();
+    await this.productRepository.insert(products);
   }
 }

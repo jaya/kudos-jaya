@@ -7,6 +7,7 @@ describe('ProductController', () => {
   let mockRepository;
   beforeEach(() => {
     mockRepository = {
+      clear: jest.fn(),
       delete: jest.fn(),
       insert: jest.fn(),
       save: jest.fn(),
@@ -105,18 +106,14 @@ describe('ProductController', () => {
   });
 
   describe('updateCatalog()', () => {
-    it('Should update the date of the sync between the db and todo and insert new products if they exist', async () => {
-      mockRepository.upsert.mockResolvedValueOnce();
+    it('Should clear all products and insert the received catalog', async () => {
+      mockRepository.clear.mockResolvedValueOnce();
+      mockRepository.insert.mockResolvedValueOnce();
 
       await productController.updateCatalog(fetchProductsResponse);
 
-      expect(mockRepository.upsert).toHaveBeenCalledWith(
-        fetchProductsResponse,
-        {
-          conflictPaths: ['id'],
-          skipUpdateIfNoValuesChanged: true,
-        },
-      );
+      expect(mockRepository.clear).toHaveBeenCalled();
+      expect(mockRepository.insert).toHaveBeenCalledWith(fetchProductsResponse);
     });
   });
 });

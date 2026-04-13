@@ -137,3 +137,7 @@ Your Kudos Jaya Slack app is now ready to use! 🎉
 2. Run the `/src/utils/test/authMiddleware.test.ts` test
 3. Copy the client API key outputed in the console and give to the client
 4. Store the hashed API key in the `installation.clientApiKey` table in the DB associated to the client
+
+### How to get the logs
+
+`pm2 logs kudos-jaya --out --raw | grep --line-buffered '"severity":"error"' | jq`
