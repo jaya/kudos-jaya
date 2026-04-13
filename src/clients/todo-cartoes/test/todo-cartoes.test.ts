@@ -154,6 +154,11 @@ describe('TodoCartoes', () => {
           code: undefined,
           status: undefined,
           data: undefined,
+          payload: {
+            card_identificator: '12345',
+            external_partner_load_id: 'trans-123',
+            total: 5000,
+          },
         },
       );
     });
