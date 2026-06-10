@@ -1,19 +1,46 @@
 import { Giphy } from '../clients/giphy/giphy';
 import { InstallationController } from '../controllers';
+import { RecognitionController } from '../controllers/recognition';
 
 export const openKudosView = async ({ client, body, context }) => {
+  const teamId = body.team_id;
+  const fromId = body.user_id;
+
   const gif = await new Giphy().fetchGif();
-  const selectOptions = await getCompanyValues(body.team_id);
+  const { companyValues, monthlyKudosLimit } =
+    await new InstallationController().find(teamId);
+
+  let maxSelectedItems: number | undefined;
+
+  if (monthlyKudosLimit != null) {
+    const givenThisMonth =
+      await new RecognitionController().getMonthlyKudosGivenCount(
+        teamId,
+        fromId,
+      );
+    const remaining = monthlyKudosLimit - givenThisMonth;
+
+    if (remaining <= 0) {
+      await client.chat.postMessage({
+        channel: fromId,
+        text: `You have reached your monthly kudos limit of ${monthlyKudosLimit}. You can give more kudos next month! :pray:`,
+      });
+      return;
+    }
+
+    maxSelectedItems = remaining;
+  }
+
+  const selectOptions = buildCompanyValueOptions(companyValues);
 
   await client.views.open({
     token: context.botToken,
     trigger_id: body.trigger_id,
-    view: getKudosView(gif, selectOptions),
+    view: getKudosView(gif, selectOptions, maxSelectedItems),
   });
 };
 
-const getCompanyValues = async (teamId: string) => {
-  const { companyValues } = await new InstallationController().find(teamId);
+const buildCompanyValueOptions = (companyValues?: string) => {
   const separatedValues = companyValues?.split(',');
 
   return separatedValues?.map((value, index) => ({
@@ -36,6 +63,7 @@ export function getKudosView(
     };
     value: string;
   }[],
+  maxSelectedItems?: number,
 ) {
   const blocks = [];
 
@@ -52,6 +80,9 @@ export function getKudosView(
           emoji: false,
         },
         action_id: 'to_id',
+        ...(maxSelectedItems !== undefined && {
+          max_selected_items: maxSelectedItems,
+        }),
       },
       label: {
         type: 'plain_text',
