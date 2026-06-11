@@ -18,20 +18,22 @@
     "slash_commands": [
       {
         "command": "/give-kudos",
-        "url": "https://kudos.jaya.tech/slack/events",
+        "url": "https://45ad-189-36-215-220.ngrok-free.app/slack/events",
         "description": "Acknowledge the impact someone had on you",
         "should_escape": false
       },
       {
         "command": "/cancel-kudos",
-        "url": "https://kudos.jaya.tech/slack/events",
+        "url": "https://45ad-189-36-215-220.ngrok-free.app/slack/events",
         "description": "Cancel a given kudos",
         "should_escape": false
       }
     ]
   },
   "oauth_config": {
-    "redirect_urls": ["https://kudos.jaya.tech/slack/oauth_redirect"],
+    "redirect_urls": [
+      "https://45ad-189-36-215-220.ngrok-free.app/slack/oauth_redirect"
+    ],
     "scopes": {
       "bot": [
         "channels:history",
@@ -51,12 +53,12 @@
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://kudos.jaya.tech/slack/events",
+      "request_url": "https://45ad-189-36-215-220.ngrok-free.app/slack/events",
       "bot_events": ["app_home_opened", "message.channels"]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://kudos.jaya.tech/slack/events"
+      "request_url": "https://45ad-189-36-215-220.ngrok-free.app/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,
