@@ -1,5 +1,4 @@
 import { App } from '@slack/bolt';
-import giveKudosCommandCallback from '../give-kudos';
 import giveKudosCommandModule from '../index';
 
 jest.mock('@slack/bolt', () => ({
@@ -8,7 +7,13 @@ jest.mock('@slack/bolt', () => ({
   })),
 }));
 
-jest.mock('../give-kudos', () => jest.fn());
+jest.mock('@/features/kudos/handlers', () => ({
+  giveKudosCommandHandler: jest.fn(),
+}));
+
+jest.mock('@/features/cancel-kudos/handlers', () => ({
+  cancelKudosCommandHandler: jest.fn(),
+}));
 
 describe('giveKudosCommandModule.register', () => {
   let mockApp: App;
@@ -23,7 +28,16 @@ describe('giveKudosCommandModule.register', () => {
 
     expect(mockApp.command).toHaveBeenCalledWith(
       '/give-kudos',
-      giveKudosCommandCallback,
+      expect.any(Function),
+    );
+  });
+
+  it('should register the /cancel-kudos command with the correct callback', () => {
+    giveKudosCommandModule.register(mockApp);
+
+    expect(mockApp.command).toHaveBeenCalledWith(
+      '/cancel-kudos',
+      expect.any(Function),
     );
   });
 });

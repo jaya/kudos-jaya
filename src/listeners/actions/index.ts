@@ -1,17 +1,20 @@
-import { handleGetAnotherGif } from '@/views/give-kudos';
 import { App } from '@slack/bolt';
-import chooseCardButtonCallback from './choose-card';
-import prizesReportModalCallback from './prizes-report-modal';
-import productsPageCallback from './product-pages';
-import walletReportCallback from './wallet-report';
+import {
+  redeemButtonActionHandler,
+  paginationActionHandler,
+  chooseCardActionHandler,
+} from '@/features/card-redemption/handlers';
+import { openPrizesReportHandler } from '@/features/prizes-report';
+import { openWalletReportHandler } from '@/features/wallet-report';
+import { getGifActionHandler } from '@/features/kudos/handlers';
 
 const register = (app: App) => {
-  app.action('redeem_button', productsPageCallback);
-  app.action('choose_card', chooseCardButtonCallback);
-  app.action('products_page', productsPageCallback);
-  app.action('open_prizes_report_modal', prizesReportModalCallback);
-  app.action('open_wallet_report', walletReportCallback);
-  app.action('get_another_gif', handleGetAnotherGif);
+  app.action('redeem_button', redeemButtonActionHandler);
+  app.action('choose_card', chooseCardActionHandler);
+  app.action('products_page', paginationActionHandler);
+  app.action('open_prizes_report_modal', openPrizesReportHandler);
+  app.action('open_wallet_report', openWalletReportHandler);
+  app.action('get_another_gif', getGifActionHandler);
 };
 
 export default { register };
