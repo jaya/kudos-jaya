@@ -1,5 +1,6 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import { InstallationController } from '@/controllers/installation';
+import { UserController } from '@/controllers/user';
 import { decrypt } from '@/utils/encrypt';
 import logger from '@/utils/logger';
 import { getAdminPanelSection } from './home/components/admin-panel';
@@ -14,9 +15,15 @@ const appHomeOpenedCallback = async ({ client, event }) => {
     const { token } = client;
     const teamId = event?.view?.app_installed_team_id;
 
-    const { giftCardApiToken } = await new InstallationController().find(
+    const { giftCardApiToken, bot } = await new InstallationController().find(
       teamId,
     );
+
+    await new UserController().updateEmailIfNull({
+      botToken: bot.token,
+      teamId,
+      userId: user,
+    });
 
     const adminPanel = await getAdminPanelSection({
       token,
