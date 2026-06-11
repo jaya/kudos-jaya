@@ -1,5 +1,5 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
-import { InstallationController } from '@/controllers';
+import { InstallationController, UserController } from '@/controllers';
 import logger from '@/utils/logger';
 import { WebClient } from '@slack/web-api';
 import appHomeOpenedCallback from '../app-home-opened';
@@ -29,18 +29,23 @@ jest.mock('../home/components/admin-panel');
 jest.mock('../home/components/user-balance');
 jest.mock('../home/components/recognition-list');
 jest.mock('@/utils/logger');
+jest.mock('@/controllers/user');
 
 describe('appHomeOpenedCallback()', () => {
   let client: WebClient;
   beforeEach(() => {
     jest.clearAllMocks();
     client = new WebClient() as jest.Mocked<WebClient>;
+    jest
+      .spyOn(UserController.prototype, 'updateEmailIfNull')
+      .mockResolvedValue(undefined);
   });
 
   describe('When the event is app_home_opened', () => {
     it('Should build the app home structure', async () => {
       jest.spyOn(InstallationController.prototype, 'find').mockResolvedValue({
         giftCardApiToken: 'mocked-decrypted-token',
+        bot: { scopes: [], token: 'xoxb-test', userId: 'U123', id: 'A123' },
       });
       jest
         .spyOn(TodoCartoes.prototype, 'fetchProducts')
@@ -63,6 +68,7 @@ describe('appHomeOpenedCallback()', () => {
       it('Should build only the admin section', async () => {
         jest.spyOn(InstallationController.prototype, 'find').mockResolvedValue({
           giftCardApiToken: undefined,
+          bot: { scopes: [], token: 'xoxb-test', userId: 'U123', id: 'A123' },
         });
         (getAdminPanelSection as jest.Mock).mockResolvedValue(
           adminPanelSectionResponse,
@@ -91,6 +97,7 @@ describe('appHomeOpenedCallback()', () => {
       it('Should build only the admin section and inform the user the error', async () => {
         jest.spyOn(InstallationController.prototype, 'find').mockResolvedValue({
           giftCardApiToken: 'mocked-decrypted-token',
+          bot: { scopes: [], token: 'xoxb-test', userId: 'U123', id: 'A123' },
         });
         jest
           .spyOn(TodoCartoes.prototype, 'fetchProducts')

@@ -71,4 +71,30 @@ export class UserController {
   }): Promise<Partial<User>[]> {
     return this.repository.find({ where: { teamId, ...params } });
   }
+
+  public async updateEmailIfNull({
+    botToken,
+    teamId,
+    userId,
+  }: {
+    botToken: string;
+    teamId: string;
+    userId: string;
+  }): Promise<void> {
+    try {
+      const user = await this.repository.findOneBy({ id: userId, teamId });
+
+      if (!user || user.email) {
+        return;
+      }
+
+      const { email } = await getSlackUserInfo(botToken, userId);
+
+      if (email) {
+        await this.repository.update({ id: userId }, { email });
+      }
+    } catch (error) {
+      logger.error('UserController.updateEmailIfNull()', error);
+    }
+  }
 }
