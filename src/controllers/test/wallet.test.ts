@@ -129,13 +129,29 @@ describe('WalletController', () => {
       jest.clearAllMocks();
       mockWalletRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
     });
-    it('should return the sum of all wallets', async () => {
+    it('should return the sum of all wallets for active users', async () => {
       mockQueryBuilder.getRawOne.mockResolvedValueOnce({ total: 3000 });
 
       const balance = await walletController.getBalanceToBeRedeemed({
         teamId: 'T1234',
       });
 
+      expect(mockWalletRepository.createQueryBuilder).toHaveBeenCalledWith(
+        'wallet',
+      );
+      expect(mockQueryBuilder.select).toHaveBeenCalledWith(
+        'SUM(wallet.balance)',
+        'total',
+      );
+      expect(mockQueryBuilder.innerJoin).toHaveBeenCalled();
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
+        'wallet.teamId = :teamId',
+        { teamId: 'T1234' },
+      );
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'user.isActive = :isActive',
+        { isActive: true },
+      );
       expect(balance).toBe(3000);
     });
 

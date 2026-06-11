@@ -1,7 +1,10 @@
 import { AppDataSource } from '@/data-source';
 import { User } from '@/entities/user';
 import logger from '@/utils/logger';
-import { getSlackUserInfo } from '@/utils/user-slack-info';
+import {
+  getSlackUserInfo,
+  getSlackUserActiveStatus,
+} from '@/utils/user-slack-info';
 import { In, Not } from 'typeorm';
 
 export class UserController {
@@ -95,6 +98,27 @@ export class UserController {
       }
     } catch (error) {
       logger.error('UserController.updateEmailIfNull()', error);
+    }
+  }
+
+  public async syncActiveStatus(params: {
+    botToken: string;
+    teamId: string;
+  }): Promise<void> {
+    try {
+      const { botToken, teamId } = params;
+      const users = await this.repository.find({ where: { teamId } });
+
+      await Promise.all(
+        users.map(async (user) => {
+          const isActive = await getSlackUserActiveStatus(botToken, user.id);
+          if (user.isActive !== isActive) {
+            await this.repository.update({ id: user.id, teamId }, { isActive });
+          }
+        }),
+      );
+    } catch (error) {
+      logger.error('UserController.syncActiveStatus()', error);
     }
   }
 }

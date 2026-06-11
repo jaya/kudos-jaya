@@ -1,5 +1,5 @@
 import { AppDataSource } from '@/data-source';
-import { Recognition } from '@/entities/';
+import { Recognition, User } from '@/entities/';
 import logger from '@/utils/logger';
 import { Between, In } from 'typeorm';
 import { InstallationController, UserController, WalletController } from './';
@@ -102,7 +102,13 @@ export class RecognitionController {
     const summary = this.recognitionRepository
       .createQueryBuilder('recognition')
       .select('recognition.toId', 'userId')
+      .innerJoin(
+        User,
+        'user',
+        'user.id = recognition.toId AND user.teamId = recognition.teamId',
+      )
       .where('recognition.teamId = :teamId', { teamId })
+      .andWhere('user.isActive = :isActive', { isActive: true })
       .addSelect('COUNT(recognition.id)', 'recognitionCount')
       .groupBy('recognition.toId')
       .orderBy('COUNT(recognition.id)', 'DESC')

@@ -65,6 +65,8 @@ describe('RecognitionController', () => {
       createQueryBuilder: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      innerJoin: jest.fn().mockReturnThis(),
       addSelect: jest.fn().mockReturnThis(),
       groupBy: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
@@ -187,8 +189,10 @@ describe('RecognitionController', () => {
   describe('getUsersRecognitionSummary', () => {
     const mockQueryBuilder = {
       select: jest.fn().mockReturnThis(),
-      addSelect: jest.fn().mockReturnThis(),
+      innerJoin: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      addSelect: jest.fn().mockReturnThis(),
       groupBy: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
       limit: jest.fn().mockReturnThis(),
@@ -217,6 +221,15 @@ describe('RecognitionController', () => {
       expect(mockQueryBuilder.select).toHaveBeenCalledWith(
         'recognition.toId',
         'userId',
+      );
+      expect(mockQueryBuilder.innerJoin).toHaveBeenCalled();
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
+        'recognition.teamId = :teamId',
+        { teamId },
+      );
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'user.isActive = :isActive',
+        { isActive: true },
       );
       expect(mockQueryBuilder.addSelect).toHaveBeenCalledWith(
         'COUNT(recognition.id)',

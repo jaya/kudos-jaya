@@ -35,4 +35,7 @@ export class User {
 
   @Column({ nullable: true })
   isAuditor: boolean;
+
+  @Column({ default: /* istanbul ignore next */ true })
+  isActive: boolean;
 }
