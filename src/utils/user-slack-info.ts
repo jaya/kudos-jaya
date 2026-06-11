@@ -35,3 +35,18 @@ export async function isUserAdmin(
     throw e;
   }
 }
+
+export async function getSlackUserActiveStatus(
+  botToken: string,
+  userId: string,
+): Promise<boolean> {
+  try {
+    const client = new WebClient(botToken);
+    const response = await client.users.info({ user: userId });
+
+    return response?.user?.deleted === false;
+  } catch (e) {
+    logger.error('getSlackUserActiveStatus()', { error: e });
+    return false;
+  }
+}

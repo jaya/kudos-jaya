@@ -19,10 +19,17 @@ const appHomeOpenedCallback = async ({ client, event }) => {
       teamId,
     );
 
-    await new UserController().updateEmailIfNull({
+    const userController = new UserController();
+
+    await userController.updateEmailIfNull({
       botToken: bot.token,
       teamId,
       userId: user,
+    });
+
+    await userController.syncActiveStatus({
+      botToken: bot.token,
+      teamId,
     });
 
     const adminPanel = await getAdminPanelSection({

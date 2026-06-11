@@ -59,7 +59,13 @@ export class WalletController {
     const balance = await this.walletRepository
       .createQueryBuilder('wallet')
       .select('SUM(wallet.balance)', 'total')
+      .innerJoin(
+        User,
+        'user',
+        'user.id = wallet.ownerId AND user.teamId = wallet.teamId',
+      )
       .where('wallet.teamId = :teamId', { teamId: params.teamId })
+      .andWhere('user.isActive = :isActive', { isActive: true })
       .getRawOne();
 
     return balance.total ?? 0;
