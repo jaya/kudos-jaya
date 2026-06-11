@@ -1,0 +1,133 @@
+import { InstallationController, RecognitionController } from '@/controllers';
+import { Giphy } from '@/clients/giphy/giphy';
+import logger from '@/utils/logger';
+
+export interface GiveKudosParams {
+  fromId: string;
+  toIds: string[];
+  message: string;
+  teamId: string;
+  botToken: string;
+  companyValues?: string;
+  gif: string;
+}
+
+export interface ValidationResult {
+  canGive: boolean;
+  remaining?: number;
+  message?: string;
+}
+
+export class GiveKudosService {
+  private installationController: InstallationController;
+  private recognitionController: RecognitionController;
+  private giphy: Giphy;
+
+  constructor() {
+    this.installationController = new InstallationController();
+    this.recognitionController = new RecognitionController();
+    this.giphy = new Giphy();
+  }
+
+  public async validateMonthlyLimit(
+    teamId: string,
+    fromId: string,
+  ): Promise<ValidationResult> {
+    try {
+      const { monthlyKudosLimit } =
+        await this.installationController.find(teamId);
+
+      if (monthlyKudosLimit === null || monthlyKudosLimit === undefined) {
+        return { canGive: true };
+      }
+
+      const givenThisMonth =
+        await this.recognitionController.getMonthlyKudosGivenCount(
+          teamId,
+          fromId,
+        );
+      const remaining = monthlyKudosLimit - givenThisMonth;
+
+      if (remaining <= 0) {
+        return {
+          canGive: false,
+          remaining: 0,
+          message: `You have reached your monthly kudos limit of ${monthlyKudosLimit}. You can give more kudos next month! :pray:`,
+        };
+      }
+
+      return {
+        canGive: true,
+        remaining,
+      };
+    } catch (error) {
+      logger.error('validateMonthlyLimit()', error);
+      return { canGive: false, message: 'Failed to validate kudos limit' };
+    }
+  }
+
+  public async createRecognitions(
+    params: Omit<GiveKudosParams, 'gif'>,
+  ): Promise<Array<{ id: string; success: boolean; toId: string }>> {
+    const results = [];
+
+    for (const toId of params.toIds) {
+      try {
+        const response = await this.recognitionController.save({
+          fromId: params.fromId,
+          toId,
+          message: params.message,
+          teamId: params.teamId,
+          botToken: params.botToken,
+        });
+
+        results.push({
+          id: response.id,
+          success: response.ok,
+          toId,
+        });
+      } catch (error) {
+        logger.error('createRecognitions()', error);
+        results.push({
+          id: '',
+          success: false,
+          toId,
+        });
+      }
+    }
+
+    return results;
+  }
+
+  public async fetchGif(): Promise<string> {
+    try {
+      return await this.giphy.fetchGif();
+    } catch (error) {
+      logger.error('fetchGif()', error);
+      throw error;
+    }
+  }
+
+  public async getCompanyValues(teamId: string): Promise<string | undefined> {
+    try {
+      const { companyValues } = await this.installationController.find(teamId);
+      return companyValues;
+    } catch (error) {
+      logger.error('getCompanyValues()', error);
+      return undefined;
+    }
+  }
+
+  public async getDefaultRecognitionChannel(
+    teamId: string,
+  ): Promise<string | undefined> {
+    try {
+      const { defaultRecognitionChannel } =
+        await this.installationController.find(teamId);
+      return defaultRecognitionChannel;
+    } catch (error) {
+      logger.error('getDefaultRecognitionChannel()', error);
+      return undefined;
+    }
+  }
+}
