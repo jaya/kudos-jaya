@@ -83,6 +83,7 @@ export class WalletController {
       .addSelect('u.name', 'name')
       .innerJoin(User, 'u', 'u.id = w.ownerId AND u.teamId = w.teamId')
       .where('w.teamId = :teamId', { teamId: params.teamId })
+      .andWhere('u.isActive = :isActive', { isActive: true })
       .orderBy('w.balance', 'DESC')
       .getRawMany();
   }
