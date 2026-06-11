@@ -1,5 +1,6 @@
 import { AppDataSource } from '@/data-source';
 import { Installation, Product, Transaction, User, Wallet } from '@/entities/';
+import { InternalError } from '@/errors';
 import logger from '@/utils/logger';
 
 export type PrizesReport = {
@@ -18,7 +19,11 @@ export class TransactionController {
     try {
       await this.repository.save(transaction);
     } catch (error) {
-      logger.error('TransactionController.register()', error);
+      logger.error('TransactionController.register() failed', {
+        teamId: transaction.teamId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new InternalError('Failed to register transaction', error);
     }
   }
 

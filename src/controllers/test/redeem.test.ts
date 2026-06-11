@@ -1,10 +1,12 @@
 import { TodoCartoes } from '@/clients/todo-cartoes/todo-cartoes';
 import { InstallationController } from '@/controllers/installation';
 import { RedeemController } from '@/controllers/redeem';
+import { TransactionController } from '@/controllers/transaction';
 import { WalletController } from '@/controllers/wallet';
 
 jest.mock('@/controllers/wallet');
 jest.mock('@/controllers/installation');
+jest.mock('@/controllers/transaction');
 jest.mock('@/utils/encrypt', () => ({
   decrypt: jest.fn(),
 }));
@@ -12,16 +14,21 @@ jest.mock('@/utils/encrypt', () => ({
 describe('RedeemController', () => {
   let redeemController: RedeemController;
   let mockWalletController: jest.Mocked<WalletController>;
+  let mockTransactionController: jest.Mocked<TransactionController>;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockWalletController =
       new WalletController() as jest.Mocked<WalletController>;
+    mockTransactionController =
+      new TransactionController() as jest.Mocked<TransactionController>;
     redeemController = new RedeemController();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (redeemController as any).walletController = mockWalletController;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (redeemController as any).transactionController = mockTransactionController;
   });
 
   describe('emitGiftCard', () => {

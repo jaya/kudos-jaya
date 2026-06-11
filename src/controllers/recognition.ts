@@ -1,5 +1,6 @@
 import { AppDataSource } from '@/data-source';
 import { Recognition, User } from '@/entities/';
+import { InternalError } from '@/errors';
 import logger from '@/utils/logger';
 import { Between, In } from 'typeorm';
 import { InstallationController, UserController, WalletController } from './';
@@ -62,8 +63,13 @@ export class RecognitionController {
       }
       return { ok: true, id };
     } catch (error) {
-      logger.error('RecognitionController.save()', { error });
-      return { ok: false };
+      logger.error('RecognitionController.save() failed', {
+        fromId: params.fromId,
+        toId: params.toId,
+        teamId: params.teamId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new InternalError('Failed to save recognition', error);
     }
   }
 

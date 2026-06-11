@@ -7,6 +7,14 @@ enum LoggerSeverity {
   info = 'info',
   warn = 'warning',
 }
+
+export interface LogMeta {
+  correlationId?: string;
+  teamId?: string;
+  userId?: string;
+  [key: string]: unknown;
+}
+
 class Logger {
   private logger: PinoLogger;
   constructor(level: keyof typeof LoggerSeverity) {
@@ -20,20 +28,51 @@ class Logger {
     });
   }
 
-  public info(message: string, meta = {}): void {
-    this.logger.info(meta, message);
+  private parseMeta(
+    messageOrMeta: string | LogMeta | undefined,
+    meta?: LogMeta,
+  ): { message: string; meta: LogMeta } {
+    if (typeof messageOrMeta === 'string') {
+      return { message: messageOrMeta, meta: meta || {} };
+    }
+    if (messageOrMeta && typeof messageOrMeta === 'object') {
+      const message =
+        typeof messageOrMeta.message === 'string' ? messageOrMeta.message : '';
+      return { message, meta: messageOrMeta };
+    }
+    return { message: '', meta: {} };
   }
 
-  public warn(message: string, meta = {}): void {
-    this.logger.warn(meta, message);
+  public info(
+    messageOrMeta: string | LogMeta | undefined,
+    meta?: LogMeta,
+  ): void {
+    const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
+    this.logger.info(parsedMeta, message);
   }
 
-  public error(message: string, meta = {}): void {
-    this.logger.error(meta, message);
+  public warn(
+    messageOrMeta: string | LogMeta | undefined,
+    meta?: LogMeta,
+  ): void {
+    const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
+    this.logger.warn(parsedMeta, message);
   }
 
-  public debug(message: string, meta = {}): void {
-    this.logger.debug(meta, message);
+  public error(
+    messageOrMeta: string | LogMeta | undefined,
+    meta?: LogMeta,
+  ): void {
+    const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
+    this.logger.error(parsedMeta, message);
+  }
+
+  public debug(
+    messageOrMeta: string | LogMeta | undefined,
+    meta?: LogMeta,
+  ): void {
+    const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
+    this.logger.debug(parsedMeta, message);
   }
 }
 
