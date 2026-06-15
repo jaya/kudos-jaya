@@ -1,5 +1,6 @@
 import config from 'config';
 import pino, { Logger as PinoLogger } from 'pino';
+import { RequestContext } from '@/context/RequestContext';
 
 enum LoggerSeverity {
   debug = 'debug',
@@ -28,6 +29,21 @@ class Logger {
     });
   }
 
+  private enrichMetaWithContext(meta: LogMeta): LogMeta {
+    try {
+      const context = RequestContext.get();
+      return {
+        correlationId: meta.correlationId || context.correlationId,
+        teamId: meta.teamId || context.teamId,
+        userId: meta.userId || context.userId,
+        ...meta,
+      };
+    } catch {
+      // RequestContext not available, return meta as-is
+      return meta;
+    }
+  }
+
   private parseMeta(
     messageOrMeta: string | LogMeta | undefined,
     meta?: LogMeta,
@@ -48,7 +64,8 @@ class Logger {
     meta?: LogMeta,
   ): void {
     const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
-    this.logger.info(parsedMeta, message);
+    const enrichedMeta = this.enrichMetaWithContext(parsedMeta);
+    this.logger.info(enrichedMeta, message);
   }
 
   public warn(
@@ -56,7 +73,8 @@ class Logger {
     meta?: LogMeta,
   ): void {
     const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
-    this.logger.warn(parsedMeta, message);
+    const enrichedMeta = this.enrichMetaWithContext(parsedMeta);
+    this.logger.warn(enrichedMeta, message);
   }
 
   public error(
@@ -64,7 +82,8 @@ class Logger {
     meta?: LogMeta,
   ): void {
     const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
-    this.logger.error(parsedMeta, message);
+    const enrichedMeta = this.enrichMetaWithContext(parsedMeta);
+    this.logger.error(enrichedMeta, message);
   }
 
   public debug(
@@ -72,7 +91,8 @@ class Logger {
     meta?: LogMeta,
   ): void {
     const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
-    this.logger.debug(parsedMeta, message);
+    const enrichedMeta = this.enrichMetaWithContext(parsedMeta);
+    this.logger.debug(enrichedMeta, message);
   }
 }
 
