@@ -1,5 +1,4 @@
 import { AppDataSource } from '@/data-source';
-import logger from '@/utils/logger';
 import { InstallationController } from '../installation';
 import {
   installationPayload,
@@ -7,7 +6,6 @@ import {
 } from './samples/installation';
 
 jest.mock('@/data-source');
-jest.mock('@/utils/logger');
 
 describe('InstallationController', () => {
   let installController: InstallationController;
@@ -85,14 +83,12 @@ describe('InstallationController', () => {
       });
     });
     describe('when there is an error trying to update', () => {
-      it('should throw the error and not update', async () => {
-        const error = new Error();
+      it('should throw InternalError when update fails', async () => {
+        const error = new Error('DB error');
         mockInstallRepository.update.mockRejectedValue(error);
-        await installController.update({});
-        expect(logger.error).toHaveBeenCalledWith(
-          'InstallationController.update()',
-          error,
-        );
+        await expect(
+          installController.update({ teamId: 'T12345' }),
+        ).rejects.toThrow();
       });
     });
   });

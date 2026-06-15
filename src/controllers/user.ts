@@ -1,5 +1,6 @@
 import { AppDataSource } from '@/data-source';
 import { User } from '@/entities/user';
+import { InternalError } from '@/errors';
 import logger from '@/utils/logger';
 import {
   getSlackUserInfo,
@@ -20,7 +21,12 @@ export class UserController {
       const user = await getSlackUserInfo(botToken, userId);
       return await this.repository.save({ id: userId, teamId, ...user });
     } catch (error) {
-      logger.error('UserController.create()', error);
+      logger.error('UserController.create() failed', {
+        userId: params.userId,
+        teamId: params.teamId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new InternalError('Failed to create user', error);
     }
   }
 
@@ -61,7 +67,12 @@ export class UserController {
 
       await this.repository.save(updatedUsers);
     } catch (error) {
-      logger.error('UserController.setAuditors()', error);
+      logger.error('UserController.setAuditors() failed', {
+        teamId: params.teamId,
+        auditorCount: params.userIds.length,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new InternalError('Failed to set auditors', error);
     }
   }
 
@@ -97,7 +108,12 @@ export class UserController {
         await this.repository.update({ id: userId }, { email });
       }
     } catch (error) {
-      logger.error('UserController.updateEmailIfNull()', error);
+      logger.error('UserController.updateEmailIfNull() failed', {
+        userId,
+        teamId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new InternalError('Failed to update user email', error);
     }
   }
 
@@ -118,7 +134,11 @@ export class UserController {
         }),
       );
     } catch (error) {
-      logger.error('UserController.syncActiveStatus()', error);
+      logger.error('UserController.syncActiveStatus() failed', {
+        teamId: params.teamId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new InternalError('Failed to sync active status', error);
     }
   }
 }

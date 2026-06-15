@@ -1,9 +1,6 @@
 import { AppDataSource } from '@/data-source';
-import logger from '@/utils/logger';
 import { TransactionController } from '../transaction';
 import { fetchPrizesReportResponse } from './samples/transaction';
-
-jest.mock('@/utils/logger');
 
 describe('TransactionController()', () => {
   let transactionController: TransactionController;
@@ -49,16 +46,13 @@ describe('TransactionController()', () => {
       });
     });
     describe('error', () => {
-      it('Should log the error and not save the transaction', async () => {
-        const error = new Error();
+      it('Should throw InternalError when save fails', async () => {
+        const error = new Error('DB error');
         mockRepository.save.mockRejectedValueOnce(error);
 
-        await transactionController.register(mockSaveTransaction);
-
-        expect(logger.error).toHaveBeenCalledWith(
-          'TransactionController.register()',
-          error,
-        );
+        await expect(
+          transactionController.register(mockSaveTransaction),
+        ).rejects.toThrow();
       });
     });
   });

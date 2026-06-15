@@ -119,21 +119,21 @@ describe('RecognitionController', () => {
       expect(result).toEqual({ ok: true, id: 1 });
     });
 
-    it('should return an error if recognition save fails', async () => {
+    it('should throw InternalError if recognition save fails', async () => {
       const fromId = 'user1';
       const toId = 'user2';
 
       mockRepository.save.mockRejectedValueOnce(new Error('Save failed'));
 
-      const result = await recognitionController.save({
-        fromId,
-        toId,
-        message,
-        teamId,
-        botToken,
-      });
-
-      expect(result).toEqual({ ok: false });
+      await expect(
+        recognitionController.save({
+          fromId,
+          toId,
+          message,
+          teamId,
+          botToken,
+        }),
+      ).rejects.toThrow();
     });
   });
 

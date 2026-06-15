@@ -1,5 +1,6 @@
 import { AppDataSource } from '@/data-source';
 import { Installation } from '@/entities/';
+import { InternalError } from '@/errors';
 import { decrypt, encrypt } from '@/utils/encrypt';
 import logger from '@/utils/logger';
 
@@ -46,7 +47,11 @@ export class InstallationController {
 
       return await this.find(teamId);
     } catch (error) {
-      logger.error('InstallationController.update()', error);
+      logger.error('InstallationController.update() failed', {
+        teamId: installation.teamId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw new InternalError('Failed to update installation', error);
     }
   }
 
