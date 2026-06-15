@@ -1,18 +1,5 @@
-import {
-  AllMiddlewareArgs,
-  SlackCommandMiddlewareArgs,
-  SlackViewMiddlewareArgs,
-  SlackActionMiddlewareArgs,
-} from '@slack/bolt';
 import { RequestContext, RequestContextData } from './RequestContext';
 import { generateCorrelationId } from './correlation-id';
-
-type SlackArgs = AllMiddlewareArgs &
-  (
-    | SlackCommandMiddlewareArgs
-    | SlackViewMiddlewareArgs
-    | SlackActionMiddlewareArgs
-  );
 
 export function createRequestContextFromSlack(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,10 +17,13 @@ export function createRequestContextFromSlack(
   return new RequestContext(contextData);
 }
 
-export function withRequestContext<T extends SlackArgs>(
-  handler: (args: T) => Promise<void>,
-) {
-  return async (args: T) => {
+export function withRequestContext(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (args: any) => Promise<void>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): (args: any) => Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return async (args: any) => {
     const { body, context } = args;
     const requestContext = createRequestContextFromSlack(
       body,

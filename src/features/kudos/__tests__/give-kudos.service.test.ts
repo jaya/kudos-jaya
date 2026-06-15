@@ -1,6 +1,7 @@
 import { GiveKudosService } from '../services/give-kudos.service';
 import { InstallationController, RecognitionController } from '@/controllers';
 import { Giphy } from '@/clients/giphy/giphy';
+import { RequestContext } from '@/context';
 
 jest.mock('@/controllers');
 jest.mock('@/clients/giphy/giphy');
@@ -13,6 +14,14 @@ describe('GiveKudosService', () => {
   let mockRecognitionController: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockGiphy: any;
+
+  const mockContext = new RequestContext({
+    teamId: 'team123',
+    enterpriseId: null,
+    userId: 'user1',
+    botToken: 'token',
+    correlationId: 'corr123',
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -47,7 +56,9 @@ describe('GiveKudosService', () => {
         monthlyKudosLimit: null,
       });
 
-      const result = await service.validateMonthlyLimit('team123', 'user1');
+      const result = await RequestContext.runAsync(mockContext, () =>
+        service.validateMonthlyLimit('user1'),
+      );
 
       expect(result.canGive).toBe(true);
       expect(result.remaining).toBeUndefined();
@@ -59,7 +70,9 @@ describe('GiveKudosService', () => {
       });
       mockRecognitionController.getMonthlyKudosGivenCount.mockResolvedValue(5);
 
-      const result = await service.validateMonthlyLimit('team123', 'user1');
+      const result = await RequestContext.runAsync(mockContext, () =>
+        service.validateMonthlyLimit('user1'),
+      );
 
       expect(result.canGive).toBe(true);
       expect(result.remaining).toBe(5);
@@ -71,7 +84,9 @@ describe('GiveKudosService', () => {
       });
       mockRecognitionController.getMonthlyKudosGivenCount.mockResolvedValue(5);
 
-      const result = await service.validateMonthlyLimit('team123', 'user1');
+      const result = await RequestContext.runAsync(mockContext, () =>
+        service.validateMonthlyLimit('user1'),
+      );
 
       expect(result.canGive).toBe(false);
       expect(result.remaining).toBe(0);
@@ -86,13 +101,13 @@ describe('GiveKudosService', () => {
         ok: true,
       });
 
-      const results = await service.createRecognitions({
-        fromId: 'user1',
-        toIds: ['user2', 'user3'],
-        message: 'Great work!',
-        teamId: 'team123',
-        botToken: 'token',
-      });
+      const results = await RequestContext.runAsync(mockContext, () =>
+        service.createRecognitions({
+          fromId: 'user1',
+          toIds: ['user2', 'user3'],
+          message: 'Great work!',
+        }),
+      );
 
       expect(results).toHaveLength(2);
       expect(results[0].success).toBe(true);
@@ -105,13 +120,13 @@ describe('GiveKudosService', () => {
         .mockResolvedValueOnce({ id: 'rec1', ok: true })
         .mockRejectedValueOnce(new Error('Save failed'));
 
-      const results = await service.createRecognitions({
-        fromId: 'user1',
-        toIds: ['user2', 'user3'],
-        message: 'Great work!',
-        teamId: 'team123',
-        botToken: 'token',
-      });
+      const results = await RequestContext.runAsync(mockContext, () =>
+        service.createRecognitions({
+          fromId: 'user1',
+          toIds: ['user2', 'user3'],
+          message: 'Great work!',
+        }),
+      );
 
       expect(results).toHaveLength(2);
       expect(results[0].success).toBe(true);
@@ -143,7 +158,9 @@ describe('GiveKudosService', () => {
         companyValues: 'Innovation, Teamwork, Excellence',
       });
 
-      const values = await service.getCompanyValues('team123');
+      const values = await RequestContext.runAsync(mockContext, () =>
+        service.getCompanyValues(),
+      );
 
       expect(values).toBe('Innovation, Teamwork, Excellence');
     });
@@ -151,7 +168,9 @@ describe('GiveKudosService', () => {
     it('should return undefined on error', async () => {
       mockInstallationController.find.mockRejectedValue(new Error('Not found'));
 
-      const values = await service.getCompanyValues('team123');
+      const values = await RequestContext.runAsync(mockContext, () =>
+        service.getCompanyValues(),
+      );
 
       expect(values).toBeUndefined();
     });
@@ -163,7 +182,9 @@ describe('GiveKudosService', () => {
         defaultRecognitionChannel: 'C12345',
       });
 
-      const channel = await service.getDefaultRecognitionChannel('team123');
+      const channel = await RequestContext.runAsync(mockContext, () =>
+        service.getDefaultRecognitionChannel(),
+      );
 
       expect(channel).toBe('C12345');
     });
@@ -171,7 +192,9 @@ describe('GiveKudosService', () => {
     it('should return undefined on error', async () => {
       mockInstallationController.find.mockRejectedValue(new Error('Not found'));
 
-      const channel = await service.getDefaultRecognitionChannel('team123');
+      const channel = await RequestContext.runAsync(mockContext, () =>
+        service.getDefaultRecognitionChannel(),
+      );
 
       expect(channel).toBeUndefined();
     });
