@@ -1,13 +1,12 @@
 import logger from '@/utils/logger';
 import { GiveKudosService } from '../services/give-kudos.service';
+import { withRequestContext } from '@/context';
 
-const giveKudosViewHandler = async ({ ack, view, client, body }) => {
+const giveKudosViewHandler = withRequestContext(async ({ ack, view, client, body }) => {
   await ack();
 
   try {
-    const botToken = client.token;
     const fromId = body.user.id;
-    const teamId = body.user.team_id;
     const service = new GiveKudosService();
 
     // Extract form values
@@ -26,7 +25,7 @@ const giveKudosViewHandler = async ({ ack, view, client, body }) => {
         : undefined;
 
     // Validate monthly limit again
-    const validation = await service.validateMonthlyLimit(teamId, fromId);
+    const validation = await service.validateMonthlyLimit(fromId);
     if (!validation.canGive) {
       await client.chat.postMessage({
         channel: fromId,
@@ -42,8 +41,6 @@ const giveKudosViewHandler = async ({ ack, view, client, body }) => {
       fromId,
       toIds: users,
       message,
-      teamId,
-      botToken,
       companyValues,
     });
 
@@ -66,7 +63,7 @@ const giveKudosViewHandler = async ({ ack, view, client, body }) => {
 
     // Send confirmation message with GIF
     if (usersText.length > 0) {
-      const defaultChannel = await service.getDefaultRecognitionChannel(teamId);
+      const defaultChannel = await service.getDefaultRecognitionChannel();
 
       const blocks = [
         {
@@ -109,6 +106,6 @@ const giveKudosViewHandler = async ({ ack, view, client, body }) => {
   } catch (error) {
     logger.error('giveKudosViewHandler()', error);
   }
-};
+});
 
 export default giveKudosViewHandler;

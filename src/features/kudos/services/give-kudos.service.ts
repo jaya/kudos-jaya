@@ -1,13 +1,12 @@
 import { InstallationController, RecognitionController } from '@/controllers';
 import { Giphy } from '@/clients/giphy/giphy';
 import logger from '@/utils/logger';
+import { RequestContext } from '@/context';
 
 export interface GiveKudosParams {
   fromId: string;
   toIds: string[];
   message: string;
-  teamId: string;
-  botToken: string;
   companyValues?: string;
   gif: string;
 }
@@ -29,11 +28,9 @@ export class GiveKudosService {
     this.giphy = new Giphy();
   }
 
-  public async validateMonthlyLimit(
-    teamId: string,
-    fromId: string,
-  ): Promise<ValidationResult> {
+  public async validateMonthlyLimit(fromId: string): Promise<ValidationResult> {
     try {
+      const { teamId } = RequestContext.get();
       const { monthlyKudosLimit } =
         await this.installationController.find(teamId);
 
@@ -69,6 +66,7 @@ export class GiveKudosService {
   public async createRecognitions(
     params: Omit<GiveKudosParams, 'gif'>,
   ): Promise<Array<{ id: string; success: boolean; toId: string }>> {
+    const { teamId } = RequestContext.get();
     const results = [];
 
     for (const toId of params.toIds) {
@@ -77,8 +75,7 @@ export class GiveKudosService {
           fromId: params.fromId,
           toId,
           message: params.message,
-          teamId: params.teamId,
-          botToken: params.botToken,
+          teamId,
         });
 
         results.push({
@@ -108,8 +105,9 @@ export class GiveKudosService {
     }
   }
 
-  public async getCompanyValues(teamId: string): Promise<string | undefined> {
+  public async getCompanyValues(): Promise<string | undefined> {
     try {
+      const { teamId } = RequestContext.get();
       const { companyValues } = await this.installationController.find(teamId);
       return companyValues;
     } catch (error) {
@@ -118,10 +116,9 @@ export class GiveKudosService {
     }
   }
 
-  public async getDefaultRecognitionChannel(
-    teamId: string,
-  ): Promise<string | undefined> {
+  public async getDefaultRecognitionChannel(): Promise<string | undefined> {
     try {
+      const { teamId } = RequestContext.get();
       const { defaultRecognitionChannel } =
         await this.installationController.find(teamId);
       return defaultRecognitionChannel;

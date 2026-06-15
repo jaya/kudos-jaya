@@ -2,6 +2,7 @@ import { AppDataSource } from '@/data-source';
 import { Recognition, User } from '@/entities/';
 import { InternalError } from '@/errors';
 import logger from '@/utils/logger';
+import { RequestContext } from '@/context';
 import { Between, In } from 'typeorm';
 import { InstallationController, UserController, WalletController } from './';
 
@@ -15,7 +16,7 @@ type SaveRecognitionParams = {
   toId: string;
   message: string;
   teamId: string;
-  botToken: string;
+  botToken?: string;
 };
 
 export class RecognitionController {
@@ -25,7 +26,8 @@ export class RecognitionController {
   private readonly walletController = new WalletController();
 
   public async save(params: SaveRecognitionParams) {
-    const { toId, teamId, fromId, botToken } = params;
+    const { toId, teamId, fromId } = params;
+    const botToken = params.botToken || RequestContext.get().botToken;
     try {
       let fromUser = await this.userController.find({ userId: fromId, teamId });
       let toUser = await this.userController.find({ userId: toId, teamId });
