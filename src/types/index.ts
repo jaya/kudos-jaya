@@ -1,5 +1,10 @@
 import { LogLevel } from '@slack/bolt';
 
+export type * from './api';
+export type * from './domain';
+export type * from './errors';
+export type * from './slack';
+
 export type SlackConfig = {
   signingSecret: string;
   clientId: string;
