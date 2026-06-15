@@ -2,14 +2,17 @@ import { TransactionController } from '@/controllers/transaction';
 import { uploadFile } from '@/utils/upload-files-slack';
 import { writeCsv } from '@/utils/write-csv';
 import logger from '@/utils/logger';
-import { PrizesReportParams, PrizesReportResult } from '../types';
+import { RequestContext } from '@/context';
+import { PrizesReportResult } from '../types';
 
 export class PrizesReportService {
   async generateReport(
-    params: PrizesReportParams,
-    client: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    userId: string,
+    startDate: string,
+    endDate: string,
+    client: any,
   ): Promise<PrizesReportResult> {
-    const { userId, teamId, startDate, endDate } = params;
+    const { teamId } = RequestContext.get();
 
     try {
       const transactions = await new TransactionController().fetchPrizesReport({

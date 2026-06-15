@@ -1,7 +1,8 @@
 import logger from '@/utils/logger';
+import { withRequestContext } from '@/context';
 import { CancelKudosService } from '../services/cancel-kudos.service';
 
-const cancelKudosViewHandler = async ({ ack, client, body, context }) => {
+const cancelKudosViewHandler = withRequestContext(async ({ ack, client, body, context }) => {
   try {
     await ack();
 
@@ -13,7 +14,6 @@ const cancelKudosViewHandler = async ({ ack, client, body, context }) => {
       return;
     }
 
-    const teamId = body.user.team_id;
     const service = new CancelKudosService();
 
     for (const kudo of selectedKudos) {
@@ -21,23 +21,21 @@ const cancelKudosViewHandler = async ({ ack, client, body, context }) => {
       const slackMessageId = kudoParams[0];
       const slackChannelId = kudoParams[1];
 
-      // Delete from database
-      await service.deleteKudos(teamId, slackMessageId, slackChannelId);
+      await service.deleteKudos(slackMessageId, slackChannelId);
 
-      // Delete from Slack
       try {
         await client.chat.delete({
           token: context.botToken,
           ts: slackMessageId,
           channel: slackChannelId,
         });
-      } catch (error) {
-        logger.error('Failed to delete Slack message', error);
+      } catch (err: unknown) {
+        logger.error('Failed to delete Slack message', err);
       }
     }
-  } catch (error) {
-    logger.error('cancelKudosViewHandler()', error);
+  } catch (err: unknown) {
+    logger.error('cancelKudosViewHandler()', err);
   }
-};
+});
 
 export default cancelKudosViewHandler;
