@@ -82,6 +82,7 @@ describe('giveKudosViewHandler', () => {
       client: mockClient,
       body: mockBody,
       view: mockView,
+      context: { botToken: 'xoxb-test-token' },
     });
 
     expect(mockAck).toHaveBeenCalled();
@@ -100,6 +101,7 @@ describe('giveKudosViewHandler', () => {
       client: mockClient,
       body: mockBody,
       view: mockView,
+      context: { botToken: 'xoxb-test-token' },
     });
 
     expect(mockAck).toHaveBeenCalled();
@@ -128,6 +130,7 @@ describe('giveKudosViewHandler', () => {
       client: mockClient,
       body: mockBody,
       view: mockView,
+      context: { botToken: 'xoxb-test-token' },
     });
 
     expect(mockAck).toHaveBeenCalled();

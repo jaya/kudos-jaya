@@ -69,6 +69,7 @@ export class RedeemController {
         walletId,
         amount,
         productId: cardId,
+        externalTransactionId: payload.transactionId,
       });
 
       return {
