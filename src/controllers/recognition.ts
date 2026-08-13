@@ -79,14 +79,36 @@ export class RecognitionController {
     teamId: string,
     fromId: string,
   ): Promise<number> {
+    // Get current time in Brazil timezone (UTC-3)
     const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const brazilTime = new Date(
+      now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }),
+    );
+
+    // Calculate month boundaries in Brazil time
+    const startOfMonth = new Date(
+      brazilTime.getFullYear(),
+      brazilTime.getMonth(),
+      1,
+    );
+    const startOfNextMonth = new Date(
+      brazilTime.getFullYear(),
+      brazilTime.getMonth() + 1,
+      1,
+    );
+
+    // Convert back to UTC for database query
+    const brazilOffsetMs = now.getTime() - brazilTime.getTime();
+    const startOfMonthUtc = new Date(startOfMonth.getTime() + brazilOffsetMs);
+    const startOfNextMonthUtc = new Date(
+      startOfNextMonth.getTime() + brazilOffsetMs,
+    );
+
     return this.recognitionRepository.count({
       where: {
         teamId,
         fromId,
-        createdAt: Between(startOfMonth, startOfNextMonth),
+        createdAt: Between(startOfMonthUtc, startOfNextMonthUtc),
       },
     });
   }

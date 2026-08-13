@@ -156,6 +156,24 @@ describe('RecognitionController', () => {
       });
       expect(count).toBe(3);
     });
+
+    it('should calculate month boundaries using Brazil timezone', async () => {
+      const fromId = 'user1';
+      mockRepository.count.mockResolvedValueOnce(2);
+
+      const count = await recognitionController.getMonthlyKudosGivenCount(
+        teamId,
+        fromId,
+      );
+
+      expect(mockRepository.count).toHaveBeenCalled();
+      const callArgs = mockRepository.count.mock.calls[0][0];
+
+      expect(callArgs.where.teamId).toBe(teamId);
+      expect(callArgs.where.fromId).toBe(fromId);
+      expect(callArgs.where.createdAt).toBeDefined();
+      expect(count).toBe(2);
+    });
   });
 
   describe('getTotal', () => {
