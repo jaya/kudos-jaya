@@ -34,6 +34,9 @@ export class Transaction {
   @Column()
   productId: string;
 
+  @Column({ nullable: true })
+  externalTransactionId: string;
+
   @Column({ default: /* istanbul ignore next */ () => 'NOW()' })
   createdAt: Date;
 

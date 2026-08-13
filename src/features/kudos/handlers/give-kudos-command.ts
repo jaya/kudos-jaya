@@ -35,14 +35,24 @@ const giveKudosCommandHandler = withRequestContext(
       const companyValueOptions = buildCompanyValueOptions(companyValues);
 
       // Open modal
+      const kudosViewRaw = getKudosView(
+        gif,
+        companyValueOptions,
+        validation.remaining,
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const kudosView = kudosViewRaw as any;
       await client.views.open({
         token: context.botToken,
         trigger_id: body.trigger_id,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        view: getKudosView(gif, companyValueOptions, validation.remaining) as any,
+        view: kudosView,
       });
     } catch (err: unknown) {
-      logger.error('giveKudosCommandHandler()', err);
+      const errorData =
+        err instanceof Error
+          ? { message: err.message }
+          : { error: String(err) };
+      logger.error('giveKudosCommandHandler()', errorData);
     }
   },
 );
