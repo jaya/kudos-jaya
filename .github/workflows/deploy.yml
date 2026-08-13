@@ -41,6 +41,7 @@ jobs:
 
             npm install
             npm run build
+            npm run migration:up
 
             pm2 delete kudos-jaya || true
             pm2 start npm --name "kudos-jaya" -- run start
