@@ -80,13 +80,48 @@ export class RecognitionController {
     fromId: string,
   ): Promise<number> {
     const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Sao_Paulo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    const parts = formatter.formatToParts(now);
+    const year = parseInt(parts.find((p) => p.type === 'year')!.value);
+    const month = parseInt(parts.find((p) => p.type === 'month')!.value) - 1;
+
+    const startOfMonth = new Date(Date.UTC(year, month, 1));
+    const startOfNextMonth = new Date(Date.UTC(year, month + 1, 1));
+
+    const brazilDate = new Date(
+      now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }),
+    );
+    const offset = now.getTime() - brazilDate.getTime();
+
+    const startOfMonthUtc = new Date(startOfMonth.getTime() - offset);
+    const startOfNextMonthUtc = new Date(startOfNextMonth.getTime() - offset);
+
+    logger.debug('getMonthlyKudosGivenCount timezone conversion', {
+      teamId,
+      fromId,
+      nowUtc: now.toISOString(),
+      brazilTimeFormatted: now.toLocaleString('en-US', {
+        timeZone: 'America/Sao_Paulo',
+      }),
+      parsedYear: year,
+      parsedMonth: month + 1,
+      offsetMs: offset,
+      startOfMonthUtc: startOfMonthUtc.toISOString(),
+      startOfNextMonthUtc: startOfNextMonthUtc.toISOString(),
+    });
+
     return this.recognitionRepository.count({
       where: {
         teamId,
         fromId,
-        createdAt: Between(startOfMonth, startOfNextMonth),
+        createdAt: Between(startOfMonthUtc, startOfNextMonthUtc),
       },
     });
   }

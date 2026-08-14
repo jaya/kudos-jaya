@@ -58,7 +58,11 @@ export class GiveKudosService {
         remaining,
       };
     } catch (error) {
-      logger.error('validateMonthlyLimit()', error);
+      logger.error('validateMonthlyLimit() failed', {
+        fromId,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       return { canGive: false, message: 'Failed to validate kudos limit' };
     }
   }
