@@ -103,6 +103,20 @@ export class RecognitionController {
     const startOfMonthUtc = new Date(startOfMonth.getTime() - offset);
     const startOfNextMonthUtc = new Date(startOfNextMonth.getTime() - offset);
 
+    logger.debug('getMonthlyKudosGivenCount timezone conversion', {
+      teamId,
+      fromId,
+      nowUtc: now.toISOString(),
+      brazilTimeFormatted: now.toLocaleString('en-US', {
+        timeZone: 'America/Sao_Paulo',
+      }),
+      parsedYear: year,
+      parsedMonth: month + 1,
+      offsetMs: offset,
+      startOfMonthUtc: startOfMonthUtc.toISOString(),
+      startOfNextMonthUtc: startOfNextMonthUtc.toISOString(),
+    });
+
     return this.recognitionRepository.count({
       where: {
         teamId,
