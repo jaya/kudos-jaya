@@ -79,30 +79,29 @@ export class RecognitionController {
     teamId: string,
     fromId: string,
   ): Promise<number> {
-    // Get current time in Brazil timezone (UTC-3)
     const now = new Date();
-    const brazilTime = new Date(
+
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Sao_Paulo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+
+    const parts = formatter.formatToParts(now);
+    const year = parseInt(parts.find((p) => p.type === 'year')!.value);
+    const month = parseInt(parts.find((p) => p.type === 'month')!.value) - 1;
+
+    const startOfMonth = new Date(Date.UTC(year, month, 1));
+    const startOfNextMonth = new Date(Date.UTC(year, month + 1, 1));
+
+    const brazilDate = new Date(
       now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }),
     );
+    const offset = now.getTime() - brazilDate.getTime();
 
-    // Calculate month boundaries in Brazil time
-    const startOfMonth = new Date(
-      brazilTime.getFullYear(),
-      brazilTime.getMonth(),
-      1,
-    );
-    const startOfNextMonth = new Date(
-      brazilTime.getFullYear(),
-      brazilTime.getMonth() + 1,
-      1,
-    );
-
-    // Convert back to UTC for database query
-    const brazilOffsetMs = now.getTime() - brazilTime.getTime();
-    const startOfMonthUtc = new Date(startOfMonth.getTime() + brazilOffsetMs);
-    const startOfNextMonthUtc = new Date(
-      startOfNextMonth.getTime() + brazilOffsetMs,
-    );
+    const startOfMonthUtc = new Date(startOfMonth.getTime() - offset);
+    const startOfNextMonthUtc = new Date(startOfNextMonth.getTime() - offset);
 
     return this.recognitionRepository.count({
       where: {
