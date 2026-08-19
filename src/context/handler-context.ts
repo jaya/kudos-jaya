@@ -6,13 +6,23 @@ export function createRequestContextFromSlack(
   body: any,
   botToken: string,
 ): RequestContext {
+  const teamId = body.team_id || body.team?.id || '';
+  const enterpriseId = body.enterprise_id || body.enterprise?.id || null;
+  const userId = body.user_id || body.user?.id || '';
+
   const contextData: RequestContextData = {
-    teamId: body.team_id || '',
-    enterpriseId: body.enterprise_id || null,
-    userId: body.user_id || '',
+    teamId,
+    enterpriseId,
+    userId,
     botToken,
     correlationId: generateCorrelationId(),
   };
+
+  if (!teamId) {
+    throw new Error(
+      `Missing teamId in Slack context. body keys: ${Object.keys(body).join(', ')}`,
+    );
+  }
 
   return new RequestContext(contextData);
 }
