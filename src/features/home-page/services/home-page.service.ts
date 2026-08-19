@@ -1,5 +1,5 @@
 import { HomePageParams, HomePageBlocksResult } from '../types';
-import { getHomePageBlocks } from '../ui/home-blocks';
+import { getHomePageBlocks } from '../ui/slack/home-blocks';
 
 export class HomePageService {
   async buildHomePageBlocks(

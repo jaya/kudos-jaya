@@ -1,7 +1,7 @@
 import { HomePageService } from '../services/home-page.service';
-import * as homeBlocks from '../ui/home-blocks';
+import * as homeBlocks from '../ui/slack/home-blocks';
 
-jest.mock('../ui/home-blocks');
+jest.mock('../ui/slack/home-blocks');
 jest.mock('@/utils/logger');
 
 describe('HomePageService', () => {

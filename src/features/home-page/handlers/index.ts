@@ -1,1 +1,1 @@
-export { default as appHomeOpenedHandler } from './app-home-opened';
+export * from './slack';
