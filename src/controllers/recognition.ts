@@ -81,38 +81,78 @@ export class RecognitionController {
   ): Promise<number> {
     const now = new Date();
 
-    const formatter = new Intl.DateTimeFormat('en-US', {
+    const dateFormatter = new Intl.DateTimeFormat('en-US', {
       timeZone: 'America/Sao_Paulo',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
     });
 
-    const parts = formatter.formatToParts(now);
-    const year = parseInt(parts.find((p) => p.type === 'year')!.value);
-    const month = parseInt(parts.find((p) => p.type === 'month')!.value) - 1;
+    const timeParts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Sao_Paulo',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    }).formatToParts(now);
 
-    const startOfMonth = new Date(Date.UTC(year, month, 1));
-    const startOfNextMonth = new Date(Date.UTC(year, month + 1, 1));
+    const dateParts = dateFormatter.formatToParts(now);
 
-    const brazilDate = new Date(
-      now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }),
+    const yearPart = dateParts.find((p) => p.type === 'year');
+    const monthPart = dateParts.find((p) => p.type === 'month');
+    const dayPart = dateParts.find((p) => p.type === 'day');
+    const hourPart = timeParts.find((p) => p.type === 'hour');
+    const minutePart = timeParts.find((p) => p.type === 'minute');
+    const secondPart = timeParts.find((p) => p.type === 'second');
+
+    if (
+      !yearPart ||
+      !monthPart ||
+      !dayPart ||
+      !hourPart ||
+      !minutePart ||
+      !secondPart
+    ) {
+      logger.error('Failed to parse date components from Brazil timezone', {
+        teamId,
+        fromId,
+        dateParts: dateParts.map((p) => `${p.type}:${p.value}`),
+        timeParts: timeParts.map((p) => `${p.type}:${p.value}`),
+      });
+      throw new Error('Failed to parse Brazil timezone date components');
+    }
+
+    const year = parseInt(yearPart.value);
+    const month = parseInt(monthPart.value) - 1;
+    const day = parseInt(dayPart.value);
+    const hour = parseInt(hourPart.value);
+    const minute = parseInt(minutePart.value);
+    const second = parseInt(secondPart.value);
+
+    // Create a reference point: current time in Brazil timezone
+    const brazilCurrentTimeLocal = new Date(
+      Date.UTC(year, month, day, hour, minute, second),
     );
-    const offset = now.getTime() - brazilDate.getTime();
 
-    const startOfMonthUtc = new Date(startOfMonth.getTime() - offset);
-    const startOfNextMonthUtc = new Date(startOfNextMonth.getTime() - offset);
+    // Calculate offset by comparing Brazil time (as if local) with actual UTC now
+    // The difference tells us how to convert between UTC and Brazil timezone
+    const offsetMs = now.getTime() - brazilCurrentTimeLocal.getTime();
+
+    // Create month boundaries in Brazil timezone and convert to UTC
+    const startOfMonthBrazil = new Date(Date.UTC(year, month, 1));
+    const startOfNextMonthBrazil = new Date(Date.UTC(year, month + 1, 1));
+
+    const startOfMonthUtc = new Date(startOfMonthBrazil.getTime() - offsetMs);
+    const startOfNextMonthUtc = new Date(
+      startOfNextMonthBrazil.getTime() - offsetMs,
+    );
 
     logger.debug('getMonthlyKudosGivenCount timezone conversion', {
       teamId,
       fromId,
       nowUtc: now.toISOString(),
-      brazilTimeFormatted: now.toLocaleString('en-US', {
-        timeZone: 'America/Sao_Paulo',
-      }),
-      parsedYear: year,
-      parsedMonth: month + 1,
-      offsetMs: offset,
+      brazilTime: `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}`,
+      offsetMs,
       startOfMonthUtc: startOfMonthUtc.toISOString(),
       startOfNextMonthUtc: startOfNextMonthUtc.toISOString(),
     });

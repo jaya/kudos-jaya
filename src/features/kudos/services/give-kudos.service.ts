@@ -58,11 +58,26 @@ export class GiveKudosService {
         remaining,
       };
     } catch (error) {
+      const errorName =
+        error instanceof Error ? error.constructor.name : 'UnknownError';
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
       logger.error('validateMonthlyLimit() failed', {
         fromId,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+        errorName,
+        errorMessage,
+        stack: errorStack,
       });
+
+      if (error instanceof Error && error.message.includes('timezone')) {
+        return {
+          canGive: false,
+          message: 'Kudos system is temporarily unavailable. Please try again.',
+        };
+      }
+
       return { canGive: false, message: 'Failed to validate kudos limit' };
     }
   }
