@@ -1,13 +1,15 @@
 import openWalletReportHandler from '../../handlers/open-wallet-report';
 import { WalletReportService } from '../../services/wallet-report.service';
+import { RequestContext } from '@/context/RequestContext';
 
 jest.mock('../../services/wallet-report.service');
 jest.mock('@/utils/logger');
+jest.mock('@/context/RequestContext');
 
 describe('openWalletReportHandler', () => {
   let mockAck: jest.Mock;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  let mockAdapter: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockBody: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,10 +19,8 @@ describe('openWalletReportHandler', () => {
     jest.clearAllMocks();
 
     mockAck = jest.fn().mockResolvedValue(undefined);
-    mockClient = {
-      chat: {
-        postMessage: jest.fn(),
-      },
+    mockAdapter = {
+      postMessage: jest.fn().mockResolvedValue(undefined),
     };
     mockBody = {
       user: {
@@ -35,6 +35,17 @@ describe('openWalletReportHandler', () => {
     } as any;
 
     (WalletReportService as jest.Mock).mockImplementation(() => mockService);
+
+    // Mock RequestContext.get() to return context with adapter
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      adapter: mockAdapter,
+    });
+
+    // Mock RequestContext.runAsync to call the handler directly
+    (RequestContext.runAsync as jest.Mock).mockImplementation(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (context: any, fn: any) => fn(),
+    );
   });
 
   it('should generate and post wallet report successfully', async () => {
@@ -46,21 +57,20 @@ describe('openWalletReportHandler', () => {
 
     await openWalletReportHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
+      client: { token: 'test-token' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     expect(mockAck).toHaveBeenCalled();
     expect(mockService.generateReport).toHaveBeenCalledWith(
       { userId: 'user1', teamId: 'team1' },
-      mockClient,
+      undefined,
     );
-    expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
+    expect(mockAdapter.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         channel: 'user1',
         text: 'Here is the report',
-        attachments: expect.any(Array),
       }),
     );
   });
@@ -73,12 +83,12 @@ describe('openWalletReportHandler', () => {
 
     await openWalletReportHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
+      client: { token: 'test-token' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
-    expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
+    expect(mockAdapter.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         channel: 'user1',
         text: 'Sorry, we had a trouble generating the report',
@@ -91,12 +101,12 @@ describe('openWalletReportHandler', () => {
 
     await openWalletReportHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
+      client: { token: 'test-token' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
-    expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
+    expect(mockAdapter.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         channel: 'user1',
         text: 'Sorry, we had a trouble generating the report',

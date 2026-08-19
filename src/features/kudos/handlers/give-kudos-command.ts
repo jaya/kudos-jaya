@@ -3,16 +3,19 @@ import { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { GiveKudosService } from '../services/give-kudos.service';
 import { buildCompanyValueOptions, getKudosView } from '../ui/give-kudos-modal';
 import { withRequestContext } from '@/context';
+import { RequestContext } from '@/context/RequestContext';
 
 const giveKudosCommandHandler = withRequestContext(
-  async ({
-    ack,
-    client,
-    body,
-    context,
-  }: AllMiddlewareArgs & SlackCommandMiddlewareArgs) => {
+  async ({ ack, body }: AllMiddlewareArgs & SlackCommandMiddlewareArgs) => {
     try {
       await ack();
+
+      const context = RequestContext.get();
+      const adapter = context.adapter;
+
+      if (!adapter) {
+        throw new Error('Platform adapter not available in request context');
+      }
 
       const fromId = body.user_id;
       const service = new GiveKudosService();
@@ -20,7 +23,7 @@ const giveKudosCommandHandler = withRequestContext(
       // Validate monthly limit
       const validation = await service.validateMonthlyLimit(fromId);
       if (!validation.canGive) {
-        await client.chat.postMessage({
+        await adapter.postMessage({
           channel: fromId,
           text: validation.message || 'You cannot give kudos at this time',
         });
@@ -42,9 +45,8 @@ const giveKudosCommandHandler = withRequestContext(
       );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const kudosView = kudosViewRaw as any;
-      await client.views.open({
-        token: context.botToken,
-        trigger_id: body.trigger_id,
+      await adapter.openModal({
+        triggerId: body.trigger_id,
         view: kudosView,
       });
     } catch (err: unknown) {

@@ -1,9 +1,18 @@
 import logger from '@/utils/logger';
 import { CancelKudosService } from '../services/cancel-kudos.service';
+import { withRequestContext } from '@/context';
+import { RequestContext } from '@/context/RequestContext';
 
-const cancelKudosViewHandler = async ({ ack, client, body, context }) => {
+const cancelKudosViewHandler = withRequestContext(async ({ ack, body }) => {
   try {
     await ack();
+
+    const context = RequestContext.get();
+    const adapter = context.adapter;
+
+    if (!adapter) {
+      throw new Error('Platform adapter not available in request context');
+    }
 
     const selectedKudos =
       body?.view?.state?.values['cancel_kudos_block']?.['cancel_kudos']
@@ -26,8 +35,7 @@ const cancelKudosViewHandler = async ({ ack, client, body, context }) => {
 
       // Delete from Slack
       try {
-        await client.chat.delete({
-          token: context.botToken,
+        await adapter.deleteMessage({
           ts: slackMessageId,
           channel: slackChannelId,
         });
@@ -38,6 +46,6 @@ const cancelKudosViewHandler = async ({ ack, client, body, context }) => {
   } catch (error) {
     logger.error('cancelKudosViewHandler()', error);
   }
-};
+});
 
 export default cancelKudosViewHandler;

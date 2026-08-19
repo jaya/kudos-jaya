@@ -1,13 +1,15 @@
 import chooseCardActionHandler from '../../handlers/choose-card-action';
 import * as amountInputModal from '../../ui/amount-input-modal';
+import { RequestContext } from '@/context/RequestContext';
 
 jest.mock('../../ui/amount-input-modal');
 jest.mock('@/utils/logger');
+jest.mock('@/context/RequestContext');
 
 describe('chooseCardActionHandler', () => {
   let mockAck: jest.Mock;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  let mockAdapter: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockBody: any;
 
@@ -15,10 +17,8 @@ describe('chooseCardActionHandler', () => {
     jest.clearAllMocks();
 
     mockAck = jest.fn().mockResolvedValue(undefined);
-    mockClient = {
-      views: {
-        update: jest.fn(),
-      },
+    mockAdapter = {
+      updateModal: jest.fn().mockResolvedValue(undefined),
     };
     mockBody = {
       view: {
@@ -30,19 +30,33 @@ describe('chooseCardActionHandler', () => {
           value: 'card1,50,500',
         },
       ],
+      user: {
+        team_id: 'T123',
+      },
     };
 
     (amountInputModal.getAmountInputView as jest.Mock).mockReturnValue({
       type: 'modal',
       callback_id: 'generate_gift_card',
     });
+
+    // Mock RequestContext.get() to return context with adapter
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      adapter: mockAdapter,
+    });
+
+    // Mock RequestContext.runAsync to call the handler directly
+    (RequestContext.runAsync as jest.Mock).mockImplementation(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (context: any, fn: any) => fn(),
+    );
   });
 
   it('should update modal with amount input', async () => {
     await chooseCardActionHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
+      client: { token: 'test-token' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
@@ -52,21 +66,20 @@ describe('chooseCardActionHandler', () => {
       '50',
       '500',
     );
-    expect(mockClient.views.update).toHaveBeenCalled();
+    expect(mockAdapter.updateModal).toHaveBeenCalled();
   });
 
-  it('should pass correct view_id and hash', async () => {
+  it('should pass correct view_id to adapter', async () => {
     await chooseCardActionHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
+      client: { token: 'test-token' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
-    expect(mockClient.views.update).toHaveBeenCalledWith(
+    expect(mockAdapter.updateModal).toHaveBeenCalledWith(
       expect.objectContaining({
-        view_id: 'view123',
-        hash: 'hash123',
+        viewId: 'view123',
       }),
     );
   });

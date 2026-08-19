@@ -1,17 +1,17 @@
 import cancelKudosCommandHandler from '../../handlers/cancel-kudos-command';
 import { CancelKudosService } from '../../services/cancel-kudos.service';
+import { RequestContext } from '@/context/RequestContext';
 
 jest.mock('../../services/cancel-kudos.service');
 jest.mock('@/utils/logger');
+jest.mock('@/context/RequestContext');
 
 describe('cancelKudosCommandHandler', () => {
   let mockAck: jest.Mock;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  let mockAdapter: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockBody: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockContext: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockService: any;
 
@@ -19,21 +19,14 @@ describe('cancelKudosCommandHandler', () => {
     jest.clearAllMocks();
 
     mockAck = jest.fn().mockResolvedValue(undefined);
-    mockClient = {
-      chat: {
-        postEphemeral: jest.fn(),
-      },
-      views: {
-        open: jest.fn(),
-      },
+    mockAdapter = {
+      postMessage: jest.fn().mockResolvedValue(undefined),
+      openModal: jest.fn().mockResolvedValue(undefined),
     };
     mockBody = {
       team_id: 'team123',
       user_id: 'user1',
       trigger_id: 'trigger123',
-    };
-    mockContext = {
-      botToken: 'token123',
     };
 
     mockService = {
@@ -42,6 +35,17 @@ describe('cancelKudosCommandHandler', () => {
     } as any;
 
     (CancelKudosService as jest.Mock).mockImplementation(() => mockService);
+
+    // Mock RequestContext.get() to return context with adapter
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      adapter: mockAdapter,
+    });
+
+    // Mock RequestContext.runAsync to call the handler directly
+    (RequestContext.runAsync as jest.Mock).mockImplementation(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (context: any, fn: any) => fn(),
+    );
   });
 
   it('should open cancel kudos modal when kudos exist', async () => {
@@ -66,30 +70,28 @@ describe('cancelKudosCommandHandler', () => {
 
     await cancelKudosCommandHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
-      context: mockContext,
+      client: { token: 'test-token' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     expect(mockAck).toHaveBeenCalled();
-    expect(mockClient.views.open).toHaveBeenCalled();
-    expect(mockClient.chat.postEphemeral).not.toHaveBeenCalled();
+    expect(mockAdapter.openModal).toHaveBeenCalled();
+    expect(mockAdapter.postMessage).not.toHaveBeenCalled();
   });
 
-  it('should send ephemeral message when no kudos exist', async () => {
+  it('should send message when no kudos exist', async () => {
     mockService.getUserKudos.mockResolvedValue([]);
 
     await cancelKudosCommandHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
-      context: mockContext,
+      client: { token: 'test-token' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     expect(mockAck).toHaveBeenCalled();
-    expect(mockClient.chat.postEphemeral).toHaveBeenCalledWith(
+    expect(mockAdapter.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         text: 'You have no kudos to cancel.',
       }),

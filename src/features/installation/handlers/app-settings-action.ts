@@ -1,10 +1,19 @@
 import logger from '@/utils/logger';
 import { buildSettingsModal } from '../ui/settings-modal';
 import { InstallationService } from '../services/installation.service';
+import { withRequestContext } from '@/context';
+import { RequestContext } from '@/context/RequestContext';
 
-const appSettingsActionHandler = async ({ ack, client, body }) => {
+const appSettingsActionHandler = withRequestContext(async ({ ack, body }) => {
   try {
     await ack();
+
+    const context = RequestContext.get();
+    const adapter = context.adapter;
+
+    if (!adapter) {
+      throw new Error('Platform adapter not available in request context');
+    }
 
     const teamId = body.user.team_id;
     const service = new InstallationService();
@@ -15,13 +24,13 @@ const appSettingsActionHandler = async ({ ack, client, body }) => {
 
     const modal = buildSettingsModal(settings, auditorUserIds);
 
-    await client.views.open({
-      trigger_id: body.trigger_id,
+    await adapter.openModal({
+      triggerId: body.trigger_id,
       view: modal,
     });
   } catch (error) {
     logger.error('appSettingsActionHandler()', error);
   }
-};
+});
 
 export default appSettingsActionHandler;

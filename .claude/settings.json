@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // empty' | grep -qE '(git push|git push origin main|git push origin \\+main)' && echo '{\"continue\": false, \"stopReason\": \"Pushing directly to main is not allowed. Please create a PR instead.\"}' || echo '{\"continue\": true}'",
+            "statusMessage": "Checking push destination..."
+          }
+        ]
+      }
+    ]
+  }
+}
