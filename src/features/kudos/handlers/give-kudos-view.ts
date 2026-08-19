@@ -75,6 +75,13 @@ const giveKudosViewHandler = withRequestContext(async ({ ack, view, body }) => {
 
       const blocks = [
         {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*<@${fromId}> is recognizing${usersText.join('')}!*`,
+          },
+        },
+        {
           type: 'image',
           image_url: gif,
           alt_text: 'GIF',
@@ -83,7 +90,7 @@ const giveKudosViewHandler = withRequestContext(async ({ ack, view, body }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `Kudos given to${usersText.join('')}! *"${message}"*`,
+            text: `*"${message}"*`,
           },
         },
       ];
@@ -100,7 +107,7 @@ const giveKudosViewHandler = withRequestContext(async ({ ack, view, body }) => {
 
       await adapter.postMessage({
         channel: defaultChannel || fromId,
-        text: `Kudos given to${usersText.join('')}! *"${message}"*`,
+        text: `<@${fromId}> is recognizing${usersText.join('')}! "${message}"`,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         blocks: blocks as any,
       });
