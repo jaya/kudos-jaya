@@ -14,7 +14,8 @@ export function createRequestContextFromSlack(
   const enterpriseId = body.enterprise_id || body.enterprise?.id || null;
   const userId = body.user_id || body.user?.id || '';
 
-  const client = slackClient || (botToken ? new WebClient(botToken) : undefined);
+  const client =
+    slackClient || (botToken ? new WebClient(botToken) : undefined);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const adapter = client ? new SlackAdapter(client as any) : undefined;
 
@@ -27,7 +28,6 @@ export function createRequestContextFromSlack(
     adapter,
   };
 
-  // Only throw error if teamId is missing in production; allow empty for tests
   if (!teamId && process.env.NODE_ENV !== 'test') {
     throw new Error(
       `Missing teamId in Slack context. body keys: ${Object.keys(body).join(', ')}`,
@@ -45,7 +45,6 @@ export function withRequestContext(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return async (args: any) => {
     const { body, context, client } = args;
-    // Use context.botToken if available, otherwise try to get it from client.token (for tests)
     const botToken = context?.botToken || client?.token || '';
     const requestContext = createRequestContextFromSlack(
       body,
