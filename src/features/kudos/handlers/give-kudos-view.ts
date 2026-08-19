@@ -1,11 +1,19 @@
 import logger from '@/utils/logger';
 import { GiveKudosService } from '../services/give-kudos.service';
 import { withRequestContext } from '@/context';
+import { RequestContext } from '@/context/RequestContext';
 
-const giveKudosViewHandler = withRequestContext(async ({ ack, view, client, body }) => {
+const giveKudosViewHandler = withRequestContext(async ({ ack, view, body }) => {
   await ack();
 
   try {
+    const context = RequestContext.get();
+    const adapter = context.adapter;
+
+    if (!adapter) {
+      throw new Error('Platform adapter not available in request context');
+    }
+
     const fromId = body.user.id;
     const service = new GiveKudosService();
 
@@ -27,7 +35,7 @@ const giveKudosViewHandler = withRequestContext(async ({ ack, view, client, body
     // Validate monthly limit again
     const validation = await service.validateMonthlyLimit(fromId);
     if (!validation.canGive) {
-      await client.chat.postMessage({
+      await adapter.postMessage({
         channel: fromId,
         text:
           validation.message ||
@@ -52,7 +60,7 @@ const giveKudosViewHandler = withRequestContext(async ({ ack, view, client, body
         usersText.push(` <@${result.toId}>`);
 
         // Send notification to recipient
-        await client.chat.postMessage({
+        await adapter.postMessage({
           channel: result.toId,
           text: `Hey <@${result.toId}> Jaya is sending you a gift, check your balance! `,
         });
@@ -90,15 +98,17 @@ const giveKudosViewHandler = withRequestContext(async ({ ack, view, client, body
         });
       }
 
-      await client.chat.postMessage({
+      await adapter.postMessage({
         channel: defaultChannel || fromId,
-        blocks,
+        text: `Kudos given to${usersText.join('')}! *"${message}"*`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        blocks: blocks as any,
       });
     }
 
     // Handle failures
     if (failedUsers.length > 0) {
-      await client.chat.postMessage({
+      await adapter.postMessage({
         channel: fromId,
         text: `An error occurred while giving kudos to: ${failedUsers.join(', ')} :cry:`,
       });

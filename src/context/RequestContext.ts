@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from 'async_hooks';
+import type { PlatformAdapter } from '../adapters';
 
 export interface RequestContextData {
   teamId: string;
@@ -6,6 +7,7 @@ export interface RequestContextData {
   userId: string;
   botToken: string;
   correlationId: string;
+  adapter?: PlatformAdapter;
 }
 
 export class RequestContext {
@@ -31,6 +33,10 @@ export class RequestContext {
 
   get correlationId(): string {
     return this.data.correlationId;
+  }
+
+  get adapter(): PlatformAdapter | undefined {
+    return this.data.adapter;
   }
 
   static get(): RequestContext {
