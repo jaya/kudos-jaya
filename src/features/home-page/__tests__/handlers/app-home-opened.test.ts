@@ -1,8 +1,10 @@
 import appHomeOpenedHandler from '../../handlers/app-home-opened';
 import { HomePageService } from '../../services/home-page.service';
+import { RequestContext } from '@/context/RequestContext';
 
 jest.mock('../../services/home-page.service');
 jest.mock('@/utils/logger');
+jest.mock('@/context/RequestContext');
 
 describe('appHomeOpenedHandler', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,6 +38,17 @@ describe('appHomeOpenedHandler', () => {
     } as any;
 
     (HomePageService as jest.Mock).mockImplementation(() => mockService);
+
+    // Mock RequestContext.get()
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      botToken: 'token123',
+    });
+
+    // Mock RequestContext.runAsync to call the handler directly
+    (RequestContext.runAsync as jest.Mock).mockImplementation(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (context: any, fn: any) => fn(),
+    );
   });
 
   it('should publish home page blocks on app home opened', async () => {
@@ -50,6 +63,8 @@ describe('appHomeOpenedHandler', () => {
     await appHomeOpenedHandler({
       client: mockClient,
       event: mockEvent,
+      body: { team_id: 'team1', user_id: 'user1' },
+      context: { botToken: 'token123' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
@@ -76,6 +91,8 @@ describe('appHomeOpenedHandler', () => {
     await appHomeOpenedHandler({
       client: mockClient,
       event: mockEvent,
+      body: { team_id: 'team1', user_id: 'user1' },
+      context: { botToken: 'token123' },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
