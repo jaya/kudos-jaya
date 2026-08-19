@@ -25,9 +25,12 @@ describe('giveKudosViewHandler', () => {
       },
     };
     mockBody = {
+      team: {
+        id: 'team123',
+        domain: 'example-workspace',
+      },
       user: {
         id: 'user1',
-        team_id: 'team123',
       },
     };
     mockView = {

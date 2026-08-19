@@ -31,8 +31,13 @@ export class GiveKudosService {
   public async validateMonthlyLimit(fromId: string): Promise<ValidationResult> {
     try {
       const { teamId } = RequestContext.get();
-      const { monthlyKudosLimit } =
-        await this.installationController.find(teamId);
+      const installation = await this.installationController.find(teamId);
+
+      if (!installation) {
+        return { canGive: true };
+      }
+
+      const { monthlyKudosLimit } = installation;
 
       if (monthlyKudosLimit === null || monthlyKudosLimit === undefined) {
         return { canGive: true };
