@@ -1,9 +1,18 @@
 import logger from '@/utils/logger';
 import { getAmountInputView } from '../ui/amount-input-modal';
+import { withRequestContext } from '@/context';
+import { RequestContext } from '@/context/RequestContext';
 
-const chooseCardActionHandler = async ({ ack, client, body }) => {
+const chooseCardActionHandler = withRequestContext(async ({ ack, body }) => {
   try {
     await ack();
+
+    const context = RequestContext.get();
+    const adapter = context.adapter;
+
+    if (!adapter) {
+      throw new Error('Platform adapter not available in request context');
+    }
 
     const values = body.actions[0].value.split(',');
     const cardId = values[0];
@@ -12,14 +21,13 @@ const chooseCardActionHandler = async ({ ack, client, body }) => {
 
     const view = getAmountInputView(cardId, minValue, maxValue);
 
-    await client.views.update({
-      view_id: body.view!.id,
-      hash: body.view!.hash,
+    await adapter.updateModal({
+      viewId: body.view!.id,
       view,
     });
   } catch (error) {
     logger.error('chooseCardActionHandler()', error);
   }
-};
+});
 
 export default chooseCardActionHandler;

@@ -6,47 +6,55 @@ import {
   buildCancelKudosModalOptions,
   getCancelKudosView,
 } from '../ui/cancel-kudos-modal';
+import { withRequestContext } from '@/context';
+import { RequestContext } from '@/context/RequestContext';
 
-const cancelKudosCommandHandler = async ({
-  ack,
-  client,
-  body,
-  context,
-}: AllMiddlewareArgs & SlackCommandMiddlewareArgs) => {
-  try {
-    await ack();
+const cancelKudosCommandHandler = withRequestContext(
+  async ({
+    ack,
+    body,
+  }: AllMiddlewareArgs & SlackCommandMiddlewareArgs) => {
+    try {
+      await ack();
 
-    const teamId = body.team_id;
-    const userId = body.user_id;
-    const service = new CancelKudosService();
+      const context = RequestContext.get();
+      const adapter = context.adapter;
 
-    // Fetch user's kudos
-    const recognitions = await service.getUserKudos(teamId, userId);
+      if (!adapter) {
+        throw new Error('Platform adapter not available in request context');
+      }
 
-    if (recognitions.length <= 0) {
-      await client.chat.postEphemeral({
-        token: context.botToken,
-        channel: userId,
-        user: userId,
-        text: 'You have no kudos to cancel.',
-      });
-      return;
-    }
+      const teamId = body.team_id;
+      const userId = body.user_id;
+      const service = new CancelKudosService();
 
-    // Build modal
-    const grouped = groupKudosByMessage(recognitions);
-    const options = buildCancelKudosModalOptions(grouped);
+      // Fetch user's kudos
+      const recognitions = await service.getUserKudos(teamId, userId);
 
-    // Open modal
-    await client.views.open({
-      token: context.botToken,
-      trigger_id: body.trigger_id,
+      if (recognitions.length <= 0) {
+        // TODO: Implement postEphemeral in adapter
+        // For now, use postMessage
+        await adapter.postMessage({
+          channel: userId,
+          text: 'You have no kudos to cancel.',
+        });
+        return;
+      }
+
+      // Build modal
+      const grouped = groupKudosByMessage(recognitions);
+      const options = buildCancelKudosModalOptions(grouped);
+
+      // Open modal
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      view: getCancelKudosView(options) as any,
-    });
-  } catch (error) {
-    logger.error('cancelKudosCommandHandler()', error);
-  }
-};
+      await adapter.openModal({
+        triggerId: body.trigger_id,
+        view: getCancelKudosView(options) as any,
+      });
+    } catch (error) {
+      logger.error('cancelKudosCommandHandler()', error);
+    }
+  },
+);
 
 export default cancelKudosCommandHandler;
