@@ -120,6 +120,66 @@ export class GiveKudosService {
     return results;
   }
 
+  public async createRecognitionsWithSlackIds(
+    params: Omit<GiveKudosParams, 'gif'> & {
+      slackMessageId: string;
+      slackChannelId: string;
+    },
+  ): Promise<Array<{ id: string; success: boolean; toId: string }>> {
+    const { teamId } = RequestContext.get();
+    const results = [];
+
+    for (const toId of params.toIds) {
+      try {
+        const response = await this.recognitionController.save({
+          fromId: params.fromId,
+          toId,
+          message: params.message,
+          teamId,
+        });
+
+        if (response.ok && response.id) {
+          // Update with Slack IDs immediately after saving
+          try {
+            const recognitionId =
+              typeof response.id === 'string'
+                ? parseInt(response.id, 10)
+                : response.id;
+
+            await this.recognitionController.update({
+              teamId,
+              id: [recognitionId],
+              params: {
+                slackMessageId: params.slackMessageId,
+                slackChannelId: params.slackChannelId,
+              },
+            });
+          } catch (updateError) {
+            logger.error('Failed to update recognition with Slack IDs', {
+              recognitionId: response.id,
+              error: updateError,
+            });
+          }
+        }
+
+        results.push({
+          id: response.id,
+          success: response.ok,
+          toId,
+        });
+      } catch (error) {
+        logger.error('createRecognitionsWithSlackIds()', error);
+        results.push({
+          id: '',
+          success: false,
+          toId,
+        });
+      }
+    }
+
+    return results;
+  }
+
   public async fetchGif(): Promise<string> {
     try {
       return await this.giphy.fetchGif();

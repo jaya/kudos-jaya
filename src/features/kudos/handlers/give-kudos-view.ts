@@ -44,78 +44,79 @@ const giveKudosViewHandler = withRequestContext(async ({ ack, view, body }) => {
       return;
     }
 
-    // Create recognitions for all users
-    const results = await service.createRecognitions({
-      fromId,
-      toIds: users,
-      message,
-      companyValues,
-    });
-
-    const usersText = [];
+    const usersText = users.map((userId) => ` <@${userId}>`);
     const failedUsers = [];
 
-    for (const result of results) {
-      if (result.success) {
-        usersText.push(` <@${result.toId}>`);
+    // Post message to Slack FIRST, before saving to database
+    const defaultChannel = await service.getDefaultRecognitionChannel();
 
-        // Send notification to recipient
-        await adapter.postMessage({
-          channel: result.toId,
-          text: `Hey <@${result.toId}> Jaya is sending you a gift, check your balance! `,
-        });
-      } else {
-        failedUsers.push(result.toId);
-      }
+    const blocks = [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*<@${fromId}> is recognizing${usersText.join('')}!*`,
+        },
+      },
+      {
+        type: 'image',
+        image_url: gif,
+        alt_text: 'GIF',
+      },
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*"${message}"*`,
+        },
+      },
+    ];
+
+    if (companyValues) {
+      blocks.push({
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `*Company Values:* ${companyValues}`,
+        },
+      });
     }
 
-    // Send confirmation message with GIF
-    if (usersText.length > 0) {
-      const defaultChannel = await service.getDefaultRecognitionChannel();
+    const { ts, channel } = await adapter.postMessage({
+      channel: defaultChannel || fromId,
+      text: `<@${fromId}> is recognizing${usersText.join('')}! "${message}"`,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      blocks: blocks as any,
+    });
 
-      const blocks = [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*<@${fromId}> is recognizing${usersText.join('')}!*`,
-          },
-        },
-        {
-          type: 'image',
-          image_url: gif,
-          alt_text: 'GIF',
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*"${message}"*`,
-          },
-        },
-      ];
-
-      if (companyValues) {
-        blocks.push({
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Company Values:* ${companyValues}`,
-          },
-        });
-      }
-
-      const { ts, channel } = await adapter.postMessage({
-        channel: defaultChannel || fromId,
-        text: `<@${fromId}> is recognizing${usersText.join('')}! "${message}"`,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        blocks: blocks as any,
+    // Only create recognitions in DB after Slack post succeeds
+    if (ts && channel) {
+      const results = await service.createRecognitionsWithSlackIds({
+        fromId,
+        toIds: users,
+        message,
+        companyValues,
+        slackMessageId: ts,
+        slackChannelId: channel,
       });
 
-      // Update recognitions with Slack message IDs
-      const recIds = results.filter((r) => r.success).map((r) => r.id);
-      if (recIds.length > 0) {
-        await service.updateRecognitionMessageIds(recIds, ts, channel);
+      // Send notifications to recipients
+      for (const result of results) {
+        if (result.success) {
+          try {
+            await adapter.postMessage({
+              channel: result.toId,
+              text: `Hey <@${result.toId}> Jaya is sending you a gift, check your balance! `,
+            });
+          } catch (error) {
+            logger.error('Failed to send recipient notification', {
+              toId: result.toId,
+              error,
+            });
+          }
+        } else {
+          failedUsers.push(result.toId);
+        }
       }
     }
 

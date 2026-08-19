@@ -64,6 +64,7 @@ describe('giveKudosViewHandler', () => {
     mockService = {
       validateMonthlyLimit: jest.fn(),
       createRecognitions: jest.fn(),
+      createRecognitionsWithSlackIds: jest.fn(),
       getDefaultRecognitionChannel: jest.fn(),
       updateRecognitionMessageIds: jest.fn(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,7 +89,7 @@ describe('giveKudosViewHandler', () => {
       canGive: true,
       remaining: 5,
     });
-    mockService.createRecognitions.mockResolvedValue([
+    mockService.createRecognitionsWithSlackIds.mockResolvedValue([
       { id: 'rec1', success: true, toId: 'user2' },
       { id: 'rec2', success: true, toId: 'user3' },
     ]);
@@ -101,8 +102,8 @@ describe('giveKudosViewHandler', () => {
     });
 
     expect(mockAck).toHaveBeenCalled();
-    expect(mockService.createRecognitions).toHaveBeenCalled();
-    expect(mockAdapter.postMessage).toHaveBeenCalledTimes(3); // 2 notifications + 1 confirmation
+    expect(mockService.createRecognitionsWithSlackIds).toHaveBeenCalled();
+    expect(mockAdapter.postMessage).toHaveBeenCalledTimes(3); // 1 confirmation + 2 notifications
   });
 
   it('should send error message when validation fails', async () => {
@@ -132,7 +133,7 @@ describe('giveKudosViewHandler', () => {
       canGive: true,
       remaining: 5,
     });
-    mockService.createRecognitions.mockResolvedValue([
+    mockService.createRecognitionsWithSlackIds.mockResolvedValue([
       { id: 'rec1', success: true, toId: 'user2' },
       { id: '', success: false, toId: 'user3' },
     ]);
