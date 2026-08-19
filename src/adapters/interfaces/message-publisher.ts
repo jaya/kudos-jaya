@@ -5,7 +5,7 @@ export interface MessagePublisher {
     blocks?: Record<string, unknown>[];
     thread_ts?: string;
     metadata?: Record<string, unknown>;
-  }): Promise<void>;
+  }): Promise<{ ts: string; channel: string }>;
 
   updateMessage(params: {
     channel: string;

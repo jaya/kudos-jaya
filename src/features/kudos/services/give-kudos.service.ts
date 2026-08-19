@@ -151,4 +151,24 @@ export class GiveKudosService {
       return undefined;
     }
   }
+
+  public async updateRecognitionMessageIds(
+    recognitionIds: string[],
+    messageTs: string,
+    channel: string,
+  ): Promise<void> {
+    try {
+      const { teamId } = RequestContext.get();
+      const ids = recognitionIds.map((id) => parseInt(id, 10));
+      if (ids.length > 0) {
+        await this.recognitionController.update({
+          teamId,
+          id: ids,
+          params: { slackMessageId: messageTs, slackChannelId: channel },
+        });
+      }
+    } catch (error) {
+      logger.error('updateRecognitionMessageIds()', error);
+    }
+  }
 }

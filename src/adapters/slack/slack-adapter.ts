@@ -13,15 +13,19 @@ export class SlackAdapter implements PlatformAdapter {
     blocks?: Record<string, unknown>[];
     thread_ts?: string;
     metadata?: Record<string, unknown>;
-  }): Promise<void> {
+  }): Promise<{ ts: string; channel: string }> {
     try {
-      await this.client.chat.postMessage({
+      const result = await this.client.chat.postMessage({
         channel: params.channel,
         text: params.text,
         blocks: params.blocks as any,
         thread_ts: params.thread_ts,
         metadata: params.metadata as any,
       } as any);
+      return {
+        ts: result?.ts || '',
+        channel: result?.channel || params.channel,
+      };
     } catch (error) {
       logger.error('SlackAdapter.postMessage()', error);
       throw error;

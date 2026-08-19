@@ -1,13 +1,15 @@
 import giveKudosViewHandler from '../../handlers/give-kudos-view';
 import { GiveKudosService } from '../../services/give-kudos.service';
+import { RequestContext } from '@/context/RequestContext';
 
 jest.mock('../../services/give-kudos.service');
 jest.mock('@/utils/logger');
+jest.mock('@/context/RequestContext');
 
 describe('giveKudosViewHandler', () => {
   let mockAck: jest.Mock;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  let mockAdapter: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockBody: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,10 +21,10 @@ describe('giveKudosViewHandler', () => {
     jest.clearAllMocks();
 
     mockAck = jest.fn().mockResolvedValue(undefined);
-    mockClient = {
-      chat: {
-        postMessage: jest.fn(),
-      },
+    mockAdapter = {
+      postMessage: jest
+        .fn()
+        .mockResolvedValue({ ts: '1234567890.123456', channel: 'C12345' }),
     };
     mockBody = {
       team: {
@@ -63,10 +65,22 @@ describe('giveKudosViewHandler', () => {
       validateMonthlyLimit: jest.fn(),
       createRecognitions: jest.fn(),
       getDefaultRecognitionChannel: jest.fn(),
+      updateRecognitionMessageIds: jest.fn(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
 
     (GiveKudosService as jest.Mock).mockImplementation(() => mockService);
+
+    // Mock RequestContext.get() to return context with adapter
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      adapter: mockAdapter,
+    });
+
+    // Mock RequestContext.runAsync to call the handler directly
+    (RequestContext.runAsync as jest.Mock).mockImplementation(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (context: any, fn: any) => fn(),
+    );
   });
 
   it('should create recognitions and send confirmation message', async () => {
@@ -82,15 +96,13 @@ describe('giveKudosViewHandler', () => {
 
     await giveKudosViewHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
       view: mockView,
-      context: { botToken: 'xoxb-test-token' },
     });
 
     expect(mockAck).toHaveBeenCalled();
     expect(mockService.createRecognitions).toHaveBeenCalled();
-    expect(mockClient.chat.postMessage).toHaveBeenCalledTimes(3); // 2 notifications + 1 confirmation
+    expect(mockAdapter.postMessage).toHaveBeenCalledTimes(3); // 2 notifications + 1 confirmation
   });
 
   it('should send error message when validation fails', async () => {
@@ -101,14 +113,12 @@ describe('giveKudosViewHandler', () => {
 
     await giveKudosViewHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
       view: mockView,
-      context: { botToken: 'xoxb-test-token' },
     });
 
     expect(mockAck).toHaveBeenCalled();
-    expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
+    expect(mockAdapter.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         channel: 'user1',
         text: 'Monthly limit reached',
@@ -130,14 +140,12 @@ describe('giveKudosViewHandler', () => {
 
     await giveKudosViewHandler({
       ack: mockAck,
-      client: mockClient,
       body: mockBody,
       view: mockView,
-      context: { botToken: 'xoxb-test-token' },
     });
 
     expect(mockAck).toHaveBeenCalled();
-    expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
+    expect(mockAdapter.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         channel: 'user1',
         text: expect.stringContaining('error occurred'),

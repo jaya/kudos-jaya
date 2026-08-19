@@ -105,12 +105,18 @@ const giveKudosViewHandler = withRequestContext(async ({ ack, view, body }) => {
         });
       }
 
-      await adapter.postMessage({
+      const { ts, channel } = await adapter.postMessage({
         channel: defaultChannel || fromId,
         text: `<@${fromId}> is recognizing${usersText.join('')}! "${message}"`,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         blocks: blocks as any,
       });
+
+      // Update recognitions with Slack message IDs
+      const recIds = results.filter((r) => r.success).map((r) => r.id);
+      if (recIds.length > 0) {
+        await service.updateRecognitionMessageIds(recIds, ts, channel);
+      }
     }
 
     // Handle failures
