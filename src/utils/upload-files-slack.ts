@@ -36,7 +36,7 @@ type SlackFile = {
 };
 
 type UploadFileResponse = {
-  files: { ok: boolean; files: SlackFile[] }[];
+  file: SlackFile;
 } & WebAPICallResult;
 
 export async function uploadFile({ client, channelId }): Promise<string> {
@@ -66,7 +66,7 @@ export async function uploadFile({ client, channelId }): Promise<string> {
 
   fs.unlinkSync(filePath);
   const data = fileUploadResponse as UploadFileResponse;
-  const url = data?.files[0]?.files[0]?.url_private_download;
+  const url = data?.file?.url_private_download;
 
   if (!url) {
     throw new Error('No download URL returned from Slack');

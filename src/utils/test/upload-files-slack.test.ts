@@ -38,9 +38,7 @@ describe('uploadFile()', () => {
     });
     (client.files.uploadV2 as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      files: [
-        { ok: true, files: [{ url_private_download: 'https://download.url' }] },
-      ],
+      file: { url_private_download: 'https://download.url' },
     });
 
     const url = await uploadFile({ client, channelId });
