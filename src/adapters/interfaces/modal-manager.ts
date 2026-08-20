@@ -15,4 +15,9 @@ export interface ModalManager {
   }): Promise<void>;
 
   closeModal(params: { viewId: string }): Promise<void>;
+
+  publishHomeTab(params: {
+    userId: string;
+    view: Record<string, unknown>;
+  }): Promise<void>;
 }

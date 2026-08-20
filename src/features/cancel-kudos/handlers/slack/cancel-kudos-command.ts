@@ -28,9 +28,9 @@ const cancelKudosCommandHandler = withRequestContext(
       const recognitions = await service.getUserKudos(userId);
 
       if (recognitions.length <= 0) {
-        // TODO: Implement postEphemeral in adapter
-        await adapter.postMessage({
-          channel: userId,
+        await adapter.postEphemeral({
+          channel: body.channel_id,
+          user: userId,
           text: 'You have no kudos to cancel.',
         });
         return;

@@ -15,4 +15,11 @@ export interface MessagePublisher {
   }): Promise<void>;
 
   deleteMessage(params: { channel: string; ts: string }): Promise<void>;
+
+  postEphemeral(params: {
+    channel: string;
+    user: string;
+    text: string;
+    blocks?: Record<string, unknown>[];
+  }): Promise<void>;
 }
