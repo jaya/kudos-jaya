@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import manifest from '../../manifest.json';
-import { userHandler } from '../handlers/user';
+import { userHandler } from '../api/user';
 const oauthRedirect = manifest.oauth_config.redirect_urls[0];
 const botScopes = manifest.oauth_config.scopes.bot;
 
