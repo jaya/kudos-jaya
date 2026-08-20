@@ -19,12 +19,9 @@ const generateWalletReportViewHandler = withRequestContext(
       }
 
       const service = new WalletReportService();
-      const result = await service.generateReport(
-        {
-          userId,
-        },
-        undefined,
-      );
+      const result = await service.generateReport({
+        userId,
+      });
 
       if (result.success) {
         await adapter.postMessage({

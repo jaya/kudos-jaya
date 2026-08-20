@@ -1,6 +1,5 @@
 import { TransactionController } from '@/controllers/transaction';
 import { RequestContext } from '@/context';
-import { uploadFile } from '@/utils/upload-files-slack';
 import { writeCsv } from '@/utils/write-csv';
 import logger from '@/utils/logger';
 import { PrizesReportParams, PrizesReportResult } from '../types';
@@ -8,12 +7,15 @@ import { PrizesReportParams, PrizesReportResult } from '../types';
 export class PrizesReportService {
   async generateReport(
     params: Omit<PrizesReportParams, 'teamId'>,
-    client: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<PrizesReportResult> {
     const { userId, startDate, endDate } = params;
-    const { teamId } = RequestContext.get();
+    const { teamId, adapter } = RequestContext.get();
 
     try {
+      if (!adapter) {
+        throw new Error('Platform adapter not available');
+      }
+
       const transactions = await new TransactionController().fetchPrizesReport({
         teamId,
         start: startDate,
@@ -29,7 +31,13 @@ export class PrizesReportService {
       }
 
       await writeCsv(transactions);
-      const fileUrl = await uploadFile({ client, channelId: userId });
+      const result = await adapter.uploadFile({
+        filename: 'file.csv',
+        filetype: 'csv',
+        channels: [userId],
+        file: 'dist/src/assets/file.csv',
+      });
+      const fileUrl = result.url;
 
       return {
         success: true,
