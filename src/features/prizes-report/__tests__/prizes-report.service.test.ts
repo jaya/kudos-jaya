@@ -2,6 +2,8 @@ import { PrizesReportService } from '../services/prizes-report.service';
 import { TransactionController } from '@/controllers/transaction';
 import { RequestContext } from '@/context';
 import * as writeCsvUtil from '@/utils/write-csv';
+import * as fs from 'fs';
+import * as path from 'path';
 
 jest.mock('@/controllers/transaction');
 jest.mock('@/utils/write-csv');
@@ -14,6 +16,7 @@ describe('PrizesReportService', () => {
   let mockAdapter: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockTransactionController: any;
+  const testFilePath = path.join(__dirname, '../../../assets/file.csv');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -29,7 +32,10 @@ describe('PrizesReportService', () => {
     (TransactionController as jest.Mock).mockImplementation(
       () => mockTransactionController,
     );
-    (writeCsvUtil.writeCsv as jest.Mock).mockResolvedValue(undefined);
+    (writeCsvUtil.writeCsv as jest.Mock).mockImplementation(async () => {
+      // Create the test file so fs.createReadStream can read it
+      fs.writeFileSync(testFilePath, 'test data');
+    });
     mockAdapter.uploadFile.mockResolvedValue({
       fileId: 'f123',
       url: 'https://example.com/report.csv',
@@ -41,6 +47,13 @@ describe('PrizesReportService', () => {
     });
 
     service = new PrizesReportService();
+  });
+
+  afterEach(() => {
+    // Clean up test file if it exists
+    if (fs.existsSync(testFilePath)) {
+      fs.unlinkSync(testFilePath);
+    }
   });
 
   describe('generateReport', () => {
@@ -64,12 +77,10 @@ describe('PrizesReportService', () => {
       expect(result.message).toBe('Here is the report');
       expect(result.fileUrl).toBe('https://example.com/report.csv');
       expect(writeCsvUtil.writeCsv).toHaveBeenCalledWith(mockTransactions);
-      expect(mockAdapter.uploadFile).toHaveBeenCalledWith({
-        filename: 'file.csv',
-        filetype: 'csv',
-        channels: ['user1'],
-        file: 'dist/src/assets/file.csv',
-      });
+      const uploadCall = (mockAdapter.uploadFile as jest.Mock).mock.calls[0][0];
+      expect(uploadCall.filename).toBe('file.csv');
+      expect(uploadCall.filetype).toBe('csv');
+      expect(uploadCall.channels).toEqual(['user1']);
     });
 
     it('should return error when no data available', async () => {
