@@ -1,4 +1,5 @@
 import { WebClient } from '@slack/web-api';
+import type { Stream } from 'node:stream';
 import { PlatformAdapter } from '../interfaces';
 import logger from '@/utils/logger';
 
@@ -227,7 +228,7 @@ export class SlackAdapter implements PlatformAdapter {
     filename: string;
     filetype: string;
     channels: string[];
-    file: Buffer | string;
+    file: Buffer | Stream | string;
     title?: string;
     initialComment?: string;
   }): Promise<{
