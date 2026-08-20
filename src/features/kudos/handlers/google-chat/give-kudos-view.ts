@@ -13,12 +13,6 @@ interface GoogleChatViewParams {
   };
 }
 
-/**
- * Google Chat: Give Kudos View Handler
- *
- * Handles form submission from give-kudos modal in Google Chat
- * Routes through adapter interface for platform-agnostic execution
- */
 const giveKudosViewHandler = withRequestContext(
   async ({ userId, formData }: GoogleChatViewParams) => {
     try {
@@ -32,13 +26,10 @@ const giveKudosViewHandler = withRequestContext(
       const fromId = userId;
       const service = new GiveKudosService();
 
-      // Extract form values (structure differs from Slack but intent is same)
       const toIds = formData.to_ids || [];
       const message = formData.message || '';
       const gif = formData.gif_url || '';
       const companyValues = formData.company_values?.join(', ') || undefined;
-
-      // Validate monthly limit again
       const validation = await service.validateMonthlyLimit(fromId);
       if (!validation.canGive) {
         await adapter.postMessage({
@@ -53,7 +44,6 @@ const giveKudosViewHandler = withRequestContext(
       const usersText = toIds.map((id) => ` <@${id}>`);
       const failedUsers = [];
 
-      // Post message to Google Chat FIRST, before saving to database
       const defaultChannel = await service.getDefaultRecognitionChannel();
 
       const blocks = [
@@ -95,7 +85,6 @@ const giveKudosViewHandler = withRequestContext(
         blocks: blocks as any,
       });
 
-      // Only create recognitions in DB after platform post succeeds
       if (ts && channel) {
         const results = await service.createRecognitionsWithSlackIds({
           fromId,
@@ -106,7 +95,6 @@ const giveKudosViewHandler = withRequestContext(
           slackChannelId: channel,
         });
 
-        // Send notifications to recipients
         for (const result of results) {
           if (result.success) {
             try {
@@ -126,7 +114,6 @@ const giveKudosViewHandler = withRequestContext(
         }
       }
 
-      // Handle failures
       if (failedUsers.length > 0) {
         await adapter.postMessage({
           channel: fromId,
