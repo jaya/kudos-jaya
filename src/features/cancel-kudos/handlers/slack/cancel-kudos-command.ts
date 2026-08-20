@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { withRequestContext } from '@/context';
+import { RequestContext } from '@/context/RequestContext';
 import logger from '@/utils/logger';
 import { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { CancelKudosService } from '../../services/cancel-kudos.service';
 import {
-  groupKudosByMessage,
   buildCancelKudosModalOptions,
   getCancelKudosView,
+  groupKudosByMessage,
 } from '../../ui/slack/cancel-kudos-modal';
-import { withRequestContext } from '@/context';
-import { RequestContext } from '@/context/RequestContext';
 
 const cancelKudosCommandHandler = withRequestContext(
   async ({ ack, body }: AllMiddlewareArgs & SlackCommandMiddlewareArgs) => {
@@ -25,7 +25,6 @@ const cancelKudosCommandHandler = withRequestContext(
       const userId = body.user_id;
       const service = new CancelKudosService();
 
-      // Fetch user's kudos
       const recognitions = await service.getUserKudos(userId);
 
       if (recognitions.length <= 0) {
