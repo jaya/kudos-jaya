@@ -116,10 +116,6 @@ describe('cancelKudosViewHandler', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
-    expect(mockService.deleteKudos).toHaveBeenCalledWith(
-      'team123',
-      'msg123',
-      'ch123',
-    );
+    expect(mockService.deleteKudos).toHaveBeenCalledWith('msg123', 'ch123');
   });
 });

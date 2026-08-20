@@ -1,4 +1,5 @@
 import { WalletController } from '@/controllers';
+import { RequestContext } from '@/context';
 import { uploadFile } from '@/utils/upload-files-slack';
 import { writeCsv } from '@/utils/write-csv';
 import logger from '@/utils/logger';
@@ -6,10 +7,11 @@ import { WalletReportParams, WalletReportResult } from '../types';
 
 export class WalletReportService {
   async generateReport(
-    params: WalletReportParams,
+    params: Omit<WalletReportParams, 'teamId'>,
     client: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<WalletReportResult> {
-    const { userId, teamId } = params;
+    const { userId } = params;
+    const { teamId } = RequestContext.get();
 
     try {
       const reportData = await new WalletController().fetchWalletReport({

@@ -7,7 +7,6 @@ import { RequestContext } from '@/context/RequestContext';
 const generatePrizesReportViewHandler = withRequestContext(
   async ({ ack, view, body }) => {
     const userId = body.user.id;
-    const teamId = body.user.team_id;
 
     try {
       await ack();
@@ -28,14 +27,12 @@ const generatePrizesReportViewHandler = withRequestContext(
       const result = await service.generateReport(
         {
           userId,
-          teamId,
           startDate: new Date(startDate),
           endDate: new Date(endDate),
         },
         undefined,
       );
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await adapter.postMessage({
         channel: userId,
         text: result.message,

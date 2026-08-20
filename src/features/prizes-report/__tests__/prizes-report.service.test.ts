@@ -1,5 +1,6 @@
 import { PrizesReportService } from '../services/prizes-report.service';
 import { TransactionController } from '@/controllers/transaction';
+import { RequestContext } from '@/context';
 import * as uploadFilesSlack from '@/utils/upload-files-slack';
 import * as writeCsvUtil from '@/utils/write-csv';
 
@@ -7,6 +8,7 @@ jest.mock('@/controllers/transaction');
 jest.mock('@/utils/upload-files-slack');
 jest.mock('@/utils/write-csv');
 jest.mock('@/utils/logger');
+jest.mock('@/context');
 
 describe('PrizesReportService', () => {
   let service: PrizesReportService;
@@ -32,6 +34,10 @@ describe('PrizesReportService', () => {
       'https://example.com/report.csv',
     );
 
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      teamId: 'team1',
+    });
+
     service = new PrizesReportService();
   });
 
@@ -49,7 +55,6 @@ describe('PrizesReportService', () => {
       const result = await service.generateReport(
         {
           userId: 'user1',
-          teamId: 'team1',
           startDate: new Date('2024-01-01'),
           endDate: new Date('2024-12-31'),
         },
@@ -68,7 +73,6 @@ describe('PrizesReportService', () => {
       const result = await service.generateReport(
         {
           userId: 'user1',
-          teamId: 'team1',
           startDate: new Date('2024-01-01'),
           endDate: new Date('2024-12-31'),
         },
@@ -87,7 +91,6 @@ describe('PrizesReportService', () => {
       const result = await service.generateReport(
         {
           userId: 'user1',
-          teamId: 'team1',
           startDate: new Date('2024-01-01'),
           endDate: new Date('2024-12-31'),
         },

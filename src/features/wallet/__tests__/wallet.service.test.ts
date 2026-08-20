@@ -1,8 +1,10 @@
 import { WalletController } from '@/controllers';
+import { RequestContext } from '@/context';
 import { WalletService } from '../services/wallet.service';
 
 jest.mock('@/controllers');
 jest.mock('../utils/write-csv');
+jest.mock('@/context');
 
 describe('WalletService', () => {
   let walletService: WalletService;
@@ -15,7 +17,6 @@ describe('WalletService', () => {
 
   const mockParams = {
     ownerId: 'user1',
-    teamId: 'team123',
     amount: 100,
   };
 
@@ -43,30 +44,44 @@ describe('WalletService', () => {
       fetchWalletReport: mockFetchWalletReport,
     }));
 
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      teamId: 'team123',
+    });
+
     walletService = new WalletService();
   });
 
   it('should delegate deposit to WalletController', async () => {
     await walletService.deposit(mockParams);
-    expect(mockDeposit).toHaveBeenCalledWith(mockParams);
+    expect(mockDeposit).toHaveBeenCalledWith({
+      ...mockParams,
+      teamId: 'team123',
+    });
   });
 
   it('should delegate withdraw to WalletController', async () => {
     await walletService.withdraw(mockParams);
-    expect(mockWithdraw).toHaveBeenCalledWith(mockParams);
+    expect(mockWithdraw).toHaveBeenCalledWith({
+      ...mockParams,
+      teamId: 'team123',
+    });
   });
 
   it('should delegate getBalance to WalletController', async () => {
     const balance = await walletService.getBalance(mockParams);
-    expect(mockGetBalance).toHaveBeenCalledWith(mockParams);
+    expect(mockGetBalance).toHaveBeenCalledWith({
+      ...mockParams,
+      teamId: 'team123',
+    });
     expect(balance).toBe(100);
   });
 
   it('should delegate getBalanceToBeRedeemed to WalletController', async () => {
     const balance = await walletService.getBalanceToBeRedeemed({
-      teamId: 'team123',
+      amount: 100,
     });
     expect(mockGetBalanceToBeRedeemed).toHaveBeenCalledWith({
+      amount: 100,
       teamId: 'team123',
     });
     expect(balance).toBe(150);
@@ -74,7 +89,7 @@ describe('WalletService', () => {
 
   it('should delegate find to WalletController', async () => {
     const wallet = await walletService.find(mockParams);
-    expect(mockFind).toHaveBeenCalledWith(mockParams);
+    expect(mockFind).toHaveBeenCalledWith({ ...mockParams, teamId: 'team123' });
     expect(wallet).toEqual({
       ownerId: 'user1',
       teamId: 'team123',
@@ -83,7 +98,7 @@ describe('WalletService', () => {
   });
 
   it('should delegate fetchWalletReport to WalletController', async () => {
-    const report = await walletService.fetchWalletReport({ teamId: 'team123' });
+    const report = await walletService.fetchWalletReport();
     expect(mockFetchWalletReport).toHaveBeenCalledWith({ teamId: 'team123' });
     expect(report).toEqual([
       { balance: 100, name: 'User 1' },

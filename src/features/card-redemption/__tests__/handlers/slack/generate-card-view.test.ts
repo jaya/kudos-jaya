@@ -72,7 +72,6 @@ describe('generateCardViewHandler', () => {
       userId: 'user1',
       cardId: 'card1',
       amount: 100,
-      teamId: 'team1',
     });
     expect(mockClient.chat.postMessage).toHaveBeenCalled();
   });

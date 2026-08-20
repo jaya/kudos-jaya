@@ -16,8 +16,6 @@ const saveSettingsViewHandler = withRequestContext(
       }
 
       const userId = body.user.id;
-      const teamId = view.team_id;
-      const botToken = context.botToken;
 
       const todoToken =
         view.state.values['setup_todo_token']['todo_token']?.value;
@@ -37,22 +35,23 @@ const saveSettingsViewHandler = withRequestContext(
       const service = new InstallationService();
 
       await service.saveSettings({
-        teamId,
         userId,
-        botToken,
         todoToken,
         defaultChannelId,
         defaultAmount: defaultAmount ? Number(defaultAmount) : undefined,
         companyValues,
         monthlyKudosLimit:
           // eslint-disable-next-line eqeqeq
-          monthlyKudosLimitValue != null ? Number(monthlyKudosLimitValue) : null,
+          monthlyKudosLimitValue != null
+            ? Number(monthlyKudosLimitValue)
+            : null,
         auditorUserIds: auditorUsers,
       });
 
       await adapter.postMessage({
         channel: userId,
-        text: '*Awesome!* 🎉 Now that we\'re ready, type `/give-kudos` in chat and spread the *gratitude* and *love* with your colleagues.',
+        // eslint-disable-next-line quotes
+        text: "*Awesome!* 🎉 Now that we're ready, type `/give-kudos` in chat and spread the *gratitude* and *love* with your colleagues.",
       });
     } catch (error) {
       logger.error('saveSettingsViewHandler()', error);

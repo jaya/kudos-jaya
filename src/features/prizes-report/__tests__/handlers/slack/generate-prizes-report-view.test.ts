@@ -83,7 +83,6 @@ describe('generatePrizesReportViewHandler', () => {
     expect(mockService.generateReport).toHaveBeenCalledWith(
       expect.objectContaining({
         userId: 'user1',
-        teamId: 'team1',
       }),
       undefined,
     );

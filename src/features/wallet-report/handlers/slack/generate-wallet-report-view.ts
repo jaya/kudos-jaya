@@ -4,11 +4,9 @@ import { WalletReportService } from '../../services/wallet-report.service';
 import { withRequestContext } from '@/context';
 import { RequestContext } from '@/context/RequestContext';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const generateWalletReportViewHandler = withRequestContext(
   async ({ ack, body }: any) => {
     const userId = body.user.id;
-    const teamId = body.user.team_id;
 
     try {
       await ack();
@@ -24,13 +22,11 @@ const generateWalletReportViewHandler = withRequestContext(
       const result = await service.generateReport(
         {
           userId,
-          teamId,
         },
         undefined,
       );
 
       if (result.success) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await adapter.postMessage({
           channel: userId,
           text: result.message,

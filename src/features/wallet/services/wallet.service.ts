@@ -1,10 +1,10 @@
 import { WalletController } from '@/controllers';
+import { RequestContext } from '@/context';
 import { Wallet } from '@/entities/wallet';
 import { writeCsv } from '../utils/write-csv';
 
 type BaseParams = {
   ownerId: string;
-  teamId: string;
   amount?: number;
 };
 
@@ -16,29 +16,35 @@ export class WalletService {
   }
 
   public async deposit(params: BaseParams): Promise<void> {
-    return this.walletController.deposit(params);
+    const { teamId } = RequestContext.get();
+    return this.walletController.deposit({ ...params, teamId });
   }
 
   public async withdraw(params: BaseParams): Promise<void> {
-    return this.walletController.withdraw(params);
+    const { teamId } = RequestContext.get();
+    return this.walletController.withdraw({ ...params, teamId });
   }
 
   public async getBalance(params: BaseParams): Promise<number> {
-    return this.walletController.getBalance(params);
+    const { teamId } = RequestContext.get();
+    return this.walletController.getBalance({ ...params, teamId });
   }
 
   public async getBalanceToBeRedeemed(
     params: Omit<BaseParams, 'ownerId'>,
   ): Promise<number> {
-    return this.walletController.getBalanceToBeRedeemed(params);
+    const { teamId } = RequestContext.get();
+    return this.walletController.getBalanceToBeRedeemed({ ...params, teamId });
   }
 
   public async find(params: BaseParams): Promise<Partial<Wallet>> {
-    return this.walletController.find(params);
+    const { teamId } = RequestContext.get();
+    return this.walletController.find({ ...params, teamId });
   }
 
-  public async fetchWalletReport(params: { teamId: string }) {
-    return this.walletController.fetchWalletReport(params);
+  public async fetchWalletReport() {
+    const { teamId } = RequestContext.get();
+    return this.walletController.fetchWalletReport({ teamId });
   }
 
   public async generateWalletReportCsv(data: object[]): Promise<void> {

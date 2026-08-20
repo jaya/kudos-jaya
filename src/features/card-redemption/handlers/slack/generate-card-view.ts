@@ -19,7 +19,6 @@ const generateCardViewHandler = withRequestContext(
       }
 
       const cardId = body.view.private_metadata;
-      const teamId = body.user.team_id;
       const amount =
         view.state.values['card_amount_block']['card_amount_value'].value;
 
@@ -28,11 +27,9 @@ const generateCardViewHandler = withRequestContext(
         userId,
         cardId,
         amount: Number(amount),
-        teamId,
       });
 
       if (!card?.url) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await adapter.postMessage({
           text: card.message,
           channel: userId,
@@ -49,7 +46,6 @@ const generateCardViewHandler = withRequestContext(
         return;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await adapter.postMessage({
         text: card.message,
         channel: userId,
@@ -77,7 +73,7 @@ const generateCardViewHandler = withRequestContext(
         ] as any,
       });
 
-      const auditors = await service.getAuditors(teamId);
+      const auditors = await service.getAuditors();
       const productInfo = await service.getProductInfo(cardId);
 
       for (const user of auditors) {

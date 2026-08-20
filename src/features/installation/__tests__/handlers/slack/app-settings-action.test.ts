@@ -38,8 +38,8 @@ describe('appSettingsActionHandler()', () => {
     });
 
     expect(mockAck).toHaveBeenCalled();
-    expect(mockService.getCurrentSettings).toHaveBeenCalledWith('T12345');
-    expect(mockService.getAuditorUsers).toHaveBeenCalledWith('T12345');
+    expect(mockService.getCurrentSettings).toHaveBeenCalledWith();
+    expect(mockService.getAuditorUsers).toHaveBeenCalledWith();
     expect(mockClient.views.open).toHaveBeenCalledWith(
       expect.objectContaining({
         trigger_id: 'trigger-123',

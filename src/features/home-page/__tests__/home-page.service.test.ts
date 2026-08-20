@@ -1,14 +1,22 @@
 import { HomePageService } from '../services/home-page.service';
 import * as homeBlocks from '../ui/slack/home-blocks';
+import { RequestContext } from '@/context';
 
 jest.mock('../ui/slack/home-blocks');
 jest.mock('@/utils/logger');
+jest.mock('@/context');
 
 describe('HomePageService', () => {
   let service: HomePageService;
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      teamId: 'team1',
+      botToken: 'token123',
+    });
+
     service = new HomePageService();
   });
 
@@ -27,8 +35,6 @@ describe('HomePageService', () => {
 
       const result = await service.buildHomePageBlocks({
         user: 'user1',
-        teamId: 'team1',
-        token: 'token123',
       });
 
       expect(result).toEqual(mockResult);
@@ -50,8 +56,6 @@ describe('HomePageService', () => {
 
       const result = await service.buildHomePageBlocks({
         user: 'user1',
-        teamId: 'team1',
-        token: 'token123',
       });
 
       expect(result.hasError).toBe(true);

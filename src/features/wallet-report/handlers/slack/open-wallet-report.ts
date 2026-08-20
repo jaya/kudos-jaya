@@ -6,7 +6,6 @@ import { RequestContext } from '@/context/RequestContext';
 
 const openWalletReportHandler = withRequestContext(async ({ ack, body }) => {
   const userId = body.user.id;
-  const teamId = body.user.team_id;
 
   try {
     await ack();
@@ -20,10 +19,8 @@ const openWalletReportHandler = withRequestContext(async ({ ack, body }) => {
 
     const service = new WalletReportService();
     // TODO: Update service to accept adapter instead of client
-    // For now, we'll keep passing undefined and the service will handle it
-    const result = await service.generateReport({ userId, teamId }, undefined);
+    const result = await service.generateReport({ userId }, undefined);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await adapter.postMessage({
       channel: userId,
       text: result.message,

@@ -2,11 +2,13 @@ import { RedeemGiftCardService } from '../services/redeem-gift-card.service';
 import { RedeemController } from '@/controllers/redeem';
 import { ProductController } from '@/controllers/product';
 import { UserController } from '@/controllers/user';
+import { RequestContext } from '@/context';
 
 jest.mock('@/controllers/redeem');
 jest.mock('@/controllers/product');
 jest.mock('@/controllers/user');
 jest.mock('@/utils/logger');
+jest.mock('@/context');
 
 describe('RedeemGiftCardService', () => {
   let service: RedeemGiftCardService;
@@ -40,6 +42,10 @@ describe('RedeemGiftCardService', () => {
     );
     (UserController as jest.Mock).mockImplementation(() => mockUserController);
 
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      teamId: 'team1',
+    });
+
     service = new RedeemGiftCardService();
   });
 
@@ -57,7 +63,6 @@ describe('RedeemGiftCardService', () => {
         userId: 'user1',
         cardId: 'card1',
         amount: 100,
-        teamId: 'team1',
       });
 
       expect(result).toEqual(mockResult);
@@ -78,7 +83,6 @@ describe('RedeemGiftCardService', () => {
         userId: 'user1',
         cardId: 'card1',
         amount: 100,
-        teamId: 'team1',
       });
 
       expect(result.success).toBe(false);
@@ -117,7 +121,7 @@ describe('RedeemGiftCardService', () => {
       const mockAuditors = [{ id: 'user1' }, { id: 'user2' }];
       mockUserController.findMany.mockResolvedValue(mockAuditors);
 
-      const result = await service.getAuditors('team1');
+      const result = await service.getAuditors();
 
       expect(result).toEqual(mockAuditors);
       expect(mockUserController.findMany).toHaveBeenCalledWith({
@@ -129,7 +133,7 @@ describe('RedeemGiftCardService', () => {
     it('should return empty array when no auditors found', async () => {
       mockUserController.findMany.mockResolvedValue([]);
 
-      const result = await service.getAuditors('team1');
+      const result = await service.getAuditors();
 
       expect(result).toEqual([]);
     });
@@ -137,7 +141,7 @@ describe('RedeemGiftCardService', () => {
     it('should return empty array on error', async () => {
       mockUserController.findMany.mockRejectedValue(new Error('DB error'));
 
-      const result = await service.getAuditors('team1');
+      const result = await service.getAuditors();
 
       expect(result).toEqual([]);
     });
