@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { WalletController } from '@/controllers';
 import { RequestContext } from '@/context';
 import { writeCsv } from '@/utils/write-csv';
@@ -29,13 +31,16 @@ export class WalletReportService {
       }
 
       await writeCsv(reportData);
+      const filePath = path.join(__dirname, '../../../assets/file.csv');
+      const fileStream = fs.createReadStream(filePath);
       const result = await adapter.uploadFile({
         filename: 'file.csv',
         filetype: 'csv',
         channels: [userId],
-        file: 'dist/src/assets/file.csv',
+        file: fileStream,
       });
       const fileUrl = result.url;
+      fs.unlinkSync(filePath);
 
       return {
         success: true,
