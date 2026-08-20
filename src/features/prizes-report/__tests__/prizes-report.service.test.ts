@@ -32,8 +32,13 @@ describe('PrizesReportService', () => {
     (TransactionController as jest.Mock).mockImplementation(
       () => mockTransactionController,
     );
+
+    const assetDir = path.dirname(testFilePath);
+    if (!fs.existsSync(assetDir)) {
+      fs.mkdirSync(assetDir, { recursive: true });
+    }
+
     (writeCsvUtil.writeCsv as jest.Mock).mockImplementation(async () => {
-      // Create the test file so fs.createReadStream can read it
       fs.writeFileSync(testFilePath, 'test data');
     });
     mockAdapter.uploadFile.mockResolvedValue({
@@ -50,7 +55,6 @@ describe('PrizesReportService', () => {
   });
 
   afterEach(() => {
-    // Clean up test file if it exists
     if (fs.existsSync(testFilePath)) {
       fs.unlinkSync(testFilePath);
     }

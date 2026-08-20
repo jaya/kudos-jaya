@@ -15,7 +15,9 @@ describe('Adapter Substitution', () => {
       return 'mock';
     }
 
-    async postMessage(params: unknown): Promise<{ ts: string; channel: string }> {
+    async postMessage(
+      params: unknown,
+    ): Promise<{ ts: string; channel: string }> {
       this.calls.push({ method: 'postMessage', params });
       return { ts: 'mock_ts', channel: 'mock_channel' };
     }
@@ -66,12 +68,16 @@ describe('Adapter Substitution', () => {
       return { id: 'mock_conv', name: 'Mock Conversation', isPrivate: false };
     }
 
-    async getUserList(): Promise<Array<{ id: string; name: string; email?: string }>> {
+    async getUserList(): Promise<
+      Array<{ id: string; name: string; email?: string }>
+    > {
       this.calls.push({ method: 'getUserList', params: undefined });
       return [{ id: 'user1', name: 'User 1' }];
     }
 
-    async uploadFile(params: unknown): Promise<{ fileId: string; url: string }> {
+    async uploadFile(
+      params: unknown,
+    ): Promise<{ fileId: string; url: string }> {
       this.calls.push({ method: 'uploadFile', params });
       return { fileId: 'mock_file', url: 'https://example.com/file' };
     }
@@ -145,7 +151,11 @@ describe('Adapter Substitution', () => {
       await mockAdapter.postMessage({ channel: 'ch', text: 'msg' });
       await mockAdapter.updateMessage({ ts: 'ts', channel: 'ch' });
       await mockAdapter.deleteMessage({ ts: 'ts', channel: 'ch' });
-      await mockAdapter.postEphemeral({ user: 'u', channel: 'ch', text: 'msg' });
+      await mockAdapter.postEphemeral({
+        user: 'u',
+        channel: 'ch',
+        text: 'msg',
+      });
       await mockAdapter.openModal({ triggerId: 'tid', view: {} });
       await mockAdapter.updateModal({ viewId: 'vid', view: {} });
       await mockAdapter.pushModal({ triggerId: 'tid', view: {} });
@@ -173,7 +183,10 @@ describe('Adapter Substitution', () => {
     expect(userResult).toHaveProperty('id');
     expect(userResult).toHaveProperty('name');
 
-    const fileResult = await mockAdapter.uploadFile({ channel: 'ch', file: 'f' });
+    const fileResult = await mockAdapter.uploadFile({
+      channel: 'ch',
+      file: 'f',
+    });
     expect(fileResult).toHaveProperty('fileId');
     expect(fileResult).toHaveProperty('url');
 

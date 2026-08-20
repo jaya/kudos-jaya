@@ -236,18 +236,61 @@ export class SlackAdapter implements PlatformAdapter {
     url: string;
   }> {
     try {
+      let channelId = params.channels[0];
+      logger.info(`uploadFile: starting with channelId=${channelId}`);
+
+      if (channelId.startsWith('U')) {
+        logger.info('uploadFile: converting user ID to channel ID');
+        const dmResult = await (this.client.conversations.open as any)({
+          users: channelId,
+        });
+        if (!dmResult.ok) {
+          throw new Error(
+            `conversations.open failed: ${dmResult.error || 'Unknown error'}`,
+          );
+        }
+        channelId = dmResult.channel.id as string;
+        logger.info(`uploadFile: converted to channelId=${channelId}`);
+      }
+
+      logger.info(`uploadFile: uploading file with channelId=${channelId}`);
       const result = await (this.client.files.uploadV2 as any)({
         filename: params.filename,
-        filetype: params.filetype,
-        channel_id: params.channels[0],
+        channel_id: channelId,
         file: params.file,
         title: params.title,
         initial_comment: params.initialComment,
       });
-      const file = result.file as any;
+
+      if (!result.ok) {
+        throw new Error(
+          `Slack file upload failed: ${result.error || 'Unknown error'}`,
+        );
+      }
+
+      const file = (result.files?.[0]?.files?.[0] || result.file) as any;
+
+      if (!file) {
+        throw new Error(
+          'Invalid Slack response: file object not found in response',
+        );
+      }
+
+      if (!file.id) {
+        throw new Error('Invalid Slack response: file.id is missing');
+      }
+
+      const fileUrl = file.url_private_download;
+      if (!fileUrl) {
+        throw new Error(
+          `Invalid Slack response: url_private_download is missing for file ${file.id}`,
+        );
+      }
+
+      logger.info(`uploadFile: success, fileId=${file.id}`);
       return {
         fileId: file.id,
-        url: file.url_private_download,
+        url: fileUrl,
       };
     } catch (error) {
       logger.error('SlackAdapter.uploadFile()', error);

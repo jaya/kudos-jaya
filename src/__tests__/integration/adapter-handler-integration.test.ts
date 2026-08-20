@@ -16,7 +16,9 @@ describe('Adapter-Handler Integration', () => {
 
     mockSlackAdapter = {
       getPlatformName: jest.fn().mockReturnValue('slack'),
-      postMessage: jest.fn().mockResolvedValue({ ts: 'slack_ts', channel: 'slack_ch' }),
+      postMessage: jest
+        .fn()
+        .mockResolvedValue({ ts: 'slack_ts', channel: 'slack_ch' }),
       updateModal: jest.fn().mockResolvedValue(undefined),
       openModal: jest.fn().mockResolvedValue(undefined),
       getUserInfo: jest.fn().mockResolvedValue({ id: 'u1', name: 'User 1' }),
@@ -24,7 +26,9 @@ describe('Adapter-Handler Integration', () => {
 
     mockGoogleChatAdapter = {
       getPlatformName: jest.fn().mockReturnValue('google-chat'),
-      postMessage: jest.fn().mockResolvedValue({ ts: 'gc_ts', channel: 'gc_ch' }),
+      postMessage: jest
+        .fn()
+        .mockResolvedValue({ ts: 'gc_ts', channel: 'gc_ch' }),
       updateModal: jest.fn().mockResolvedValue(undefined),
       openModal: jest.fn().mockResolvedValue(undefined),
       getUserInfo: jest.fn().mockResolvedValue({ id: 'u1', name: 'User 1' }),
@@ -101,7 +105,7 @@ describe('Adapter-Handler Integration', () => {
   describe('Handler with adapter substitution', () => {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     const genericHandler = async (adapter: any) => {
-    /* eslint-enable @typescript-eslint/no-explicit-any */
+      /* eslint-enable @typescript-eslint/no-explicit-any */
       const platform = adapter.getPlatformName();
       const messageResult = await adapter.postMessage({
         channel: 'general',

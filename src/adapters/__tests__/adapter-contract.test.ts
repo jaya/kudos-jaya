@@ -15,7 +15,9 @@ describe('Adapter Contract', () => {
   beforeEach(() => {
     const mockWebClient = {
       chat: {
-        postMessage: jest.fn().mockResolvedValue({ ok: true, ts: 'ts1', channel: 'ch1' }),
+        postMessage: jest
+          .fn()
+          .mockResolvedValue({ ok: true, ts: 'ts1', channel: 'ch1' }),
         update: jest.fn().mockResolvedValue({ ok: true }),
         delete: jest.fn().mockResolvedValue({ ok: true }),
       },
@@ -25,14 +27,24 @@ describe('Adapter Contract', () => {
         push: jest.fn().mockResolvedValue({ ok: true }),
       },
       users: {
-        info: jest.fn().mockResolvedValue({ ok: true, user: { id: 'u1', name: 'User 1' } }),
+        info: jest
+          .fn()
+          .mockResolvedValue({ ok: true, user: { id: 'u1', name: 'User 1' } }),
       },
       conversations: {
-        info: jest.fn().mockResolvedValue({ ok: true, channel: { id: 'ch1', name: 'channel1' } }),
-        members: jest.fn().mockResolvedValue({ ok: true, members: ['u1', 'u2'] }),
+        info: jest.fn().mockResolvedValue({
+          ok: true,
+          channel: { id: 'ch1', name: 'channel1' },
+        }),
+        members: jest
+          .fn()
+          .mockResolvedValue({ ok: true, members: ['u1', 'u2'] }),
       },
       files: {
-        uploadV2: jest.fn().mockResolvedValue({ ok: true, file: { id: 'f1', url_private: 'url' } }),
+        uploadV2: jest.fn().mockResolvedValue({
+          ok: true,
+          file: { id: 'f1', url_private: 'url' },
+        }),
         delete: jest.fn().mockResolvedValue({ ok: true }),
       },
     } as unknown as WebClient;
