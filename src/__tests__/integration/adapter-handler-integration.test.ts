@@ -99,8 +99,9 @@ describe('Adapter-Handler Integration', () => {
   });
 
   describe('Handler with adapter substitution', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const genericHandler = async (adapter: any) => {
+    /* eslint-enable @typescript-eslint/no-explicit-any */
       const platform = adapter.getPlatformName();
       const messageResult = await adapter.postMessage({
         channel: 'general',

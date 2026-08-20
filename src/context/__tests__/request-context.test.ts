@@ -34,6 +34,7 @@ describe('RequestContext', () => {
     });
 
     it('should store adapter in context', () => {
+      // Create context instance
       new RequestContext(contextData);
 
       // Verify the data passed to context is stored correctly
@@ -110,6 +111,7 @@ describe('RequestContext', () => {
     });
 
     it('should preserve context data after creation', () => {
+      // Create context instance
       new RequestContext(contextData);
 
       expect(contextData.teamId).toBe('team123');
