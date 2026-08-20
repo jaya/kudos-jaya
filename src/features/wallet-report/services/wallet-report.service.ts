@@ -49,8 +49,10 @@ export class WalletReportService {
       };
     } catch (error) {
       const operation = this.identifyFailedOperation(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       logger.error(
-        `WalletReportService.generateReport() - Failed at: ${operation}`,
+        `WalletReportService.generateReport() - Failed at: ${operation} - ${errorMessage}`,
         error instanceof Error ? error : new Error(String(error)),
       );
       return {

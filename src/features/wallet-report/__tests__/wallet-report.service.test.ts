@@ -32,6 +32,13 @@ describe('WalletReportService', () => {
     (WalletController as jest.Mock).mockImplementation(
       () => mockWalletController,
     );
+
+    // Ensure assets directory exists
+    const assetDir = path.dirname(testFilePath);
+    if (!fs.existsSync(assetDir)) {
+      fs.mkdirSync(assetDir, { recursive: true });
+    }
+
     (writeCsvUtil.writeCsv as jest.Mock).mockImplementation(async () => {
       // Create the test file so fs.createReadStream can read it
       fs.writeFileSync(testFilePath, 'test data');

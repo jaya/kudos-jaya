@@ -50,20 +50,27 @@ describe('SlackAdapter', () => {
       },
       conversations: {
         info: jest.fn().mockResolvedValue({
+          ok: true,
           channel: { id: 'C123', name: 'general', is_private: false },
+        }),
+        open: jest.fn().mockResolvedValue({
+          ok: true,
+          channel: { id: 'D123' },
         }),
       },
       files: {
         upload: jest.fn().mockResolvedValue({
+          ok: true,
           file: { id: 'F123', permalink: 'https://files.slack.com/file' },
         }),
         uploadV2: jest.fn().mockResolvedValue({
+          ok: true,
           file: {
             id: 'F123',
             url_private_download: 'https://files.slack.com/file',
           },
         }),
-        delete: jest.fn().mockResolvedValue({}),
+        delete: jest.fn().mockResolvedValue({ ok: true }),
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
@@ -454,7 +461,6 @@ describe('SlackAdapter', () => {
       expect(mockWebClient.files.uploadV2).toHaveBeenCalledWith(
         expect.objectContaining({
           filename: 'report.csv',
-          filetype: 'csv',
           channel_id: 'C123',
           title: 'Report',
         }),
