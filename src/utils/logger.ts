@@ -13,6 +13,8 @@ export interface LogMeta {
   correlationId?: string;
   teamId?: string;
   userId?: string;
+  error?: string;
+  stack?: string;
   [key: string]: unknown;
 }
 
@@ -46,10 +48,11 @@ class Logger {
 
   private parseMeta(
     messageOrMeta: string | LogMeta | undefined,
-    meta?: LogMeta,
+    meta?: LogMeta | Error,
   ): { message: string; meta: LogMeta } {
     if (typeof messageOrMeta === 'string') {
-      return { message: messageOrMeta, meta: meta || {} };
+      const parsedMeta = this.normalizeError(meta) || {};
+      return { message: messageOrMeta, meta: parsedMeta };
     }
     if (messageOrMeta && typeof messageOrMeta === 'object') {
       const message =
@@ -57,6 +60,17 @@ class Logger {
       return { message, meta: messageOrMeta };
     }
     return { message: '', meta: {} };
+  }
+
+  private normalizeError(meta?: LogMeta | Error): LogMeta | undefined {
+    if (!meta) return undefined;
+    if (meta instanceof Error) {
+      return {
+        error: meta.message,
+        stack: meta.stack,
+      };
+    }
+    return meta as LogMeta;
   }
 
   public info(
@@ -79,7 +93,7 @@ class Logger {
 
   public error(
     messageOrMeta: string | LogMeta | undefined,
-    meta?: LogMeta,
+    meta?: LogMeta | Error,
   ): void {
     const { message, meta: parsedMeta } = this.parseMeta(messageOrMeta, meta);
     const enrichedMeta = this.enrichMetaWithContext(parsedMeta);

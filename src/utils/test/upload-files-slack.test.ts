@@ -25,6 +25,8 @@ describe('uploadFile()', () => {
     client = new WebClient() as jest.Mocked<WebClient>;
     mockReadStream = jest.fn();
     (fs.createReadStream as jest.Mock).mockReturnValue(mockReadStream);
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (fs.unlinkSync as jest.Mock).mockReturnValue(undefined);
     (path.join as jest.Mock).mockImplementation((...args) => args.join('/'));
   });
 
@@ -35,6 +37,7 @@ describe('uploadFile()', () => {
       channel: { id: expectedChannelId },
     });
     (client.files.uploadV2 as jest.Mock).mockResolvedValueOnce({
+      ok: true,
       files: [
         { ok: true, files: [{ url_private_download: 'https://download.url' }] },
       ],
