@@ -64,7 +64,7 @@ describe('openWalletReportHandler', () => {
 
     expect(mockAck).toHaveBeenCalled();
     expect(mockService.generateReport).toHaveBeenCalledWith(
-      { userId: 'user1', teamId: 'team1' },
+      { userId: 'user1' },
       undefined,
     );
     expect(mockAdapter.postMessage).toHaveBeenCalledWith(

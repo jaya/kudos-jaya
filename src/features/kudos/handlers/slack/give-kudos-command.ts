@@ -1,7 +1,10 @@
 import logger from '@/utils/logger';
 import { AllMiddlewareArgs, SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { GiveKudosService } from '../../services/give-kudos.service';
-import { buildCompanyValueOptions, getKudosView } from '../../ui/slack/give-kudos-modal';
+import {
+  buildCompanyValueOptions,
+  getKudosView,
+} from '../../ui/slack/give-kudos-modal';
 import { withRequestContext } from '@/context';
 import { RequestContext } from '@/context/RequestContext';
 

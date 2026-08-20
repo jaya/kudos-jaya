@@ -1,5 +1,6 @@
 import { WalletReportService } from '../services/wallet-report.service';
 import { WalletController } from '@/controllers';
+import { RequestContext } from '@/context';
 import * as uploadFilesSlack from '@/utils/upload-files-slack';
 import * as writeCsvUtil from '@/utils/write-csv';
 
@@ -7,6 +8,7 @@ jest.mock('@/controllers');
 jest.mock('@/utils/upload-files-slack');
 jest.mock('@/utils/write-csv');
 jest.mock('@/utils/logger');
+jest.mock('@/context');
 
 describe('WalletReportService', () => {
   let service: WalletReportService;
@@ -32,6 +34,10 @@ describe('WalletReportService', () => {
       'https://example.com/report.csv',
     );
 
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      teamId: 'team1',
+    });
+
     service = new WalletReportService();
   });
 
@@ -45,7 +51,7 @@ describe('WalletReportService', () => {
       mockWalletController.fetchWalletReport.mockResolvedValue(mockReportData);
 
       const result = await service.generateReport(
-        { userId: 'user1', teamId: 'team1' },
+        { userId: 'user1' },
         mockClient,
       );
 
@@ -63,7 +69,7 @@ describe('WalletReportService', () => {
       mockWalletController.fetchWalletReport.mockResolvedValue([]);
 
       const result = await service.generateReport(
-        { userId: 'user1', teamId: 'team1' },
+        { userId: 'user1' },
         mockClient,
       );
 
@@ -78,7 +84,7 @@ describe('WalletReportService', () => {
       );
 
       const result = await service.generateReport(
-        { userId: 'user1', teamId: 'team1' },
+        { userId: 'user1' },
         mockClient,
       );
 

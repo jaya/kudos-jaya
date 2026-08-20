@@ -15,11 +15,10 @@ const appSettingsActionHandler = withRequestContext(async ({ ack, body }) => {
       throw new Error('Platform adapter not available in request context');
     }
 
-    const teamId = body.user.team_id;
     const service = new InstallationService();
 
-    const settings = await service.getCurrentSettings(teamId);
-    const auditorUsers = await service.getAuditorUsers(teamId);
+    const settings = await service.getCurrentSettings();
+    const auditorUsers = await service.getAuditorUsers();
     const auditorUserIds = auditorUsers.map(({ id }) => id);
 
     const modal = buildSettingsModal(settings, auditorUserIds);

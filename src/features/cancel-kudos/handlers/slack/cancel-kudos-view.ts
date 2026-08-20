@@ -22,7 +22,6 @@ const cancelKudosViewHandler = withRequestContext(async ({ ack, body }) => {
       return;
     }
 
-    const teamId = body.user.team_id;
     const service = new CancelKudosService();
 
     for (const kudo of selectedKudos) {
@@ -30,10 +29,8 @@ const cancelKudosViewHandler = withRequestContext(async ({ ack, body }) => {
       const slackMessageId = kudoParams[0];
       const slackChannelId = kudoParams[1];
 
-      // Delete from database
-      await service.deleteKudos(teamId, slackMessageId, slackChannelId);
+      await service.deleteKudos(slackMessageId, slackChannelId);
 
-      // Delete from Slack
       try {
         await adapter.deleteMessage({
           ts: slackMessageId,

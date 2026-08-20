@@ -77,9 +77,7 @@ describe('saveSettingsViewHandler()', () => {
 
     expect(mockAck).toHaveBeenCalled();
     expect(mockService.saveSettings).toHaveBeenCalledWith({
-      teamId: 'TEAM1234',
       userId: 'U12345',
-      botToken: 'bot-token-test-mock',
       todoToken: 'plain-token-mock',
       defaultChannelId: '#bots',
       defaultAmount: 100,

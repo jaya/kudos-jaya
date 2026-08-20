@@ -1,4 +1,5 @@
 import { InstallationController, UserController } from '@/controllers';
+import { RequestContext } from '@/context';
 import logger from '@/utils/logger';
 import { CurrentSettingsResponse, SaveSettingsParams } from '../types';
 
@@ -6,8 +7,9 @@ export class InstallationService {
   private readonly installationController = new InstallationController();
   private readonly userController = new UserController();
 
-  async getCurrentSettings(teamId: string): Promise<CurrentSettingsResponse> {
+  async getCurrentSettings(): Promise<CurrentSettingsResponse> {
     try {
+      const { teamId } = RequestContext.get();
       return await this.installationController.getCurrentSettings(teamId);
     } catch (error) {
       logger.error('InstallationService.getCurrentSettings()', error);
@@ -15,10 +17,9 @@ export class InstallationService {
     }
   }
 
-  async getAuditorUsers(
-    teamId: string,
-  ): Promise<{ id: string; name: string }[]> {
+  async getAuditorUsers(): Promise<{ id: string; name: string }[]> {
     try {
+      const { teamId } = RequestContext.get();
       const users = await this.userController.findMany({
         teamId,
         params: { isAuditor: true },
@@ -33,11 +34,12 @@ export class InstallationService {
     }
   }
 
-  async saveSettings(params: SaveSettingsParams): Promise<void> {
+  async saveSettings(
+    params: Omit<SaveSettingsParams, 'teamId' | 'botToken'>,
+  ): Promise<void> {
     try {
+      const { teamId, botToken } = RequestContext.get();
       const {
-        teamId,
-        botToken,
         todoToken,
         defaultChannelId,
         defaultAmount,

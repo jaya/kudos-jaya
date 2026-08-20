@@ -70,8 +70,6 @@ describe('appHomeOpenedHandler', () => {
 
     expect(mockService.buildHomePageBlocks).toHaveBeenCalledWith({
       user: 'user1',
-      teamId: 'team1',
-      token: 'token123',
     });
 
     expect(mockClient.views.publish).toHaveBeenCalledWith(

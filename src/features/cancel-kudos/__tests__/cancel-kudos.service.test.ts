@@ -1,8 +1,10 @@
 import { CancelKudosService } from '../services/cancel-kudos.service';
 import { RecognitionController } from '@/controllers';
+import { RequestContext } from '@/context';
 
 jest.mock('@/controllers');
 jest.mock('@/utils/logger');
+jest.mock('@/context');
 
 describe('CancelKudosService', () => {
   let service: CancelKudosService;
@@ -20,6 +22,10 @@ describe('CancelKudosService', () => {
     (RecognitionController as jest.Mock).mockImplementation(
       () => mockRecognitionController,
     );
+
+    (RequestContext.get as jest.Mock).mockReturnValue({
+      teamId: 'team123',
+    });
 
     service = new CancelKudosService();
   });
@@ -45,7 +51,7 @@ describe('CancelKudosService', () => {
 
       mockRecognitionController.find.mockResolvedValue(mockKudos);
 
-      const result = await service.getUserKudos('team123', 'user1');
+      const result = await service.getUserKudos('user1');
 
       expect(result).toEqual(mockKudos);
       expect(mockRecognitionController.find).toHaveBeenCalledWith({
@@ -59,7 +65,7 @@ describe('CancelKudosService', () => {
     it('should return empty array when no kudos found', async () => {
       mockRecognitionController.find.mockResolvedValue([]);
 
-      const result = await service.getUserKudos('team123', 'user1');
+      const result = await service.getUserKudos('user1');
 
       expect(result).toEqual([]);
     });
@@ -67,7 +73,7 @@ describe('CancelKudosService', () => {
     it('should return empty array on error', async () => {
       mockRecognitionController.find.mockRejectedValue(new Error('DB error'));
 
-      const result = await service.getUserKudos('team123', 'user1');
+      const result = await service.getUserKudos('user1');
 
       expect(result).toEqual([]);
     });
@@ -77,7 +83,7 @@ describe('CancelKudosService', () => {
     it('should delete kudos successfully', async () => {
       mockRecognitionController.delete.mockResolvedValue(undefined);
 
-      const result = await service.deleteKudos('team123', 'msg123', 'ch123');
+      const result = await service.deleteKudos('msg123', 'ch123');
 
       expect(result).toBe(true);
       expect(mockRecognitionController.delete).toHaveBeenCalledWith({
@@ -91,7 +97,7 @@ describe('CancelKudosService', () => {
         new Error('Delete error'),
       );
 
-      const result = await service.deleteKudos('team123', 'msg123', 'ch123');
+      const result = await service.deleteKudos('msg123', 'ch123');
 
       expect(result).toBe(false);
     });

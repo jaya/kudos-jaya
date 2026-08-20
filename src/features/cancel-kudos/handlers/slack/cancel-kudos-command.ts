@@ -11,10 +11,7 @@ import { withRequestContext } from '@/context';
 import { RequestContext } from '@/context/RequestContext';
 
 const cancelKudosCommandHandler = withRequestContext(
-  async ({
-    ack,
-    body,
-  }: AllMiddlewareArgs & SlackCommandMiddlewareArgs) => {
+  async ({ ack, body }: AllMiddlewareArgs & SlackCommandMiddlewareArgs) => {
     try {
       await ack();
 
@@ -25,16 +22,14 @@ const cancelKudosCommandHandler = withRequestContext(
         throw new Error('Platform adapter not available in request context');
       }
 
-      const teamId = body.team_id;
       const userId = body.user_id;
       const service = new CancelKudosService();
 
       // Fetch user's kudos
-      const recognitions = await service.getUserKudos(teamId, userId);
+      const recognitions = await service.getUserKudos(userId);
 
       if (recognitions.length <= 0) {
         // TODO: Implement postEphemeral in adapter
-        // For now, use postMessage
         await adapter.postMessage({
           channel: userId,
           text: 'You have no kudos to cancel.',
@@ -42,12 +37,9 @@ const cancelKudosCommandHandler = withRequestContext(
         return;
       }
 
-      // Build modal
       const grouped = groupKudosByMessage(recognitions);
       const options = buildCancelKudosModalOptions(grouped);
 
-      // Open modal
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await adapter.openModal({
         triggerId: body.trigger_id,
         view: getCancelKudosView(options) as any,

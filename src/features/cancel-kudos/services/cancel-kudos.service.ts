@@ -1,4 +1,5 @@
 import { RecognitionController } from '@/controllers';
+import { RequestContext } from '@/context';
 import { Recognition } from '@/entities';
 import logger from '@/utils/logger';
 import { Not, IsNull } from 'typeorm';
@@ -10,11 +11,9 @@ export class CancelKudosService {
     this.recognitionController = new RecognitionController();
   }
 
-  public async getUserKudos(
-    teamId: string,
-    userId: string,
-  ): Promise<Recognition[]> {
+  public async getUserKudos(userId: string): Promise<Recognition[]> {
     try {
+      const { teamId } = RequestContext.get();
       return await this.recognitionController.find({
         teamId,
         params: {
@@ -29,11 +28,11 @@ export class CancelKudosService {
   }
 
   public async deleteKudos(
-    teamId: string,
     slackMessageId: string,
     slackChannelId: string,
   ): Promise<boolean> {
     try {
+      const { teamId } = RequestContext.get();
       await this.recognitionController.delete({
         teamId,
         params: { slackChannelId, slackMessageId },

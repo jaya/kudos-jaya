@@ -1,6 +1,7 @@
 import { RedeemController } from '@/controllers/redeem';
 import { ProductController } from '@/controllers/product';
 import { UserController } from '@/controllers/user';
+import { RequestContext } from '@/context';
 import logger from '@/utils/logger';
 import { GiftCardResult, RedeemGiftCardRequest } from '../types';
 
@@ -9,13 +10,16 @@ export class RedeemGiftCardService {
   private readonly productController = new ProductController();
   private readonly userController = new UserController();
 
-  async emitGiftCard(params: RedeemGiftCardRequest): Promise<GiftCardResult> {
+  async emitGiftCard(
+    params: Omit<RedeemGiftCardRequest, 'teamId'>,
+  ): Promise<GiftCardResult> {
     try {
+      const { teamId } = RequestContext.get();
       const result = await this.redeemController.emitGiftCard({
         userId: params.userId,
         cardId: params.cardId,
         amount: params.amount,
-        teamId: params.teamId,
+        teamId,
       });
       return {
         success: result.success,
@@ -41,8 +45,9 @@ export class RedeemGiftCardService {
     }
   }
 
-  async getAuditors(teamId: string): Promise<Array<{ id: string }>> {
+  async getAuditors(): Promise<Array<{ id: string }>> {
     try {
+      const { teamId } = RequestContext.get();
       const auditors = await this.userController.findMany({
         teamId,
         params: { isAuditor: true },
