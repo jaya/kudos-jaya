@@ -4,7 +4,7 @@ export {
   giveKudosViewHandler,
   getGifActionHandler,
 } from './handlers';
-export { getKudosView, buildCompanyValueOptions } from './ui/give-kudos-modal';
+export { getKudosView, buildCompanyValueOptions } from './ui';
 export type {
   CreateKudosRequest,
   CreateKudosResult,
