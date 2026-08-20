@@ -57,6 +57,12 @@ describe('SlackAdapter', () => {
         upload: jest.fn().mockResolvedValue({
           file: { id: 'F123', permalink: 'https://files.slack.com/file' },
         }),
+        uploadV2: jest.fn().mockResolvedValue({
+          file: {
+            id: 'F123',
+            url_private_download: 'https://files.slack.com/file',
+          },
+        }),
         delete: jest.fn().mockResolvedValue({}),
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -445,11 +451,11 @@ describe('SlackAdapter', () => {
         title: 'Report',
       });
 
-      expect(mockWebClient.files.upload).toHaveBeenCalledWith(
+      expect(mockWebClient.files.uploadV2).toHaveBeenCalledWith(
         expect.objectContaining({
           filename: 'report.csv',
           filetype: 'csv',
-          channels: ['C123'],
+          channel_id: 'C123',
           title: 'Report',
         }),
       );
@@ -460,7 +466,7 @@ describe('SlackAdapter', () => {
     });
 
     it('should handle uploadFile errors', async () => {
-      mockWebClient.files.upload = jest
+      mockWebClient.files.uploadV2 = jest
         .fn()
         .mockRejectedValue(new Error('Upload failed'));
 

@@ -235,10 +235,10 @@ export class SlackAdapter implements PlatformAdapter {
     url: string;
   }> {
     try {
-      const result = await (this.client.files.upload as any)({
+      const result = await (this.client.files.uploadV2 as any)({
         filename: params.filename,
         filetype: params.filetype,
-        channels: params.channels,
+        channel_id: params.channels[0],
         file: params.file,
         title: params.title,
         initial_comment: params.initialComment,
@@ -246,7 +246,7 @@ export class SlackAdapter implements PlatformAdapter {
       const file = result.file as any;
       return {
         fileId: file.id,
-        url: file.permalink,
+        url: file.url_private_download,
       };
     } catch (error) {
       logger.error('SlackAdapter.uploadFile()', error);
