@@ -1,1 +1,1 @@
-export * from './slack';
+export { default } from './slack';

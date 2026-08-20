@@ -1,7 +1,7 @@
 export { HomePageService } from './services/home-page.service';
 export { appHomeOpenedHandler } from './handlers';
-export { getHomePageBlocks } from './ui/home-blocks';
-export { getUserBalanceSection } from './ui/user-balance';
-export { getRecognitionListSection } from './ui/recognition-list';
-export { getAdminPanelSection } from './ui/admin-panel';
+export { getHomePageBlocks } from './ui';
+export { getUserBalanceSection } from './ui';
+export { getRecognitionListSection } from './ui';
+export { getAdminPanelSection } from './ui';
 export type { HomePageParams, HomePageBlocksResult } from './types';

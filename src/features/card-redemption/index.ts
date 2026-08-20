@@ -5,9 +5,6 @@ export {
   chooseCardActionHandler,
   generateCardViewHandler,
 } from './handlers';
-export {
-  getProductListBlocks,
-  getProductListView,
-} from './ui/product-list-modal';
-export { getAmountInputView } from './ui/amount-input-modal';
+export { getProductListBlocks, getProductListView } from './ui';
+export { getAmountInputView } from './ui';
 export type { RedeemGiftCardRequest, GiftCardResult } from './types';

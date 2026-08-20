@@ -4,5 +4,5 @@ export {
   groupKudosByMessage,
   buildCancelKudosModalOptions,
   getCancelKudosView,
-} from './ui/cancel-kudos-modal';
+} from './ui';
 export type { CancelKudosRequest } from './types';

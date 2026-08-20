@@ -3,5 +3,5 @@ export {
   openPrizesReportHandler,
   generatePrizesReportViewHandler,
 } from './handlers';
-export { getPrizesReportView } from './ui/prizes-report-modal';
+export { getPrizesReportView } from './ui';
 export type { PrizesReportParams, PrizesReportResult } from './types';
