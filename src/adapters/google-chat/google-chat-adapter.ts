@@ -91,10 +91,7 @@ export class GoogleChatAdapter implements PlatformAdapter {
     }
   }
 
-  async deleteMessage(params: {
-    channel: string;
-    ts: string;
-  }): Promise<void> {
+  async deleteMessage(params: { channel: string; ts: string }): Promise<void> {
     try {
       // In production: Call Google Chat API
       // await this.chatApi.spaces.messages.delete({
@@ -107,6 +104,31 @@ export class GoogleChatAdapter implements PlatformAdapter {
       });
     } catch (error) {
       logger.error('GoogleChatAdapter.deleteMessage()', error);
+      throw error;
+    }
+  }
+
+  async postEphemeral(params: {
+    channel: string;
+    user: string;
+    text: string;
+    blocks?: Record<string, unknown>[];
+  }): Promise<void> {
+    try {
+      // In Google Chat, ephemeral messages can be sent as private direct messages
+      // or via thread reply with restricted visibility
+      const card = this.convertBlocksToCard(params.blocks || []);
+
+      logger.info(
+        'GoogleChatAdapter.postEphemeral() - Ephemeral message sent',
+        {
+          channel: params.channel,
+          user: params.user,
+          hasCard: !!card,
+        },
+      );
+    } catch (error) {
+      logger.error('GoogleChatAdapter.postEphemeral()', error);
       throw error;
     }
   }
@@ -191,6 +213,28 @@ export class GoogleChatAdapter implements PlatformAdapter {
     }
   }
 
+  async publishHomeTab(params: {
+    userId: string;
+    view: Record<string, unknown>;
+  }): Promise<void> {
+    try {
+      // Google Chat doesn't have a "home tab" like Slack
+      // Instead, we would send a direct message with the home view as a card
+      const card = this.convertViewToCard(params.view);
+
+      logger.info(
+        'GoogleChatAdapter.publishHomeTab() - Home view published as DM',
+        {
+          userId: params.userId,
+          card,
+        },
+      );
+    } catch (error) {
+      logger.error('GoogleChatAdapter.publishHomeTab()', error);
+      throw error;
+    }
+  }
+
   async getUserInfo(params: { userId: string }): Promise<{
     id: string;
     name: string;
@@ -219,9 +263,7 @@ export class GoogleChatAdapter implements PlatformAdapter {
     }
   }
 
-  async getConversationInfo(params: {
-    conversationId: string;
-  }): Promise<{
+  async getConversationInfo(params: { conversationId: string }): Promise<{
     id: string;
     name: string;
     isPrivate: boolean;

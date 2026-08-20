@@ -21,11 +21,13 @@ describe('cancelKudosCommandHandler', () => {
     mockAck = jest.fn().mockResolvedValue(undefined);
     mockAdapter = {
       postMessage: jest.fn().mockResolvedValue(undefined),
+      postEphemeral: jest.fn().mockResolvedValue(undefined),
       openModal: jest.fn().mockResolvedValue(undefined),
     };
     mockBody = {
       team_id: 'team123',
       user_id: 'user1',
+      channel_id: 'channel123',
       trigger_id: 'trigger123',
     };
 
@@ -91,8 +93,9 @@ describe('cancelKudosCommandHandler', () => {
     } as any);
 
     expect(mockAck).toHaveBeenCalled();
-    expect(mockAdapter.postMessage).toHaveBeenCalledWith(
+    expect(mockAdapter.postEphemeral).toHaveBeenCalledWith(
       expect.objectContaining({
+        user: 'user1',
         text: 'You have no kudos to cancel.',
       }),
     );

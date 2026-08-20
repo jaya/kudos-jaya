@@ -8,7 +8,7 @@ jest.mock('@/context/RequestContext');
 
 describe('appHomeOpenedHandler', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  let mockAdapter: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockEvent: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,11 +17,8 @@ describe('appHomeOpenedHandler', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockClient = {
-      token: 'token123',
-      views: {
-        publish: jest.fn(),
-      },
+    mockAdapter = {
+      publishHomeTab: jest.fn(),
     };
 
     mockEvent = {
@@ -41,6 +38,7 @@ describe('appHomeOpenedHandler', () => {
 
     // Mock RequestContext.get()
     (RequestContext.get as jest.Mock).mockReturnValue({
+      adapter: mockAdapter,
       botToken: 'token123',
     });
 
@@ -61,7 +59,6 @@ describe('appHomeOpenedHandler', () => {
     });
 
     await appHomeOpenedHandler({
-      client: mockClient,
       event: mockEvent,
       body: { team_id: 'team1', user_id: 'user1' },
       context: { botToken: 'token123' },
@@ -72,9 +69,9 @@ describe('appHomeOpenedHandler', () => {
       user: 'user1',
     });
 
-    expect(mockClient.views.publish).toHaveBeenCalledWith(
+    expect(mockAdapter.publishHomeTab).toHaveBeenCalledWith(
       expect.objectContaining({
-        user_id: 'user1',
+        userId: 'user1',
         view: expect.objectContaining({
           type: 'home',
           blocks: mockBlocks,
@@ -87,7 +84,6 @@ describe('appHomeOpenedHandler', () => {
     mockEvent.tab = 'messages';
 
     await appHomeOpenedHandler({
-      client: mockClient,
       event: mockEvent,
       body: { team_id: 'team1', user_id: 'user1' },
       context: { botToken: 'token123' },
@@ -95,6 +91,6 @@ describe('appHomeOpenedHandler', () => {
     } as any);
 
     expect(mockService.buildHomePageBlocks).not.toHaveBeenCalled();
-    expect(mockClient.views.publish).not.toHaveBeenCalled();
+    expect(mockAdapter.publishHomeTab).not.toHaveBeenCalled();
   });
 });

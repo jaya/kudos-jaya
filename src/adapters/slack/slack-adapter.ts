@@ -63,6 +63,25 @@ export class SlackAdapter implements PlatformAdapter {
     }
   }
 
+  async postEphemeral(params: {
+    channel: string;
+    user: string;
+    text: string;
+    blocks?: Record<string, unknown>[];
+  }): Promise<void> {
+    try {
+      await this.client.chat.postEphemeral({
+        channel: params.channel,
+        user: params.user,
+        text: params.text,
+        blocks: params.blocks as any,
+      } as any);
+    } catch (error) {
+      logger.error('SlackAdapter.postEphemeral()', error);
+      throw error;
+    }
+  }
+
   async openModal(params: {
     triggerId: string;
     view: Record<string, unknown>;
@@ -120,6 +139,21 @@ export class SlackAdapter implements PlatformAdapter {
       } as any);
     } catch (error) {
       logger.error('SlackAdapter.closeModal()', error);
+      throw error;
+    }
+  }
+
+  async publishHomeTab(params: {
+    userId: string;
+    view: Record<string, unknown>;
+  }): Promise<void> {
+    try {
+      await this.client.views.publish({
+        user_id: params.userId,
+        view: params.view as any,
+      } as any);
+    } catch (error) {
+      logger.error('SlackAdapter.publishHomeTab()', error);
       throw error;
     }
   }
