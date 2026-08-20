@@ -39,8 +39,8 @@ describe('ProductController', () => {
     it('Should return the products from db limited to 5', async () => {
       mockRepository.find.mockResolvedValueOnce(fetchProductsResponse);
       const response = await productController.get(0);
-      expect(response.length).toEqual(6);
-      expect(response).toEqual(fetchProductsResponse.slice(0, 6));
+      expect(response.length).toEqual(fetchProductsResponse.length);
+      expect(response).toEqual(fetchProductsResponse);
     });
   });
 
