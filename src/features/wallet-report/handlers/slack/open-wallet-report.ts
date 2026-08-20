@@ -18,8 +18,7 @@ const openWalletReportHandler = withRequestContext(async ({ ack, body }) => {
     }
 
     const service = new WalletReportService();
-    // TODO: Update service to accept adapter instead of client
-    const result = await service.generateReport({ userId }, undefined);
+    const result = await service.generateReport({ userId });
 
     await adapter.postMessage({
       channel: userId,

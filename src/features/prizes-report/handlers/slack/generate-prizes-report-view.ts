@@ -24,14 +24,11 @@ const generatePrizesReportViewHandler = withRequestContext(
         view.state.values['report_dates']['report_end_date'].selected_date;
 
       const service = new PrizesReportService();
-      const result = await service.generateReport(
-        {
-          userId,
-          startDate: new Date(startDate),
-          endDate: new Date(endDate),
-        },
-        undefined,
-      );
+      const result = await service.generateReport({
+        userId,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+      });
 
       await adapter.postMessage({
         channel: userId,

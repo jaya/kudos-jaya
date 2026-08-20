@@ -1,6 +1,5 @@
 import { WalletController } from '@/controllers';
 import { RequestContext } from '@/context';
-import { uploadFile } from '@/utils/upload-files-slack';
 import { writeCsv } from '@/utils/write-csv';
 import logger from '@/utils/logger';
 import { WalletReportParams, WalletReportResult } from '../types';
@@ -8,12 +7,15 @@ import { WalletReportParams, WalletReportResult } from '../types';
 export class WalletReportService {
   async generateReport(
     params: Omit<WalletReportParams, 'teamId'>,
-    client: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<WalletReportResult> {
     const { userId } = params;
-    const { teamId } = RequestContext.get();
+    const { teamId, adapter } = RequestContext.get();
 
     try {
+      if (!adapter) {
+        throw new Error('Platform adapter not available');
+      }
+
       const reportData = await new WalletController().fetchWalletReport({
         teamId,
       });
@@ -27,7 +29,13 @@ export class WalletReportService {
       }
 
       await writeCsv(reportData);
-      const fileUrl = await uploadFile({ client, channelId: userId });
+      const result = await adapter.uploadFile({
+        filename: 'file.csv',
+        filetype: 'csv',
+        channels: [userId],
+        file: 'dist/src/assets/file.csv',
+      });
+      const fileUrl = result.url;
 
       return {
         success: true,

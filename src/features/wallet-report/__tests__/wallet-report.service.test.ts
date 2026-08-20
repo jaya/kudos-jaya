@@ -1,11 +1,9 @@
 import { WalletReportService } from '../services/wallet-report.service';
 import { WalletController } from '@/controllers';
 import { RequestContext } from '@/context';
-import * as uploadFilesSlack from '@/utils/upload-files-slack';
 import * as writeCsvUtil from '@/utils/write-csv';
 
 jest.mock('@/controllers');
-jest.mock('@/utils/upload-files-slack');
 jest.mock('@/utils/write-csv');
 jest.mock('@/utils/logger');
 jest.mock('@/context');
@@ -13,14 +11,16 @@ jest.mock('@/context');
 describe('WalletReportService', () => {
   let service: WalletReportService;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockClient: any;
+  let mockAdapter: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockWalletController: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockClient = {};
+    mockAdapter = {
+      uploadFile: jest.fn(),
+    };
 
     mockWalletController = {
       fetchWalletReport: jest.fn(),
@@ -30,12 +30,14 @@ describe('WalletReportService', () => {
       () => mockWalletController,
     );
     (writeCsvUtil.writeCsv as jest.Mock).mockResolvedValue(undefined);
-    (uploadFilesSlack.uploadFile as jest.Mock).mockResolvedValue(
-      'https://example.com/report.csv',
-    );
+    mockAdapter.uploadFile.mockResolvedValue({
+      fileId: 'f123',
+      url: 'https://example.com/report.csv',
+    });
 
     (RequestContext.get as jest.Mock).mockReturnValue({
       teamId: 'team1',
+      adapter: mockAdapter,
     });
 
     service = new WalletReportService();
@@ -50,28 +52,28 @@ describe('WalletReportService', () => {
 
       mockWalletController.fetchWalletReport.mockResolvedValue(mockReportData);
 
-      const result = await service.generateReport(
-        { userId: 'user1' },
-        mockClient,
-      );
+      const result = await service.generateReport({
+        userId: 'user1',
+      });
 
       expect(result.success).toBe(true);
       expect(result.message).toBe('Here is the report');
       expect(result.fileUrl).toBe('https://example.com/report.csv');
       expect(writeCsvUtil.writeCsv).toHaveBeenCalledWith(mockReportData);
-      expect(uploadFilesSlack.uploadFile).toHaveBeenCalledWith({
-        client: mockClient,
-        channelId: 'user1',
+      expect(mockAdapter.uploadFile).toHaveBeenCalledWith({
+        filename: 'file.csv',
+        filetype: 'csv',
+        channels: ['user1'],
+        file: 'dist/src/assets/file.csv',
       });
     });
 
     it('should return error when no data available', async () => {
       mockWalletController.fetchWalletReport.mockResolvedValue([]);
 
-      const result = await service.generateReport(
-        { userId: 'user1' },
-        mockClient,
-      );
+      const result = await service.generateReport({
+        userId: 'user1',
+      });
 
       expect(result.success).toBe(false);
       expect(result.message).toContain('do not have enough data');
@@ -83,10 +85,9 @@ describe('WalletReportService', () => {
         new Error('DB error'),
       );
 
-      const result = await service.generateReport(
-        { userId: 'user1' },
-        mockClient,
-      );
+      const result = await service.generateReport({
+        userId: 'user1',
+      });
 
       expect(result.success).toBe(false);
       expect(result.message).toContain('trouble generating the report');

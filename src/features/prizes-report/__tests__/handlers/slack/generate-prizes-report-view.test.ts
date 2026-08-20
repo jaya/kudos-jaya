@@ -84,7 +84,6 @@ describe('generatePrizesReportViewHandler', () => {
       expect.objectContaining({
         userId: 'user1',
       }),
-      undefined,
     );
     expect(mockAdapter.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
