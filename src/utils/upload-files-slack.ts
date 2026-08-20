@@ -43,6 +43,10 @@ export async function uploadFile({ client, channelId }): Promise<string> {
   const dirPath = path.join(__dirname, '../assets');
   const filePath = path.join(dirPath, 'file.csv');
 
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`CSV file not found at ${filePath}`);
+  }
+
   const conversationsResponse = await client.conversations.open({
     users: channelId,
   });
@@ -53,7 +57,20 @@ export async function uploadFile({ client, channelId }): Promise<string> {
     file: fs.createReadStream(filePath),
     filename: 'file.csv',
   });
+
+  if (!fileUploadResponse.ok) {
+    throw new Error(
+      `Slack file upload failed: ${fileUploadResponse.error || 'Unknown error'}`,
+    );
+  }
+
   fs.unlinkSync(filePath);
   const data = fileUploadResponse as UploadFileResponse;
-  return data?.files[0]?.files[0]?.url_private_download;
+  const url = data?.files[0]?.files[0]?.url_private_download;
+
+  if (!url) {
+    throw new Error('No download URL returned from Slack');
+  }
+
+  return url;
 }

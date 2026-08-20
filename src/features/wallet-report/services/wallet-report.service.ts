@@ -35,11 +35,24 @@ export class WalletReportService {
         fileUrl,
       };
     } catch (error) {
-      logger.error('WalletReportService.generateReport()', error);
+      const operation = this.identifyFailedOperation(error);
+      logger.error(
+        `WalletReportService.generateReport() - Failed at: ${operation}`,
+        error instanceof Error ? error : new Error(String(error)),
+      );
       return {
         success: false,
         message: 'Sorry, we had a trouble generating the report',
       };
     }
+  }
+
+  private identifyFailedOperation(error: unknown): string {
+    if (error instanceof Error && error.stack) {
+      if (error.stack.includes('writeCsv')) return 'CSV Writing';
+      if (error.stack.includes('uploadFile')) return 'File Upload';
+      if (error.stack.includes('fetchWalletReport')) return 'Report Fetching';
+    }
+    return 'Unknown Operation';
   }
 }
