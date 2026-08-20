@@ -10,6 +10,7 @@ export class TodoProduct implements IProduct {
   private productsHandler(
     product_lines: TodoProductLineResponse['product_lines'],
   ): BaseProduct[] {
+    const seenCardIds = new Set<string>();
     const products: BaseProduct[] = [];
 
     for (const item of product_lines) {
@@ -25,6 +26,11 @@ export class TodoProduct implements IProduct {
         if (item.brand_name === 'SHOPEE' && min_value < 30) {
           continue;
         }
+
+        if (seenCardIds.has(card.card_identificator)) {
+          continue;
+        }
+        seenCardIds.add(card.card_identificator);
 
         const product: BaseProduct = {
           id: card.card_identificator,
@@ -63,29 +69,35 @@ export class TodoProduct implements IProduct {
   private getCards(
     cards: TodoProductLineResponse['product_lines'][number]['products'],
   ): { card_identificator: string; min_value: number; max_value: number }[] {
-    const cardMap = cards.reduce((acc, product) => {
-      const { card_identificator, min_value, max_value } = product;
+    const cardMap = cards.reduce(
+      (acc, product) => {
+        const { card_identificator, min_value, max_value } = product;
 
-      const currentMin =
-        min_value === null ? 1 : Number.parseFloat(product?.min_value);
-      const currentMax =
-        max_value === null ? 0 : Number.parseFloat(product?.max_value);
+        const currentMin =
+          min_value === null ? 1 : Number.parseFloat(min_value);
+        const currentMax =
+          max_value === null ? 1 : Number.parseFloat(max_value);
 
-      acc[card_identificator] ||= {
-        card_identificator: card_identificator,
-        min_value: min_value,
-        max_value: max_value,
-      };
+        if (!acc[card_identificator]) {
+          acc[card_identificator] = {
+            card_identificator,
+            min_value: currentMin,
+            max_value: currentMax,
+          };
+        } else {
+          const existingMin = acc[card_identificator].min_value;
+          const existingMax = acc[card_identificator].max_value;
+          acc[card_identificator].min_value = Math.min(existingMin, currentMin);
+          acc[card_identificator].max_value = Math.max(existingMax, currentMax);
+        }
 
-      const existingMin =
-        Number.parseFloat(acc[card_identificator]?.min_value) || 1;
-      acc[card_identificator].min_value = Math.min(existingMin, currentMin);
-
-      const existingMax =
-        Number.parseFloat(acc[card_identificator].max_value) || 1;
-      acc[card_identificator].max_value = Math.max(existingMax, currentMax);
-      return acc;
-    }, {});
+        return acc;
+      },
+      {} as Record<
+        string,
+        { card_identificator: string; min_value: number; max_value: number }
+      >,
+    );
 
     return Object.values(cardMap);
   }

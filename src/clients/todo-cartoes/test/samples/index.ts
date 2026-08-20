@@ -534,22 +534,12 @@ export const todoProductsResponse = {
 export const fetchProductsResponse = [
   {
     id: 'TODO TI TESTES',
-    name: 'Company A',
-    description: 'Company A',
-    terms: 'Os valores disponíveis para este produto são: NaN',
-    logo: 'http://mylogo.com',
-    minValue: 1,
-    maxValue: 1,
-    isActive: true,
-  },
-  {
-    id: 'TODO TI TESTES',
     name: 'Dummy Qualita Open Denom',
     description: 'Dummy Qualita Open Denom',
     terms:
       'Os valores disponíveis para este produto são: 0 - 10 - 50 - 150 - 200 - 400 - 1000',
     logo: 'https://vendas-corp-teste.s3.sa-east-1.amazonaws.com/uploads/product_line_configuration/plataform/logo/49/1000x600_logo_amaro_black__1_.png',
-    minValue: 1,
+    minValue: 0,
     maxValue: 1000,
     isActive: true,
   },
@@ -593,7 +583,7 @@ export const fetchProductsResponse = [
     description: 'Staging Outback',
     terms: 'Os valores disponíveis para este produto são: 0 - 100 - 1000',
     logo: 'https://vendas-corp-teste.s3.sa-east-1.amazonaws.com/uploads/product_line_configuration/plataform/logo/4/outback.png',
-    minValue: 1,
+    minValue: 0,
     maxValue: 1000,
     isActive: true,
   },
